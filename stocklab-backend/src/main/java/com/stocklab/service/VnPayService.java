@@ -25,7 +25,7 @@ public class VnPayService {
         vnpParams.put("vnp_TmnCode", vnPayConfig.getTmnCode());
         vnpParams.put("vnp_Amount", String.valueOf(amount * 100));
         vnpParams.put("vnp_CurrCode", "VND");
-        vnpParams.put("vnp_BankCode", "NCB"); // Force NCB bank to bypass selection screen crash
+        // vnpParams.put("vnp_BankCode", "NCB"); // Force NCB bank to bypass selection screen crash
         vnpParams.put("vnp_TxnRef", txnRef);
         vnpParams.put("vnp_OrderInfo", orderInfo);
         vnpParams.put("vnp_OrderType", "other");
