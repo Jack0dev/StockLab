@@ -138,6 +138,7 @@ export const walletAPI = {
 export const vnpayAPI = {
   createPayment: (data) => api.post('/vnpay/create-payment', data),
   getResult: (params) => api.get('/vnpay/return', { params }),
+  cancelPayment: (txnRef) => api.post(`/vnpay/cancel/${txnRef}`),
 };
 
 // ===== Bot APIs (Module 6) =====

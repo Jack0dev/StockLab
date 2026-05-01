@@ -134,6 +134,25 @@ public class WalletService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public ApiResponse<String> cancelPendingTransaction(String username, String txnRef) {
+        WalletTransaction tx = walletTransactionRepository.findByTransactionCode(txnRef).orElse(null);
+        if (tx == null) {
+            return ApiResponse.error("Không tìm thấy giao dịch");
+        }
+        if (!tx.getUser().getUsername().equals(username)) {
+            return ApiResponse.error("Không có quyền hủy giao dịch này");
+        }
+        if (tx.getStatus() != WalletTransactionStatus.PENDING) {
+            return ApiResponse.error("Chỉ có thể hủy giao dịch đang chờ xử lý");
+        }
+        
+        tx.setStatus(WalletTransactionStatus.FAILED);
+        tx.setNote("Người dùng chủ động hủy để tạo lệnh mới");
+        walletTransactionRepository.save(tx);
+        return ApiResponse.success("Đã hủy giao dịch thành công", null);
+    }
+
     public ApiResponse<String> sendWithdrawOtp(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
