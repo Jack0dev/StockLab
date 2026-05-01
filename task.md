@@ -113,6 +113,9 @@
 ## 🐛 Bug / Fix
 
 - [x] **403 trên /api/auth/register** — Fix `shouldNotFilter()` trong `JwtAuthFilter`
+- [x] **VNPay** — Không ép mặc định ngân hàng NCB, cho phép chọn ngân hàng
+- [x] **VNPay** — Cập nhật trạng thái FAILED khi người dùng hủy thanh toán (Fallback trong Return URL)
+- [x] **VNPay** — Tự động hủy (FAILED) các giao dịch treo PENDING quá 30 phút (Scheduler)
 
 ---
 
