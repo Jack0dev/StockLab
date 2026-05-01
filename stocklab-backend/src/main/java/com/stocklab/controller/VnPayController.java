@@ -99,6 +99,15 @@ public class VnPayController {
     }
 
     /**
+     * Hủy giao dịch thanh toán khi người dùng chủ động chọn "Tạo lệnh mới"
+     */
+    @PostMapping("/cancel/{txnRef}")
+    public ApiResponse<String> cancelPayment(Authentication authentication, @PathVariable String txnRef) {
+        String username = authentication.getName();
+        return walletService.cancelPendingTransaction(username, txnRef);
+    }
+
+    /**
      * VNPay IPN (Instant Payment Notification) - Server-to-Server callback
      * VNPay gọi URL này khi giao dịch hoàn tất
      */

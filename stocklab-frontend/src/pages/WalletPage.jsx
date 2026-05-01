@@ -319,17 +319,26 @@ export default function WalletPage() {
                         <div className="deposit-qr-actions">
                           <button
                             className="btn-create-qr"
-                            onClick={() => { setPendingPayment(null); setDepositAmount(''); }}
+                            onClick={async () => {
+                              if (pendingPayment && pendingPayment.txnRef) {
+                                try {
+                                  await vnpayAPI.cancelPayment(pendingPayment.txnRef);
+                                } catch (error) {
+                                  console.error("Failed to cancel payment", error);
+                                }
+                              }
+                              setPendingPayment(null);
+                              setDepositAmount('');
+                              fetchHistory();
+                            }}
                           >
-                            Tạo lệnh mới
+                            Tạo giao dịch mới
                           </button>
                           <a
                             href={pendingPayment.paymentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
                             className="btn-direct-pay"
                           >
-                            Thanh toán trực tiếp →
+                            Thanh toán
                           </a>
                         </div>
                       </div>
