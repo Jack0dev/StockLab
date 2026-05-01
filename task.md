@@ -113,6 +113,7 @@
 ## 🐛 Bug / Fix
 
 - [x] **403 trên /api/auth/register** — Fix `shouldNotFilter()` trong `JwtAuthFilter`
+- [x] **VNPay** — Không ép mặc định ngân hàng NCB, cho phép chọn ngân hàng
 
 ---
 
