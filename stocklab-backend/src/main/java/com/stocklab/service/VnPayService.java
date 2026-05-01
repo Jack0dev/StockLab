@@ -25,7 +25,6 @@ public class VnPayService {
         vnpParams.put("vnp_TmnCode", vnPayConfig.getTmnCode());
         vnpParams.put("vnp_Amount", String.valueOf(amount * 100));
         vnpParams.put("vnp_CurrCode", "VND");
-        vnpParams.put("vnp_BankCode", "NCB"); // Force NCB bank to bypass selection screen crash
         vnpParams.put("vnp_TxnRef", txnRef);
         vnpParams.put("vnp_OrderInfo", orderInfo);
         vnpParams.put("vnp_OrderType", "other");
@@ -42,8 +41,10 @@ public class VnPayService {
         String vnpCreateDate = formatter.format(cld.getTime());
         vnpParams.put("vnp_CreateDate", vnpCreateDate);
 
-        // Bỏ truyền tham số vnp_ExpireDate để VNPay tự động tính +15 phút từ hệ thống của họ
-        // Điều này giúp tránh 100% lỗi sai lệch đồng hồ hoặc bug "timer is not defined" trên Frontend của VNPAY
+        // Bỏ truyền tham số vnp_ExpireDate để VNPay tự động tính +15 phút từ hệ thống
+        // của họ
+        // Điều này giúp tránh 100% lỗi sai lệch đồng hồ hoặc bug "timer is not defined"
+        // trên Frontend của VNPAY
 
         // Sort field names - đúng theo VNPay official Java code
         List<String> fieldNames = new ArrayList<>(vnpParams.keySet());
