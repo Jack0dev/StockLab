@@ -42,8 +42,10 @@ public class VnPayService {
         String vnpCreateDate = formatter.format(cld.getTime());
         vnpParams.put("vnp_CreateDate", vnpCreateDate);
 
-        // Bỏ truyền tham số vnp_ExpireDate để VNPay tự động tính +15 phút từ hệ thống của họ
-        // Điều này giúp tránh 100% lỗi sai lệch đồng hồ hoặc bug "timer is not defined" trên Frontend của VNPAY
+        // Bỏ truyền tham số vnp_ExpireDate để VNPay tự động tính +15 phút từ hệ thống
+        // của họ
+        // Điều này giúp tránh 100% lỗi sai lệch đồng hồ hoặc bug "timer is not defined"
+        // trên Frontend của VNPAY
 
         // Sort field names - đúng theo VNPay official Java code
         List<String> fieldNames = new ArrayList<>(vnpParams.keySet());
