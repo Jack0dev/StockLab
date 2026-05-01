@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { walletAPI, vnpayAPI } from '../api/api';
+import { walletAPI, vnpayAPI, bankAPI } from '../api/api';
 import { usePageTour } from '../hooks/usePageTour';
 import './WalletPage.css';
 
@@ -17,6 +17,9 @@ export default function WalletPage() {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawBankName, setWithdrawBankName] = useState('VCB');
   const [withdrawBankAccount, setWithdrawBankAccount] = useState('');
+  const [beneficiaryName, setBeneficiaryName] = useState('');
+  const [isLookupLoading, setIsLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [countdown, setCountdown] = useState(0);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -62,6 +65,30 @@ export default function WalletPage() {
     }
   };
 
+  const handleLookupAccount = async () => {
+    if (!withdrawBankAccount || !withdrawBankName) return;
+    setIsLookupLoading(true);
+    setLookupError('');
+    setBeneficiaryName('');
+    
+    try {
+      const res = await bankAPI.lookupAccount(withdrawBankName, withdrawBankAccount);
+      if (res.data.success) {
+        setBeneficiaryName(res.data.data);
+      } else {
+        setLookupError(res.data.message || 'Số tài khoản không hợp lệ');
+      }
+    } catch (err) {
+      if (err.response?.data?.message) {
+        setLookupError(err.response.data.message);
+      } else {
+        setLookupError('Lỗi kết nối. Vui lòng thử lại sau.');
+      }
+    } finally {
+      setIsLookupLoading(false);
+    }
+  };
+
   const handleNextStep = async (e) => {
     if (e) e.preventDefault();
     const rawWithdrawAmount = withdrawAmount.replace(/\D/g, '');
@@ -71,6 +98,10 @@ export default function WalletPage() {
     }
     if (!withdrawBankAccount) {
       setMessage({ type: 'error', text: 'Vui lòng nhập số tài khoản nhận' });
+      return;
+    }
+    if (!beneficiaryName) {
+      setMessage({ type: 'error', text: 'Tên người thụ hưởng không hợp lệ. Vui lòng kiểm tra lại số tài khoản.' });
       return;
     }
     // Gửi OTP
@@ -104,8 +135,11 @@ export default function WalletPage() {
         setMessage({ type: 'success', text: `Tạo lệnh rút ${formatCurrency(rawWithdrawAmount)}₫ thành công!` });
         setWithdrawAmount('');
         setWithdrawBankAccount('');
+        setBeneficiaryName('');
+        setLookupError('');
         setOtpCode('');
         setCountdown(0);
+        setWithdrawStep(1);
         if (fetchUserProfile) await fetchUserProfile();
         fetchHistory();
       } else {
@@ -476,33 +510,62 @@ export default function WalletPage() {
                           <select
                             className="hz-select"
                             value={withdrawBankName}
-                            onChange={(e) => setWithdrawBankName(e.target.value)}
+                            onChange={(e) => {
+                              setWithdrawBankName(e.target.value);
+                              setBeneficiaryName('');
+                              setLookupError('');
+                            }}
                           >
                             <option value="VCB">Vietcombank</option>
                             <option value="TCB">Techcombank</option>
                             <option value="MB">MB Bank</option>
                             <option value="BIDV">BIDV</option>
+                            <option value="CTG">VietinBank</option>
+                            <option value="VBA">Agribank</option>
+                            <option value="ACB">ACB</option>
+                            <option value="STB">Sacombank</option>
+                            <option value="VPB">VPBank</option>
+                            <option value="TPB">TPBank</option>
+                            <option value="VIB">VIB</option>
+                            <option value="HDB">HDBank</option>
+                            <option value="SHB">SHB</option>
+                            <option value="DAB">DongA Bank</option>
+                            <option value="EIB">Eximbank</option>
                           </select>
                         </div>
                       </div>
 
                       <div className="hz-form-row">
                         <p className="hz-label">Số tài khoản nhận tiền</p>
-                        <div className="hz-value">
+                        <div className="hz-value" style={{ display: 'flex', flexDirection: 'column' }}>
                           <input
                             type="text"
                             className="hz-input"
                             placeholder="Nhập số tài khoản"
                             value={withdrawBankAccount}
-                            onChange={(e) => setWithdrawBankAccount(e.target.value)}
+                            onChange={(e) => {
+                              setWithdrawBankAccount(e.target.value);
+                              setBeneficiaryName('');
+                              setLookupError('');
+                            }}
+                            onBlur={handleLookupAccount}
                             required
                           />
+                          {lookupError && <div style={{ color: '#fc8181', fontSize: '0.8rem', marginTop: '6px' }}>{lookupError}</div>}
                         </div>
                       </div>
 
                       <div className="hz-form-row">
                         <p className="hz-label">Tên người thụ hưởng</p>
-                        <div className="hz-value">-</div>
+                        <div className="hz-value">
+                          {isLookupLoading ? (
+                            <span style={{ color: '#a0aec0', fontStyle: 'italic' }}>Đang kiểm tra...</span>
+                          ) : beneficiaryName ? (
+                            <span style={{ color: '#e2e8f0', fontWeight: 'bold', textTransform: 'uppercase' }}>{beneficiaryName}</span>
+                          ) : (
+                            <span style={{ color: '#718096' }}>-</span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="hz-form-row" style={{ alignItems: 'flex-start' }}>
