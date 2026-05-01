@@ -375,7 +375,7 @@ select.form-control option {
 
 .deposit-qr-grid {
   display: grid;
-  grid-template-columns: 1fr 260px;
+  grid-template-columns: 1fr 250px;
   gap: 40px;
   align-items: start;
 }
@@ -449,12 +449,19 @@ select.form-control option {
   color: #e2e8f0;
 }
 
-/* QR Actions */
-.deposit-qr-actions {
+.deposit-actions-row {
   display: flex;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 16px;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 35px;
+  padding-top: 30px;
+  border-top: 1px dashed #2d3748;
+}
+
+.deposit-actions-row .btn-create-qr,
+.deposit-actions-row .btn-pay-now {
+  flex: 1;
+  max-width: 250px;
 }
 
 .btn-create-qr {
@@ -464,9 +471,12 @@ select.form-control option {
   border-radius: 8px;
   padding: 12px 24px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-create-qr:hover {
@@ -517,8 +527,8 @@ select.form-control option {
 }
 
 .qr-code-img {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   display: block;
 }
 
@@ -557,22 +567,60 @@ select.form-control option {
   white-space: nowrap;
 }
 
-.btn-download-qr {
-  background: #2d3748;
-  color: #a0aec0;
-  border: 1px solid #4a5568;
+.hover-download {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-download-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: rgba(226, 232, 240, 0.85);
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+.hover-download:hover .btn-download-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.btn-download-overlay:hover {
+  background: rgba(203, 213, 225, 0.95);
+}
+
+.btn-pay-now {
+  background: #48bb78;
+  color: #fff;
+  border: none;
   border-radius: 8px;
-  padding: 8px 20px;
-  font-size: 0.85rem;
+  padding: 12px 24px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-download-qr:hover {
-  background: #4a5568;
-  color: #e2e8f0;
+.btn-pay-now:hover {
+  background: #38a169;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
 }
 
 /* Note */
