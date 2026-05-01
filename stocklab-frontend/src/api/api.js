@@ -141,6 +141,11 @@ export const vnpayAPI = {
   cancelPayment: (txnRef) => api.post(`/vnpay/cancel/${txnRef}`),
 };
 
+// ===== Bank APIs =====
+export const bankAPI = {
+  lookupAccount: (bankCode, accountNo) => api.get('/bank/lookup', { params: { bankCode, accountNo } }),
+};
+
 // ===== Bot APIs (Module 6) =====
 export const botAPI = {
   getStatus: () => api.get('/bot/status'),
