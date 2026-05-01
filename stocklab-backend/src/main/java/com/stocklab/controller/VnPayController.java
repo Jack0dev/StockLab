@@ -208,6 +208,18 @@ public class VnPayController {
             }
             return ApiResponse.success("Giao dịch thanh toán thành công!", result);
         } else {
+            // Fallback: cập nhật trạng thái thất bại tại đây (trường hợp IPN không gọi được)
+            try {
+                WalletTransaction tx = walletTransactionRepository.findByTransactionCode(txnRef).orElse(null);
+                if (tx != null && tx.getStatus() == WalletTransactionStatus.PENDING) {
+                    tx.setStatus(WalletTransactionStatus.FAILED);
+                    tx.setNote("Thanh toán VNPay thất bại/hủy. Mã lỗi: " + responseCode);
+                    walletTransactionRepository.save(tx);
+                    log.info("VNPay Return: Payment FAILED for txnRef={}, code={}", txnRef, responseCode);
+                }
+            } catch (Exception e) {
+                log.warn("VNPay Return: FAILED fallback error for txnRef={}: {}", txnRef, e.getMessage());
+            }
             return ApiResponse.error("Giao dịch không thành công. Mã lỗi: " + responseCode);
         }
     }

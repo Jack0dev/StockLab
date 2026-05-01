@@ -14,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WalletService {
@@ -170,5 +172,26 @@ public class WalletService {
         }
         
         return response;
+    }
+
+    /**
+     * Tự động quét và hủy các giao dịch Nạp tiền bị treo (PENDING) quá 30 phút.
+     * Chạy mỗi 5 phút một lần.
+     */
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 300000)
+    @Transactional
+    public void cancelExpiredPendingTransactions() {
+        java.time.LocalDateTime expiryTime = java.time.LocalDateTime.now().minusMinutes(30);
+        java.util.List<WalletTransaction> expiredTransactions = walletTransactionRepository
+                .findAllByStatusAndCreatedAtBefore(WalletTransactionStatus.PENDING, expiryTime);
+
+        if (!expiredTransactions.isEmpty()) {
+            for (WalletTransaction tx : expiredTransactions) {
+                tx.setStatus(WalletTransactionStatus.FAILED);
+                tx.setNote("Giao dịch tự động hủy do quá hạn thanh toán (> 30 phút)");
+            }
+            walletTransactionRepository.saveAll(expiredTransactions);
+            log.info("Đã đánh dấu {} giao dịch nạp tiền quá hạn thành FAILED.", expiredTransactions.size());
+        }
     }
 }

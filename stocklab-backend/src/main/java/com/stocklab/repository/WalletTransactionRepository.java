@@ -12,4 +12,5 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
     java.util.Optional<WalletTransaction> findByTransactionCode(String transactionCode);
     Page<WalletTransaction> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
     Page<WalletTransaction> findByUserIdAndTypeOrderByCreatedAtDesc(Long userId, WalletTransactionType type, Pageable pageable);
+    java.util.List<WalletTransaction> findAllByStatusAndCreatedAtBefore(com.stocklab.model.WalletTransactionStatus status, java.time.LocalDateTime date);
 }
