@@ -268,9 +268,6 @@ export default function WalletPage() {
                           <span className="info-label">Số tiền</span>
                           <div className="info-value-group">
                             <span className="info-value highlight">{formatCurrency(pendingPayment.amount)} VNĐ</span>
-                            <button className="copy-btn" onClick={() => copyToClipboard(String(pendingPayment.amount), 'amount')}>
-                              {copiedField === 'amount' ? '✓' : '📋'}
-                            </button>
                           </div>
                         </div>
 
@@ -287,9 +284,6 @@ export default function WalletPage() {
                           <span className="info-label">Tên chủ tài khoản</span>
                           <div className="info-value-group">
                             <span className="info-value">{user?.fullName || user?.username || 'StockLab User'}</span>
-                            <button className="copy-btn" onClick={() => copyToClipboard(user?.fullName || user?.username || '', 'name')}>
-                              {copiedField === 'name' ? '✓' : '📋'}
-                            </button>
                           </div>
                         </div>
 
@@ -298,9 +292,6 @@ export default function WalletPage() {
                           <span className="info-label">Mã giao dịch</span>
                           <div className="info-value-group">
                             <span className="info-value">{pendingPayment.txnRef}</span>
-                            <button className="copy-btn" onClick={() => copyToClipboard(pendingPayment.txnRef, 'txnRef')}>
-                              {copiedField === 'txnRef' ? '✓' : '📋'}
-                            </button>
                           </div>
                         </div>
 
@@ -309,71 +300,54 @@ export default function WalletPage() {
                           <span className="info-label">Nội dung</span>
                           <div className="info-value-group">
                             <span className="info-value">Nap tien {pendingPayment.txnRef} tai StockLab</span>
-                            <button className="copy-btn" onClick={() => copyToClipboard(`Nap tien ${pendingPayment.txnRef} tai StockLab`, 'content')}>
-                              {copiedField === 'content' ? '✓' : '📋'}
-                            </button>
                           </div>
-                        </div>
-
-                        {/* Buttons */}
-                        <div className="deposit-qr-actions">
-                          <button
-                            className="btn-create-qr"
-                            onClick={async () => {
-                              if (pendingPayment && pendingPayment.txnRef) {
-                                try {
-                                  await vnpayAPI.cancelPayment(pendingPayment.txnRef);
-                                } catch (error) {
-                                  console.error("Failed to cancel payment", error);
-                                }
-                              }
-                              setPendingPayment(null);
-                              setDepositAmount('');
-                              fetchHistory();
-                            }}
-                          >
-                            Tạo giao dịch mới
-                          </button>
-                          <a
-                            href={pendingPayment.paymentUrl}
-                            className="btn-direct-pay"
-                          >
-                            Thanh toán
-                          </a>
                         </div>
                       </div>
 
                       {/* BÊN PHẢI: QR Code */}
                       <div className="deposit-qr-panel">
-                        <div className="qr-code-wrapper">
+                        <div className="qr-code-wrapper hover-download">
                           <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pendingPayment.paymentUrl)}`}
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pendingPayment.paymentUrl)}`}
                             alt="Mã QR Thanh Toán VNPay"
                             className="qr-code-img"
                           />
+                          <a
+                            href={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(pendingPayment.paymentUrl)}`}
+                            download={`vnpay-qr-${pendingPayment.txnRef}.png`}
+                            className="btn-download-overlay"
+                          >
+                            ↓ Tải về
+                          </a>
                         </div>
-                        <div className="qr-info-box">
-                          <div className="qr-info-row">
-                            <span className="qr-info-label">Tên chủ TK</span>
-                            <span className="qr-info-value">{user?.fullName || user?.username}</span>
-                          </div>
-                          <div className="qr-info-row">
-                            <span className="qr-info-label">Mã GD</span>
-                            <span className="qr-info-value">{pendingPayment.txnRef}</span>
-                          </div>
-                          <div className="qr-info-row">
-                            <span className="qr-info-label">Nội dung CK</span>
-                            <span className="qr-info-value">Nap tien {pendingPayment.txnRef} tai StockLab</span>
-                          </div>
-                        </div>
-                        <a
-                          href={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(pendingPayment.paymentUrl)}`}
-                          download={`vnpay-qr-${pendingPayment.txnRef}.png`}
-                          className="btn-download-qr"
-                        >
-                          ↓ Tải về
-                        </a>
                       </div>
+                    </div>
+
+                    {/* HÀNG NÚT BẤM */}
+                    <div className="deposit-actions-row">
+                      <button
+                        className="btn-create-qr"
+                        onClick={async () => {
+                          if (pendingPayment && pendingPayment.txnRef) {
+                            try {
+                              await vnpayAPI.cancelPayment(pendingPayment.txnRef);
+                            } catch (error) {
+                              console.error("Failed to cancel payment", error);
+                            }
+                          }
+                          setPendingPayment(null);
+                          setDepositAmount('');
+                          fetchHistory();
+                        }}
+                      >
+                        Tạo giao dịch mới
+                      </button>
+                      <a
+                        href={pendingPayment.paymentUrl}
+                        className="btn-pay-now"
+                      >
+                        Thanh toán
+                      </a>
                     </div>
 
                     {/* Lưu ý */}
