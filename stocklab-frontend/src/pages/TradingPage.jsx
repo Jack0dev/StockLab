@@ -8,7 +8,7 @@ export default function TradingPage() {
   const { user } = useAuth();
   const { restartTour } = usePageTour('trading');
   const [activeTab, setActiveTab] = useState('BUY');
-  const [orderType] = useState('LIMIT');
+  const [orderType, setOrderType] = useState('LIMIT');
   const [ticker, setTicker] = useState('');
   const [quantity, setQuantity] = useState('');
   const [price, setPrice] = useState('');
@@ -135,8 +135,12 @@ export default function TradingPage() {
 
   const canTrade = () => {
     if (!selectedStock || !quantity || Number(quantity) <= 0) return false;
-    if (!price || Number(price) <= 0) return false;
-    if (activeTab === 'BUY') return availableBalance >= finalBuyTotal;
+    if (orderType === 'LIMIT' && (!price || Number(price) <= 0)) return false;
+    if (activeTab === 'BUY') {
+      const ep = orderType === 'MARKET' ? (selectedStock?.currentPrice || 0) : Number(price);
+      const total = ep * Number(quantity) * 1.0015;
+      return availableBalance >= total;
+    }
     if (activeTab === 'SELL') return holdingQty >= Number(quantity);
     return false;
   };
@@ -210,12 +214,12 @@ export default function TradingPage() {
   };
 
   const getStatusLabel = (status) => {
-    const map = { PENDING: 'Chờ khớp', PARTIAL: 'Khớp 1 phần', FILLED: 'Đã khớp', CANCELLED: 'Đã hủy', REJECTED: 'Bị từ chối' };
+    const map = { PENDING_TRIGGER: 'Chờ kích hoạt', ACTIVE: 'Chờ khớp', PARTIALLY_FILLED: 'Khớp 1 phần', FILLED: 'Đã khớp', CANCELLED: 'Đã hủy', EXPIRED: 'Hết hạn' };
     return map[status] || status;
   };
 
   const getStatusClass = (status) => {
-    const map = { PENDING: 'pending', PARTIAL: 'partial', FILLED: 'filled', CANCELLED: 'cancelled', REJECTED: 'rejected' };
+    const map = { PENDING_TRIGGER: 'pending', ACTIVE: 'pending', PARTIALLY_FILLED: 'partial', FILLED: 'filled', CANCELLED: 'cancelled', EXPIRED: 'cancelled' };
     return map[status] || '';
   };
 
@@ -267,6 +271,27 @@ export default function TradingPage() {
           </div>
 
           <div className="form-body">
+
+            {/* Order Type Selector */}
+            <div className="form-group">
+              <label>Loại lệnh</label>
+              <div className="trade-tabs" style={{ marginBottom: 0 }}>
+                <button
+                  className={`trade-tab ${orderType === 'LIMIT' ? 'active' : ''}`}
+                  onClick={() => setOrderType('LIMIT')}
+                  style={{ flex: 1 }}
+                >
+                  📌 Giới hạn (LIMIT)
+                </button>
+                <button
+                  className={`trade-tab ${orderType === 'MARKET' ? 'active' : ''}`}
+                  onClick={() => setOrderType('MARKET')}
+                  style={{ flex: 1 }}
+                >
+                  ⚡ Thị trường (MARKET)
+                </button>
+              </div>
+            </div>
 
 
             {/* Stock Picker - BUY */}
@@ -368,7 +393,8 @@ export default function TradingPage() {
               </div>
             )}
 
-            {/* Price Input */}
+            {/* Price Input — chỉ hiển khi LIMIT */}
+            {orderType === 'LIMIT' && (
             <div className="form-group">
               <label>Giá (VND)</label>
               <input
@@ -392,6 +418,13 @@ export default function TradingPage() {
                 </div>
               )}
             </div>
+            )}
+
+            {orderType === 'MARKET' && selectedStock && (
+              <div className="price-hint" style={{ marginBottom: '12px', padding: '10px', borderRadius: '8px', background: 'rgba(255,165,0,0.1)', border: '1px solid rgba(255,165,0,0.3)' }}>
+                ⚡ Lệnh thị trường sẽ khớp ngay theo giá tốt nhất. Giá hiện tại: <strong>{formatPrice(selectedStock.currentPrice)} VND</strong>
+              </div>
+            )}
 
             {/* Quantity */}
             <div className="form-group">

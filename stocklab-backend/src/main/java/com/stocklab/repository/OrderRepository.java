@@ -52,4 +52,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Dành cho Admin: Lấy toàn bộ lệnh hệ thống theo trạng thái
     Page<Order> findByStatusOrderByCreatedAtDesc(OrderStatus status, Pageable pageable);
+
+    // Cho TriggerEngine: lấy tất cả lệnh PENDING_TRIGGER
+    List<Order> findByStatus(OrderStatus status);
+
+    // Cho OCO: lấy tất cả lệnh cùng group
+    List<Order> findByOcoGroupId(String ocoGroupId);
 }

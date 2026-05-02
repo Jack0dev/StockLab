@@ -18,12 +18,27 @@ public class OrderResponse {
     private UserDto user;
     private String ticker;
     private String companyName;
-    private String side;        // BUY / SELL
-    private String orderType;   // MARKET / LIMIT
+    private String side;          // BUY / SELL
+    private String orderType;     // MARKET / LIMIT / STOP_MARKET / ...
     private Integer quantity;
     private Integer filledQuantity;
     private BigDecimal price;
-    private String status;      // PENDING / PARTIAL / FILLED / CANCELLED / REJECTED
+    private String status;        // ACTIVE / PARTIALLY_FILLED / FILLED / CANCELLED / ...
+    private String timeInForce;   // GTC / IOC / FOK / GTD
+
+    // Conditional order fields
+    private BigDecimal stopPrice;
+    private BigDecimal trailingDelta;
+    private BigDecimal activationPrice;
+    private String ocoGroupId;
+
+    // Trigger info
+    private Boolean triggered;
+    private LocalDateTime triggeredAt;
+
+    // GTD
+    private LocalDateTime expiryDate;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

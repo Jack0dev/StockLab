@@ -172,11 +172,12 @@ const AdminOrdersPage = () => {
                     style={{ padding: '10px 15px', borderRadius: '4px', border: '1px solid #333', backgroundColor: '#141414', color: '#fff', outline: 'none', cursor: 'pointer' }}
                 >
                     <option value="ALL">Tất cả Trạng thái</option>
-                    <option value="PENDING">Chờ khớp (PENDING)</option>
-                    <option value="PARTIAL">Khớp một phần (PARTIAL)</option>
+                    <option value="ACTIVE">Chờ khớp (ACTIVE)</option>
+                    <option value="PENDING_TRIGGER">Chờ kích hoạt (PENDING_TRIGGER)</option>
+                    <option value="PARTIALLY_FILLED">Khớp một phần (PARTIALLY_FILLED)</option>
                     <option value="FILLED">Đã khớp hết (FILLED)</option>
                     <option value="CANCELLED">Đã huỷ (CANCELLED)</option>
-                    <option value="REJECTED">Bị từ chối (REJECTED)</option>
+                    <option value="EXPIRED">Hết hạn (EXPIRED)</option>
                 </select>
 
                 <select 
@@ -236,19 +237,23 @@ const AdminOrdersPage = () => {
                                 <td style={{ padding: '12px' }}>
                                     <span style={{ 
                                         color: order.status === 'FILLED' ? '#52c41a' : 
-                                               order.status === 'PENDING' ? '#faad14' : 
+                                               order.status === 'ACTIVE' ? '#faad14' : 
+                                               order.status === 'PENDING_TRIGGER' ? '#ff8c00' :
                                                order.status === 'CANCELLED' ? '#888' : 
-                                               order.status === 'PARTIAL' ? '#1890ff' : '#ff4d4f'
+                                               order.status === 'PARTIALLY_FILLED' ? '#1890ff' :
+                                               order.status === 'EXPIRED' ? '#888' : '#ff4d4f'
                                     }}>
-                                        {order.status === 'PENDING' ? 'Chờ Khớp' : 
-                                         order.status === 'PARTIAL' ? 'Khớp 1 phần' : 
+                                        {order.status === 'ACTIVE' ? 'Chờ Khớp' : 
+                                         order.status === 'PENDING_TRIGGER' ? 'Chờ Kích Hoạt' :
+                                         order.status === 'PARTIALLY_FILLED' ? 'Khớp 1 phần' : 
                                          order.status === 'FILLED' ? 'Khớp Hết' : 
-                                         order.status === 'CANCELLED' ? 'Đã Huỷ' : 'Từ Chối'}
+                                         order.status === 'CANCELLED' ? 'Đã Huỷ' : 
+                                         order.status === 'EXPIRED' ? 'Hết Hạn' : order.status}
                                     </span>
                                 </td>
                                 <td style={{ padding: '12px', color: '#aaa' }}>{new Date(order.createdAt).toLocaleString('vi-VN')}</td>
                                 <td style={{ padding: '12px', textAlign: 'center' }}>
-                                    {(order.status === 'PENDING' || order.status === 'PARTIAL') ? (
+                                    {(order.status === 'ACTIVE' || order.status === 'PARTIALLY_FILLED' || order.status === 'PENDING_TRIGGER') ? (
                                         <button 
                                             onClick={() => setConfirmModal({ isOpen: true, order })}
                                             style={{ padding: '4px 8px', backgroundColor: '#ff4d4f', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
