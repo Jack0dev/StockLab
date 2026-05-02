@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { adminStockAPI } from '../api/api';
+import { useWebSocket } from '../hooks/useWebSocket';
 
 const ModalOverlay = ({ children, onClose }) => (
     <div style={{
@@ -48,6 +49,18 @@ const AdminStocksPage = () => {
     useEffect(() => {
         fetchStocks();
     }, []);
+
+    // Realtime: cập nhật giá cổ phiếu qua WebSocket
+    const handlePriceUpdate = useCallback((priceData) => {
+        if (!Array.isArray(priceData)) return;
+        setStocks(prev => prev.map(stock => {
+            const update = priceData.find(p => p.ticker === stock.ticker);
+            if (!update) return stock;
+            return { ...stock, currentPrice: update.currentPrice, change: update.change, changePercent: update.changePercent, volume: update.volume };
+        }));
+    }, []);
+
+    useWebSocket('/topic/prices', handlePriceUpdate);
 
     const fetchStocks = async () => {
         setLoading(true);
