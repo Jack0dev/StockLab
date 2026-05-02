@@ -9,7 +9,7 @@ export default function PlatformTokenPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchTokenData = async () => {
+  const fetchTokenData = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${API}/platform-token`, {
@@ -25,13 +25,18 @@ export default function PlatformTokenPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTokenData();
-    const interval = setInterval(fetchTokenData, 5000); // Refresh mỗi 5s
-    return () => clearInterval(interval);
-  }, []);
+  }, [fetchTokenData]);
+
+  // Realtime: khi có giao dịch mới → phí thay đổi → giá token thay đổi
+  const handleTrade = useCallback(() => {
+    fetchTokenData();
+  }, [fetchTokenData]);
+
+  const { connected } = useWebSocket('/topic/trades', handleTrade);
 
   const formatPrice = (price) => {
     if (!price) return '0';

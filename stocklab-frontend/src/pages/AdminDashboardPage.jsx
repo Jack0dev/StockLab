@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminAPI } from '../api/api';
+import { useWebSocket } from '../hooks/useWebSocket';
 import './AdminDashboardPage.css';
 import {
   Chart as ChartJS,
@@ -26,13 +27,8 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await adminAPI.getAdminDashboard();
       if (res.data.success) {
         setStats(res.data.data);
@@ -44,7 +40,18 @@ export default function AdminDashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  // Realtime: khi có giao dịch mới → cập nhật thống kê
+  const handleTrade = useCallback(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  useWebSocket('/topic/trades', handleTrade);
 
   if (loading) return <div className="admin-spinner">Loading dashboard...</div>;
   if (error) return <div className="admin-error">Lỗi: {error}</div>;

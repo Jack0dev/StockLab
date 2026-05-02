@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { adminOrderAPI, orderAPI } from '../api/api';
+import { useWebSocket } from '../hooks/useWebSocket';
 
 const ModalOverlay = ({ children, onClose }) => (
     <div style={{
@@ -40,6 +41,23 @@ const AdminOrdersPage = () => {
     useEffect(() => {
         fetchOrders();
     }, []);
+
+    // Realtime: khi có giao dịch khớp → tự động cập nhật danh sách lệnh
+    const handleTradeUpdate = useCallback(() => {
+        fetchOrdersSilent();
+    }, []);
+
+    useWebSocket('/topic/trades', handleTradeUpdate);
+
+    // Fetch không hiện loading (cho realtime update)
+    const fetchOrdersSilent = async () => {
+        try {
+            const response = await adminOrderAPI.getAllOrders({ size: 2000 });
+            if (response.data.success) {
+                setOrders(response.data.data.content || response.data.data);
+            }
+        } catch { /* ignore */ }
+    };
 
     const fetchOrders = async () => {
         setLoading(true);
