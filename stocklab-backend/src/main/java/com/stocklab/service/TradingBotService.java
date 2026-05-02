@@ -1,5 +1,6 @@
 package com.stocklab.service;
 
+import com.stocklab.dto.ApiResponse;
 import com.stocklab.dto.OrderRequest;
 import com.stocklab.model.OrderSide;
 import com.stocklab.model.OrderType;
@@ -178,7 +179,12 @@ public class TradingBotService {
         }
         // MARKET: không set price, OrderService sẽ dùng currentPrice
 
-        orderService.placeOrder(botName, request);
+        ApiResponse<?> response = orderService.placeOrder(botName, request);
+        if (!response.isSuccess()) {
+            log.error("❌ Bot {} đặt lệnh {} thất bại: {}", botName, orderType, response.getMessage());
+            return;
+        }
+
         totalOrdersPlaced.incrementAndGet();
 
         // Log
