@@ -87,4 +87,22 @@ public class WebSocketService {
             log.error("❌ WebSocket broadcast bot error: {}", e.getMessage());
         }
     }
+
+    /**
+     * 📊 Broadcast trạng thái bot → /topic/bot-status
+     */
+    public void broadcastBotStatus(boolean enabled, long totalOrdersPlaced, long intervalMs, String username, int recentOrderCount) {
+        try {
+            Map<String, Object> status = new LinkedHashMap<>();
+            status.put("enabled", enabled);
+            status.put("totalOrdersPlaced", totalOrdersPlaced);
+            status.put("intervalMs", intervalMs);
+            status.put("username", username);
+            status.put("recentOrderCount", recentOrderCount);
+
+            messagingTemplate.convertAndSend("/topic/bot-status", status);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast bot-status error: {}", e.getMessage());
+        }
+    }
 }

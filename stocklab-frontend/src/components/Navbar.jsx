@@ -64,20 +64,10 @@ export default function Navbar() {
       path: '/transactions',
     },
     {
-      icon: '🤖',
-      title: 'Trading Bot',
-      desc: 'Theo dõi hoạt động bot tạo thanh khoản',
-      path: '/bot-activity',
-    },
-    {
       icon: '📄',
       title: 'Báo Cáo',
       desc: 'Xuất dữ liệu Excel/PDF',
       path: '/reports',
-      icon: '🪙',
-      title: 'Token SLP',
-      desc: 'Token sàn — giá theo lợi nhuận StockLab',
-      path: '/platform-token',
     },
   ];
 
@@ -101,6 +91,8 @@ export default function Navbar() {
               <Link to="/admin/users" className="nav-link">Quản lý Người Dùng</Link>
               <Link to="/admin/dashboard" className="nav-link">Thống Kê</Link>
               <Link to="/admin/orders" className="nav-link">Quản lý Lệnh</Link>
+              <Link to="/admin/bot-activity" className="nav-link">Trading Bot</Link>
+              <Link to="/admin/platform-token" className="nav-link">Token SLP</Link>
             </>
           ) : (
             <>

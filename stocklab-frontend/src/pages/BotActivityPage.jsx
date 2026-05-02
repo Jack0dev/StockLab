@@ -1,49 +1,64 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { botAPI } from '../api/api';
+import { useMultiWebSocket } from '../hooks/useWebSocket';
 import { usePageTour } from '../hooks/usePageTour';
 import './BotActivityPage.css';
+
+const MAX_ACTIVITY = 100;
 
 export default function BotActivityPage() {
   const { restartTour } = usePageTour('botActivity');
   const [status, setStatus] = useState(null);
   const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [autoRefresh, setAutoRefresh] = useState(true);
-  const [prevCount, setPrevCount] = useState(0);
-  const intervalRef = useRef(null);
 
-  const fetchData = async () => {
-    try {
-      const [statusRes, activityRes] = await Promise.all([
-        botAPI.getStatus(),
-        botAPI.getActivity(),
-      ]);
-      setStatus(statusRes.data);
-      const newActivity = activityRes.data || [];
-      setPrevCount(prev => {
-        if (prev > 0 && newActivity.length > prev) {
-          // New orders arrived
-        }
-        return newActivity.length;
-      });
-      setActivity(newActivity);
-    } catch (err) {
-      console.error('Bot API error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Load dữ liệu ban đầu
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statusRes, activityRes] = await Promise.all([
+          botAPI.getStatus(),
+          botAPI.getActivity(),
+        ]);
+        setStatus(statusRes.data);
+        setActivity(activityRes.data || []);
+      } catch (err) {
+        console.error('Bot API error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (autoRefresh) {
-      intervalRef.current = setInterval(fetchData, 3000);
+  // WebSocket realtime: nhận lệnh bot mới qua /topic/bot
+  const handleBotOrder = useCallback((order) => {
+    setActivity(prev => {
+      const next = [order, ...prev];
+      return next.length > MAX_ACTIVITY ? next.slice(0, MAX_ACTIVITY) : next;
+    });
+  }, []);
+
+  // WebSocket realtime: nhận trạng thái bot qua /topic/bot-status
+  const handleBotStatus = useCallback((data) => {
+    setStatus(data);
+  }, []);
+
+  const subscriptions = useMemo(() => [
+    { topic: '/topic/bot', handler: handleBotOrder },
+    { topic: '/topic/bot-status', handler: handleBotStatus },
+  ], [handleBotOrder, handleBotStatus]);
+
+  const { connected } = useMultiWebSocket(subscriptions);
+
+  const handleToggleBot = async () => {
+    try {
+      const res = await botAPI.toggle();
+      setStatus(prev => ({ ...prev, enabled: res.data.enabled }));
+    } catch (err) {
+      console.error('Failed to toggle bot', err);
     }
-    return () => clearInterval(intervalRef.current);
-  }, [autoRefresh]);
+  };
 
   const formatPrice = (p) => Number(p).toLocaleString('vi-VN');
   const formatTime = (t) => {
@@ -72,14 +87,25 @@ export default function BotActivityPage() {
           <span className="bot-subtitle">Hệ thống tạo thanh khoản tự động</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <label className="bot-auto-refresh">
-            <input
-              type="checkbox"
-              checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
-            />
-            Tự động cập nhật (3s)
-          </label>
+          <button 
+            className={`bot-toggle-btn ${status?.enabled ? 'danger' : 'success'}`}
+            onClick={handleToggleBot}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600',
+              backgroundColor: status?.enabled ? '#f44336' : '#4caf50',
+              color: 'white',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            {status?.enabled ? 'Tắt Bot' : 'Bật Bot'}
+          </button>
+          <span className={`bot-live-badge ${connected ? 'live' : 'offline'}`}>
+            {connected ? '🟢 LIVE' : '🔴 Offline'}
+          </span>
           <button className="page-tour-btn" onClick={restartTour} title="Hướng dẫn trang này">?</button>
         </div>
       </div>

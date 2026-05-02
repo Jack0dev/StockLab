@@ -9,9 +9,7 @@ import OrderHistoryPage from '../pages/OrderHistoryPage'
 import OrderBookPage from '../pages/OrderBookPage'
 import ConditionalOrderPage from '../pages/ConditionalOrderPage'
 import WalletPage from '../pages/WalletPage'
-import BotActivityPage from '../pages/BotActivityPage'
 import ReportPage from '../pages/ReportPage'
-import PlatformTokenPage from '../pages/PlatformTokenPage'
 import VnPayResultPage from '../pages/VnPayResultPage'
 
 const protectedRoutes = [
@@ -27,9 +25,7 @@ const protectedRoutes = [
   { path: '/order-book', element: <OrderBookPage /> },
   { path: '/wallet', element: <WalletPage /> },
   { path: '/payment-result', element: <VnPayResultPage /> },
-  { path: '/bot-activity', element: <BotActivityPage /> },
   { path: '/reports', element: <ReportPage /> },
-  { path: '/platform-token', element: <PlatformTokenPage /> },
 ]
 
 export default protectedRoutes
