@@ -36,6 +36,26 @@ public class TradingBotService {
     @Getter
     private boolean botEnabled;
 
+    public void setBotEnabled(boolean enabled) {
+        this.botEnabled = enabled;
+        broadcastStatus();
+    }
+
+    /**
+     * Broadcast trạng thái bot qua WebSocket
+     */
+    private void broadcastStatus() {
+        if (webSocketService != null) {
+            webSocketService.broadcastBotStatus(
+                    botEnabled,
+                    totalOrdersPlaced.get(),
+                    intervalMs,
+                    getBotUsername(),
+                    recentOrders.size()
+            );
+        }
+    }
+
     @Value("${app.bot.interval-ms:5000}")
     @Getter
     private long intervalMs;
@@ -134,6 +154,9 @@ public class TradingBotService {
                 // === Đặt lệnh SELL ===
                 placeBotOrder(seller, stock, OrderSide.SELL, quantity, sellPrice);
             }
+
+            // Broadcast status sau mỗi cycle
+            broadcastStatus();
         } catch (Exception e) {
             log.error("❌ Bot error: {}", e.getMessage());
         }

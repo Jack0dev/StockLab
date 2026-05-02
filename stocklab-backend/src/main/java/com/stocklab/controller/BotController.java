@@ -36,4 +36,17 @@ public class BotController {
     public ResponseEntity<?> getBotActivity() {
         return ResponseEntity.ok(tradingBotService.getRecentOrders());
     }
+
+    /**
+     * PUT /api/bot/toggle — Bật/tắt bot
+     */
+    @PutMapping("/toggle")
+    public ResponseEntity<Map<String, Object>> toggleBot() {
+        boolean newState = !tradingBotService.isBotEnabled();
+        tradingBotService.setBotEnabled(newState);
+        
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("enabled", newState);
+        return ResponseEntity.ok(response);
+    }
 }

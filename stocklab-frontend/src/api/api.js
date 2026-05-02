@@ -150,6 +150,7 @@ export const bankAPI = {
 export const botAPI = {
   getStatus: () => api.get('/bot/status'),
   getActivity: () => api.get('/bot/activity'),
+  toggle: () => api.put('/bot/toggle'),
 };
 
 // ===== Platform Token APIs (SLP) =====
