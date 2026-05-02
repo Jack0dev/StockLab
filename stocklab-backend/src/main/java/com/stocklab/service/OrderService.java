@@ -12,7 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,11 +58,10 @@ public class OrderService {
         try {
             orderType = OrderType.valueOf(request.getOrderType().toUpperCase());
         } catch (IllegalArgumentException e) {
-            return ApiResponse
-                    .error("Kiểu lệnh không hợp lệ: " + request.getOrderType() + ". Chỉ chấp nhận MARKET hoặc LIMIT");
+            return ApiResponse.error("Kiểu lệnh không hợp lệ: " + request.getOrderType());
         }
 
-        // 4. XÁC THỰC OTP CHO LỆNH MUA/BÁN (gửi qua email, bỏ qua cho bot)
+        // 4. XÁC THỰC OTP (bỏ qua cho bot)
         if (!username.startsWith("bot_")) {
             if (request.getOtpCode() == null || request.getOtpCode().isBlank()) {
                 return ApiResponse.error("Đặt lệnh yêu cầu mã OTP xác thực!");
@@ -69,28 +71,81 @@ public class OrderService {
             }
         }
 
-        // 5. Validate price cho LIMIT order
+        // 5. Validate conditional fields
+        if (orderType.requiresStopPrice()) {
+            if (request.getStopPrice() == null || request.getStopPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                return ApiResponse.error(orderType + ": Giá kích hoạt (stopPrice) phải > 0");
+            }
+        }
+        if (orderType.requiresTrailingDelta()) {
+            if (request.getTrailingDelta() == null || request.getTrailingDelta().compareTo(BigDecimal.ZERO) <= 0
+                    || request.getTrailingDelta().compareTo(BigDecimal.valueOf(20)) > 0) {
+                return ApiResponse.error("Trailing delta phải từ 0.01% đến 20%");
+            }
+        }
+        if (orderType == OrderType.OCO) {
+            if (request.getPrice() == null || request.getOcoStopPrice() == null) {
+                return ApiResponse.error("OCO: Cần cả giá limit và giá stop");
+            }
+        }
+
+        // 6. Validate price cho LIMIT-like
         BigDecimal price;
-        if (orderType == OrderType.LIMIT) {
+        if (orderType.isLimitLike()) {
             if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
-                return ApiResponse.error("Lệnh LIMIT bắt buộc phải có giá > 0");
+                return ApiResponse.error("Lệnh " + orderType + " bắt buộc phải có giá > 0");
             }
             price = request.getPrice();
         } else {
-            // MARKET order: dùng giá hiện tại
             price = stock.getCurrentPrice();
         }
 
-        // 6. Validate số lượng
+        // 7. Validate số lượng
         if (request.getQuantity() == null || request.getQuantity() <= 0) {
             return ApiResponse.error("Số lượng phải lớn hơn 0");
         }
 
-        // 7. Validate & Lock tài sản
-        if (side == OrderSide.BUY) {
-            return placeBuyOrder(user, stock, orderType, price, request.getQuantity());
+        // 8. Parse TimeInForce
+        TimeInForce tif = TimeInForce.GTC;
+        if (request.getTimeInForce() != null && !request.getTimeInForce().isBlank()) {
+            try {
+                tif = TimeInForce.valueOf(request.getTimeInForce().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ApiResponse.error("TimeInForce không hợp lệ: " + request.getTimeInForce());
+            }
         } else {
-            return placeSellOrder(user, stock, orderType, price, request.getQuantity());
+            tif = orderType.isMarketLike() ? TimeInForce.IOC : TimeInForce.GTC;
+        }
+
+        // 9. Initial status
+        OrderStatus initialStatus = orderType.isConditional()
+                ? OrderStatus.PENDING_TRIGGER : OrderStatus.ACTIVE;
+
+        // 10. Parse expiryDate cho GTD
+        LocalDateTime expiryDate = null;
+        if (tif == TimeInForce.GTD) {
+            if (request.getExpiryDate() == null || request.getExpiryDate().isBlank()) {
+                return ApiResponse.error("GTD: Ngày hết hạn không được để trống");
+            }
+            try {
+                expiryDate = LocalDate.parse(request.getExpiryDate()).atTime(23, 59, 59);
+            } catch (Exception e) {
+                return ApiResponse.error("Ngày hết hạn không hợp lệ");
+            }
+        }
+
+        // 11. OCO: tạo 2 lệnh cùng group
+        if (orderType == OrderType.OCO) {
+            return placeOcoOrders(user, stock, side, request, tif, expiryDate);
+        }
+
+        // 12. Validate & Lock tài sản
+        if (side == OrderSide.BUY) {
+            return placeBuyOrder(user, stock, orderType, price, request.getQuantity(),
+                    initialStatus, tif, request, expiryDate);
+        } else {
+            return placeSellOrder(user, stock, orderType, price, request.getQuantity(),
+                    initialStatus, tif, request, expiryDate);
         }
     }
 
@@ -98,75 +153,129 @@ public class OrderService {
      * Xử lý đặt lệnh MUA
      */
     private ApiResponse<OrderResponse> placeBuyOrder(User user, Stock stock, OrderType orderType,
-            BigDecimal price, int quantity) {
+            BigDecimal price, int quantity, OrderStatus initialStatus,
+            TimeInForce tif, OrderRequest request, LocalDateTime expiryDate) {
         BigDecimal totalCost = price.multiply(BigDecimal.valueOf(quantity));
         BigDecimal fee = totalCost.multiply(PlatformTokenService.FEE_RATE).setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalRequired = totalCost.add(fee);
-        
         BigDecimal availableBalance = user.getAvailableBalance();
 
-        // Validate số dư khả dụng (Tiền gốc + Phí)
         if (availableBalance.compareTo(totalRequired) < 0) {
             return ApiResponse.error("Số dư khả dụng không đủ! Cần " +
                     formatCurrency(totalRequired) + " VND (Bao gồm phí), khả dụng: " +
                     formatCurrency(availableBalance) + " VND");
         }
 
-        // Lock tiền (Gốc + Phí dự kiến)
         user.setLockedBalance(user.getLockedBalance().add(totalRequired));
         userRepository.save(user);
 
-        // Tạo Order
-        Order order = Order.builder()
-                .user(user)
-                .stock(stock)
-                .side(OrderSide.BUY)
-                .orderType(orderType)
-                .quantity(quantity)
-                .price(price)
-                .status(OrderStatus.PENDING)
-                .build();
+        Order order = buildOrder(user, stock, OrderSide.BUY, orderType, quantity, price,
+                initialStatus, tif, request, expiryDate);
         orderRepository.save(order);
 
-        return ApiResponse.success("Đặt lệnh MUA " + quantity + " CP " +
-                stock.getTicker() + " thành công! Đang chờ khớp lệnh.", toOrderResponse(order));
+        String msg = orderType.isConditional()
+                ? "Đặt lệnh " + orderType + " MUA thành công! Đang chờ điều kiện kích hoạt."
+                : "Đặt lệnh MUA " + quantity + " CP " + stock.getTicker() + " thành công!";
+        return ApiResponse.success(msg, toOrderResponse(order));
     }
 
     /**
      * Xử lý đặt lệnh BÁN
      */
     private ApiResponse<OrderResponse> placeSellOrder(User user, Stock stock, OrderType orderType,
-            BigDecimal price, int quantity) {
-        // Tìm portfolio
+            BigDecimal price, int quantity, OrderStatus initialStatus,
+            TimeInForce tif, OrderRequest request, LocalDateTime expiryDate) {
         Portfolio portfolio = portfolioRepository.findByUserIdAndStockId(user.getId(), stock.getId())
                 .orElse(null);
-
         int availableQty = (portfolio != null) ? portfolio.getAvailableQuantity() : 0;
 
-        // Validate CP khả dụng
         if (availableQty < quantity) {
             return ApiResponse.error("Không đủ cổ phiếu để bán! Đang có " +
                     availableQty + " CP " + stock.getTicker() + " khả dụng");
         }
 
-        // Lock CP
         portfolio.setLockedQuantity(portfolio.getLockedQuantity() + quantity);
         portfolioRepository.save(portfolio);
 
-        // Tạo Order
-        Order order = Order.builder()
-                .user(user)
-                .stock(stock)
-                .side(OrderSide.SELL)
-                .orderType(orderType)
-                .quantity(quantity)
-                .price(price)
-                .status(OrderStatus.PENDING)
-                .build();
+        Order order = buildOrder(user, stock, OrderSide.SELL, orderType, quantity, price,
+                initialStatus, tif, request, expiryDate);
         orderRepository.save(order);
 
-        return ApiResponse.success("Đặt lệnh BÁN " + quantity + " CP " +
-                stock.getTicker() + " thành công! Đang chờ khớp lệnh.", toOrderResponse(order));
+        String msg = orderType.isConditional()
+                ? "Đặt lệnh " + orderType + " BÁN thành công! Đang chờ điều kiện kích hoạt."
+                : "Đặt lệnh BÁN " + quantity + " CP " + stock.getTicker() + " thành công!";
+        return ApiResponse.success(msg, toOrderResponse(order));
+    }
+
+    /**
+     * Build Order entity với đầy đủ conditional fields
+     */
+    private Order buildOrder(User user, Stock stock, OrderSide side, OrderType orderType,
+            int quantity, BigDecimal price, OrderStatus status,
+            TimeInForce tif, OrderRequest request, LocalDateTime expiryDate) {
+        Order order = Order.builder()
+                .user(user).stock(stock).side(side).orderType(orderType)
+                .quantity(quantity).price(price).status(status)
+                .timeInForce(tif).expiryDate(expiryDate)
+                .stopPrice(request.getStopPrice())
+                .trailingDelta(request.getTrailingDelta())
+                .activationPrice(request.getActivationPrice())
+                .build();
+        return order;
+    }
+
+    /**
+     * OCO: tạo 2 lệnh liên kết cùng ocoGroupId
+     */
+    @Transactional
+    private ApiResponse<OrderResponse> placeOcoOrders(User user, Stock stock, OrderSide side,
+            OrderRequest request, TimeInForce tif, LocalDateTime expiryDate) {
+        String groupId = UUID.randomUUID().toString();
+        BigDecimal price1 = request.getPrice();
+        BigDecimal stopPrice2 = request.getOcoStopPrice();
+        BigDecimal limitPrice2 = request.getOcoLimitPrice();
+        int quantity = request.getQuantity();
+
+        // Lock tài sản cho cả 2 lệnh
+        BigDecimal lockPrice = price1.max(limitPrice2 != null ? limitPrice2 : stopPrice2);
+        BigDecimal totalCost = lockPrice.multiply(BigDecimal.valueOf(quantity));
+        BigDecimal fee = totalCost.multiply(PlatformTokenService.FEE_RATE).setScale(2, RoundingMode.HALF_UP);
+
+        if (side == OrderSide.BUY) {
+            BigDecimal available = user.getAvailableBalance();
+            if (available.compareTo(totalCost.add(fee)) < 0) {
+                return ApiResponse.error("Số dư không đủ cho lệnh OCO");
+            }
+            user.setLockedBalance(user.getLockedBalance().add(totalCost.add(fee)));
+            userRepository.save(user);
+        } else {
+            Portfolio p = portfolioRepository.findByUserIdAndStockId(user.getId(), stock.getId()).orElse(null);
+            if (p == null || p.getAvailableQuantity() < quantity) {
+                return ApiResponse.error("Không đủ CP cho lệnh OCO");
+            }
+            p.setLockedQuantity(p.getLockedQuantity() + quantity);
+            portfolioRepository.save(p);
+        }
+
+        // Lệnh 1: LIMIT (take profit)
+        Order order1 = Order.builder()
+                .user(user).stock(stock).side(side).orderType(OrderType.OCO)
+                .quantity(quantity).price(price1).status(OrderStatus.ACTIVE)
+                .timeInForce(tif).ocoGroupId(groupId).expiryDate(expiryDate)
+                .build();
+        orderRepository.save(order1);
+
+        // Lệnh 2: STOP (stop loss) — PENDING_TRIGGER
+        Order order2 = Order.builder()
+                .user(user).stock(stock).side(side).orderType(OrderType.STOP_LIMIT)
+                .quantity(quantity).price(limitPrice2 != null ? limitPrice2 : stopPrice2)
+                .stopPrice(stopPrice2).status(OrderStatus.PENDING_TRIGGER)
+                .timeInForce(tif).ocoGroupId(groupId).expiryDate(expiryDate)
+                .build();
+        orderRepository.save(order2);
+
+        return ApiResponse.success("Đặt lệnh OCO thành công! 2 lệnh liên kết đã được tạo.",
+                toOrderResponse(order1));
     }
 
     /**
@@ -241,7 +350,7 @@ public class OrderService {
 
         // Chỉ hủy được PENDING hoặc PARTIAL
         if (!order.isCancellable()) {
-            return ApiResponse.error("Không thể hủy lệnh ở trạng thái: " + order.getStatus());
+            return ApiResponse.error("Không thể hủy lệnh ở trạng thái: " + order.getStatus().name());
         }
 
         int remainingQty = order.getRemainingQuantity();
@@ -376,7 +485,7 @@ public class OrderService {
         newOrder.setQuantity(newQuantity);
         newOrder.setFilledQuantity(0);
         newOrder.setPrice(newPrice);
-        newOrder.setStatus(OrderStatus.PENDING);
+        newOrder.setStatus(OrderStatus.ACTIVE);
         orderRepository.save(newOrder);
 
         return ApiResponse.success(
@@ -393,7 +502,7 @@ public class OrderService {
             return ApiResponse.error("Không tìm thấy cổ phiếu: " + ticker);
         }
 
-        List<OrderStatus> activeStatuses = List.of(OrderStatus.PENDING, OrderStatus.PARTIAL);
+        List<OrderStatus> activeStatuses = List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED);
 
         // Lấy tất cả lệnh BUY đang active
         List<Order> buyOrders = orderRepository.findByStockIdAndSideAndStatusIn(
@@ -466,6 +575,14 @@ public class OrderService {
                 .filledQuantity(order.getFilledQuantity())
                 .price(order.getPrice())
                 .status(order.getStatus().name())
+                .timeInForce(order.getTimeInForce() != null ? order.getTimeInForce().name() : null)
+                .stopPrice(order.getStopPrice())
+                .trailingDelta(order.getTrailingDelta())
+                .activationPrice(order.getActivationPrice())
+                .ocoGroupId(order.getOcoGroupId())
+                .triggered(order.getTriggered())
+                .triggeredAt(order.getTriggeredAt())
+                .expiryDate(order.getExpiryDate())
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())
                 .build();

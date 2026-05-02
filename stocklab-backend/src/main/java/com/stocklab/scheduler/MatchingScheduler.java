@@ -35,7 +35,7 @@ public class MatchingScheduler {
      */
     @Scheduled(fixedRate = 1000)
     public void runMatchingCycle() {
-        List<OrderStatus> activeStatuses = List.of(OrderStatus.PENDING, OrderStatus.PARTIAL);
+        List<OrderStatus> activeStatuses = List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED);
 
         // 1. Tìm tất cả stock có lệnh active
         List<Long> stockIds = orderRepository.findDistinctStockIdsByStatusIn(activeStatuses);

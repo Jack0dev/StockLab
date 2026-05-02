@@ -31,7 +31,7 @@ public class MatchingEngine {
     @Transactional
     public List<MatchResult> matchOrders(Stock stock) {
         List<MatchResult> results = new ArrayList<>();
-        List<OrderStatus> activeStatuses = List.of(OrderStatus.PENDING, OrderStatus.PARTIAL);
+        List<OrderStatus> activeStatuses = List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED);
 
         // 1. Lấy lệnh BUY: giá cao nhất trước, cùng giá → FIFO
         List<Order> buyOrders = new ArrayList<>(orderRepository
@@ -117,8 +117,8 @@ public class MatchingEngine {
      * - Cả 2 MARKET → dùng giá hiện tại (đã set khi đặt lệnh)
      */
     private BigDecimal determineMatchPrice(Order buyOrder, Order sellOrder) {
-        boolean buyIsMarket = buyOrder.getOrderType() == OrderType.MARKET;
-        boolean sellIsMarket = sellOrder.getOrderType() == OrderType.MARKET;
+        boolean buyIsMarket = buyOrder.getOrderType().isMarketLike();
+        boolean sellIsMarket = sellOrder.getOrderType().isMarketLike();
 
         if (buyIsMarket && sellIsMarket) {
             // Cả 2 MARKET → dùng giá hiện tại của stock
@@ -151,7 +151,7 @@ public class MatchingEngine {
         if (order.getFilledQuantity() >= order.getQuantity()) {
             order.setStatus(OrderStatus.FILLED);
         } else if (order.getFilledQuantity() > 0) {
-            order.setStatus(OrderStatus.PARTIAL);
+            order.setStatus(OrderStatus.PARTIALLY_FILLED);
         }
     }
 
@@ -162,7 +162,7 @@ public class MatchingEngine {
         // MARKET BUY không có SELL → CANCELLED
         if (sellOrders.isEmpty()) {
             buyOrders.stream()
-                    .filter(o -> o.getOrderType() == OrderType.MARKET)
+                    .filter(o -> o.getOrderType().isMarketLike())
                     .forEach(o -> {
                         o.setStatus(OrderStatus.CANCELLED);
                         orderRepository.save(o);
@@ -174,7 +174,7 @@ public class MatchingEngine {
         // MARKET SELL không có BUY → CANCELLED
         if (buyOrders.isEmpty()) {
             sellOrders.stream()
-                    .filter(o -> o.getOrderType() == OrderType.MARKET)
+                    .filter(o -> o.getOrderType().isMarketLike())
                     .forEach(o -> {
                         o.setStatus(OrderStatus.CANCELLED);
                         orderRepository.save(o);
@@ -189,10 +189,10 @@ public class MatchingEngine {
      */
     private void saveChangedOrders(List<Order> buyOrders, List<Order> sellOrders) {
         buyOrders.stream()
-                .filter(o -> o.getStatus() != OrderStatus.PENDING)
+                .filter(o -> o.getStatus() != OrderStatus.ACTIVE)
                 .forEach(orderRepository::save);
         sellOrders.stream()
-                .filter(o -> o.getStatus() != OrderStatus.PENDING)
+                .filter(o -> o.getStatus() != OrderStatus.ACTIVE)
                 .forEach(orderRepository::save);
     }
 }

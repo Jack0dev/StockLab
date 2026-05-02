@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 /**
  * Xử lý hậu khớp lệnh:
@@ -70,6 +71,26 @@ public class PostTradeProcessor {
         log.info("[POST-TRADE] {} {}x{} @ {} | Fee={}x2 | Buyer={} Seller={}",
                 stock.getTicker(), matchQty, matchPrice,
                 totalAmount, feePerSide, buyer.getUsername(), seller.getUsername());
+
+        // 6. OCO: khi 1 lệnh FILLED → hủy lệnh còn lại cùng group
+        cancelOcoSiblings(buyOrder);
+        cancelOcoSiblings(sellOrder);
+    }
+
+    /**
+     * OCO: khi 1 order FILLED, cancel tất cả order khác cùng ocoGroupId
+     */
+    private void cancelOcoSiblings(Order order) {
+        if (order.getOcoGroupId() == null || order.getStatus() != OrderStatus.FILLED) return;
+
+        List<Order> siblings = orderRepository.findByOcoGroupId(order.getOcoGroupId());
+        for (Order sibling : siblings) {
+            if (!sibling.getId().equals(order.getId()) && sibling.isCancellable()) {
+                sibling.setStatus(OrderStatus.CANCELLED);
+                orderRepository.save(sibling);
+                log.info("[OCO] Cancel sibling #{} (group={})", sibling.getId(), order.getOcoGroupId());
+            }
+        }
     }
 
     /**

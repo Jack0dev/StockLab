@@ -121,22 +121,24 @@ export default function OrderHistoryPage() {
 
   const getStatusLabel = (status) => {
     const map = {
-      PENDING: 'Chờ khớp',
-      PARTIAL: 'Khớp 1 phần',
+      PENDING_TRIGGER: 'Chờ kích hoạt',
+      ACTIVE: 'Chờ khớp',
+      PARTIALLY_FILLED: 'Khớp 1 phần',
       FILLED: 'Đã khớp',
       CANCELLED: 'Đã hủy',
-      REJECTED: 'Từ chối'
+      EXPIRED: 'Hết hạn'
     };
     return map[status] || status;
   };
 
   const getStatusClass = (status) => {
     const map = {
-      PENDING: 'pending',
-      PARTIAL: 'partial',
+      PENDING_TRIGGER: 'pending',
+      ACTIVE: 'pending',
+      PARTIALLY_FILLED: 'partial',
       FILLED: 'filled',
       CANCELLED: 'cancelled',
-      REJECTED: 'rejected'
+      EXPIRED: 'cancelled'
     };
     return map[status] || '';
   };
@@ -150,11 +152,12 @@ export default function OrderHistoryPage() {
 
   const statusFilters = [
     { value: '', label: 'Tất cả' },
-    { value: 'PENDING', label: 'Chờ khớp' },
-    { value: 'PARTIAL', label: 'Khớp 1 phần' },
+    { value: 'ACTIVE', label: 'Chờ khớp' },
+    { value: 'PENDING_TRIGGER', label: 'Chờ kích hoạt' },
+    { value: 'PARTIALLY_FILLED', label: 'Khớp 1 phần' },
     { value: 'FILLED', label: 'Đã khớp' },
     { value: 'CANCELLED', label: 'Đã hủy' },
-    { value: 'REJECTED', label: 'Từ chối' },
+    { value: 'EXPIRED', label: 'Hết hạn' },
   ];
 
   return (
@@ -252,7 +255,7 @@ export default function OrderHistoryPage() {
                           >
                             Chi tiết
                           </button>
-                          {(order.status === 'PENDING' || order.status === 'PARTIAL') && (
+                          {(order.status === 'ACTIVE' || order.status === 'PARTIALLY_FILLED' || order.status === 'PENDING_TRIGGER') && (
                             <>
                               <button
                                 className="oh-modify-btn"
@@ -448,7 +451,7 @@ export default function OrderHistoryPage() {
               </div>
             </div>
             <div className="oh-modal-footer">
-              {(detailOrder.status === 'PENDING' || detailOrder.status === 'PARTIAL') && (
+              {(detailOrder.status === 'ACTIVE' || detailOrder.status === 'PARTIALLY_FILLED' || detailOrder.status === 'PENDING_TRIGGER') && (
                 <>
                   <button className="oh-modify-btn" onClick={() => { openModifyModal(detailOrder); setDetailOrder(null); }}>
                     ✏️ Sửa lệnh
