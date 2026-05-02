@@ -11,12 +11,19 @@ class OrderEnumTest {
     // ===== OrderType =====
 
     @Test
-    @DisplayName("OrderType phải có 2 giá trị: MARKET, LIMIT")
-    void orderTypeShouldHaveTwoValues() {
+    @DisplayName("OrderType phải có 9 giá trị")
+    void orderTypeShouldHaveNineValues() {
         OrderType[] values = OrderType.values();
-        assertEquals(2, values.length);
+        assertEquals(9, values.length);
         assertEquals(OrderType.MARKET, OrderType.valueOf("MARKET"));
         assertEquals(OrderType.LIMIT, OrderType.valueOf("LIMIT"));
+        assertEquals(OrderType.STOP_MARKET, OrderType.valueOf("STOP_MARKET"));
+        assertEquals(OrderType.STOP_LIMIT, OrderType.valueOf("STOP_LIMIT"));
+        assertEquals(OrderType.TAKE_PROFIT, OrderType.valueOf("TAKE_PROFIT"));
+        assertEquals(OrderType.TAKE_PROFIT_LIMIT, OrderType.valueOf("TAKE_PROFIT_LIMIT"));
+        assertEquals(OrderType.TRAILING_STOP, OrderType.valueOf("TRAILING_STOP"));
+        assertEquals(OrderType.TRAILING_STOP_LIMIT, OrderType.valueOf("TRAILING_STOP_LIMIT"));
+        assertEquals(OrderType.OCO, OrderType.valueOf("OCO"));
     }
 
     @Test
@@ -29,22 +36,23 @@ class OrderEnumTest {
     // ===== OrderStatus =====
 
     @Test
-    @DisplayName("OrderStatus phải có 5 giá trị")
-    void orderStatusShouldHaveFiveValues() {
+    @DisplayName("OrderStatus phải có 6 giá trị")
+    void orderStatusShouldHaveSixValues() {
         OrderStatus[] values = OrderStatus.values();
-        assertEquals(5, values.length);
-        assertEquals(OrderStatus.PENDING, OrderStatus.valueOf("PENDING"));
-        assertEquals(OrderStatus.PARTIAL, OrderStatus.valueOf("PARTIAL"));
+        assertEquals(6, values.length);
+        assertEquals(OrderStatus.PENDING_TRIGGER, OrderStatus.valueOf("PENDING_TRIGGER"));
+        assertEquals(OrderStatus.ACTIVE, OrderStatus.valueOf("ACTIVE"));
+        assertEquals(OrderStatus.PARTIALLY_FILLED, OrderStatus.valueOf("PARTIALLY_FILLED"));
         assertEquals(OrderStatus.FILLED, OrderStatus.valueOf("FILLED"));
         assertEquals(OrderStatus.CANCELLED, OrderStatus.valueOf("CANCELLED"));
-        assertEquals(OrderStatus.REJECTED, OrderStatus.valueOf("REJECTED"));
+        assertEquals(OrderStatus.EXPIRED, OrderStatus.valueOf("EXPIRED"));
     }
 
     @Test
     @DisplayName("OrderStatus.valueOf với giá trị không hợp lệ → exception")
     void orderStatusInvalidValueShouldThrow() {
         assertThrows(IllegalArgumentException.class, () ->
-                OrderStatus.valueOf("EXPIRED"));
+                OrderStatus.valueOf("REJECTED"));
     }
 
     // ===== OrderSide =====

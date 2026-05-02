@@ -73,19 +73,19 @@ class MatchingEngineTest {
     }
 
     private Order createLimitBuy(BigDecimal price, int qty) {
-        return createOrder(buyer, OrderSide.BUY, OrderType.LIMIT, price, qty, OrderStatus.PENDING);
+        return createOrder(buyer, OrderSide.BUY, OrderType.LIMIT, price, qty, OrderStatus.ACTIVE);
     }
 
     private Order createLimitSell(BigDecimal price, int qty) {
-        return createOrder(seller, OrderSide.SELL, OrderType.LIMIT, price, qty, OrderStatus.PENDING);
+        return createOrder(seller, OrderSide.SELL, OrderType.LIMIT, price, qty, OrderStatus.ACTIVE);
     }
 
     private Order createMarketBuy(int qty) {
-        return createOrder(buyer, OrderSide.BUY, OrderType.MARKET, testStock.getCurrentPrice(), qty, OrderStatus.PENDING);
+        return createOrder(buyer, OrderSide.BUY, OrderType.MARKET, testStock.getCurrentPrice(), qty, OrderStatus.ACTIVE);
     }
 
     private Order createMarketSell(int qty) {
-        return createOrder(seller, OrderSide.SELL, OrderType.MARKET, testStock.getCurrentPrice(), qty, OrderStatus.PENDING);
+        return createOrder(seller, OrderSide.SELL, OrderType.MARKET, testStock.getCurrentPrice(), qty, OrderStatus.ACTIVE);
     }
 
     // ===== LIMIT Order Matching =====
@@ -100,11 +100,11 @@ class MatchingEngineTest {
             Order buyOrder = createLimitBuy(new BigDecimal("85000"), 10);
             Order sellOrder = createLimitSell(new BigDecimal("85000"), 10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -123,18 +123,18 @@ class MatchingEngineTest {
             Order buyOrder = createLimitBuy(new BigDecimal("85000"), 10);
             Order sellOrder = createLimitSell(new BigDecimal("86000"), 10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
 
             assertTrue(results.isEmpty());
-            assertEquals(OrderStatus.PENDING, buyOrder.getStatus());
-            assertEquals(OrderStatus.PENDING, sellOrder.getStatus());
+            assertEquals(OrderStatus.ACTIVE, buyOrder.getStatus());
+            assertEquals(OrderStatus.ACTIVE, sellOrder.getStatus());
         }
 
         @Test
@@ -143,11 +143,11 @@ class MatchingEngineTest {
             Order buyOrder = createLimitBuy(new BigDecimal("86000"), 10);
             Order sellOrder = createLimitSell(new BigDecimal("85000"), 10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -170,11 +170,11 @@ class MatchingEngineTest {
             Order buyOrder = createMarketBuy(10);
             Order sellOrder = createLimitSell(new BigDecimal("84000"), 10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -189,11 +189,11 @@ class MatchingEngineTest {
         void shouldCancelMarketBuyWhenNoSellOrders() {
             Order buyOrder = createMarketBuy(10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of());
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -208,11 +208,11 @@ class MatchingEngineTest {
             Order buyOrder = createLimitBuy(new BigDecimal("86000"), 10);
             Order sellOrder = createMarketSell(10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -227,11 +227,11 @@ class MatchingEngineTest {
         void shouldCancelMarketSellWhenNoBuyOrders() {
             Order sellOrder = createMarketSell(10);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of());
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -253,11 +253,11 @@ class MatchingEngineTest {
             Order buyOrder = createLimitBuy(new BigDecimal("85000"), 100);
             Order sellOrder = createLimitSell(new BigDecimal("85000"), 60);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -265,7 +265,7 @@ class MatchingEngineTest {
             assertEquals(1, results.size());
             assertEquals(60, results.get(0).getMatchQuantity());
             assertEquals(60, buyOrder.getFilledQuantity());
-            assertEquals(OrderStatus.PARTIAL, buyOrder.getStatus());
+            assertEquals(OrderStatus.PARTIALLY_FILLED, buyOrder.getStatus());
             assertEquals(60, sellOrder.getFilledQuantity());
             assertEquals(OrderStatus.FILLED, sellOrder.getStatus());
         }
@@ -276,11 +276,11 @@ class MatchingEngineTest {
             Order buyOrder = createLimitBuy(new BigDecimal("85000"), 50);
             Order sellOrder = createLimitSell(new BigDecimal("85000"), 100);
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrder));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -289,7 +289,7 @@ class MatchingEngineTest {
             assertEquals(50, results.get(0).getMatchQuantity());
             assertEquals(OrderStatus.FILLED, buyOrder.getStatus());
             assertEquals(50, sellOrder.getFilledQuantity());
-            assertEquals(OrderStatus.PARTIAL, sellOrder.getStatus());
+            assertEquals(OrderStatus.PARTIALLY_FILLED, sellOrder.getStatus());
         }
     }
 
@@ -312,12 +312,12 @@ class MatchingEngineTest {
             sellOrderLate.setId(101L);
             sellOrderLate.setCreatedAt(LocalDateTime.of(2026, 3, 24, 10, 5));
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
             // Repo trả về theo thứ tự: giá tăng → cùng giá thì FIFO
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sellOrderEarly, sellOrderLate));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -326,7 +326,7 @@ class MatchingEngineTest {
             assertSame(sellOrderEarly, results.get(0).getSellOrder());
             assertEquals(OrderStatus.FILLED, sellOrderEarly.getStatus());
             // sellOrderLate vẫn PENDING vì BUY đã filled hết
-            assertEquals(OrderStatus.PENDING, sellOrderLate.getStatus());
+            assertEquals(OrderStatus.ACTIVE, sellOrderLate.getStatus());
         }
 
         @Test
@@ -346,11 +346,11 @@ class MatchingEngineTest {
             sell3.setId(203L);
             sell3.setCreatedAt(LocalDateTime.of(2026, 3, 24, 10, 2));
 
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(buyOrder));
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of(sell1, sell2, sell3));
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
@@ -370,11 +370,11 @@ class MatchingEngineTest {
         @Test
         @DisplayName("Không có lệnh nào → trả về list rỗng")
         void shouldReturnEmptyWhenNoOrders() {
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceDescCreatedAtAsc(
-                    1L, OrderSide.BUY, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
+                    1L, OrderSide.BUY, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of());
-            when(orderRepository.findByStockIdAndSideAndStatusOrderByPriceAscCreatedAtAsc(
-                    1L, OrderSide.SELL, OrderStatus.PENDING))
+            when(orderRepository.findByStockIdAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
+                    1L, OrderSide.SELL, List.of(OrderStatus.ACTIVE, OrderStatus.PARTIALLY_FILLED)))
                     .thenReturn(List.of());
 
             List<MatchResult> results = matchingEngine.matchOrders(testStock);
