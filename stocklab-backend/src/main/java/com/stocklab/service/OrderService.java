@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
+import com.stocklab.event.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,6 +30,7 @@ public class OrderService {
     private final PortfolioRepository portfolioRepository;
     private final TransactionRepository transactionRepository;
     private final OtpService otpService;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Đặt lệnh mua/bán
@@ -173,6 +176,10 @@ public class OrderService {
                 initialStatus, tif, request, expiryDate);
         orderRepository.save(order);
 
+        // Publish events for real-time updates
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, user.getUsername(), toOrderResponse(order)));
+        eventPublisher.publishEvent(new BalanceChangedEvent(this, user.getUsername()));
+
         String msg = orderType.isConditional()
                 ? "Đặt lệnh " + orderType + " MUA thành công! Đang chờ điều kiện kích hoạt."
                 : "Đặt lệnh MUA " + quantity + " CP " + stock.getTicker() + " thành công!";
@@ -200,6 +207,10 @@ public class OrderService {
         Order order = buildOrder(user, stock, OrderSide.SELL, orderType, quantity, price,
                 initialStatus, tif, request, expiryDate);
         orderRepository.save(order);
+
+        // Publish events for real-time updates
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, user.getUsername(), toOrderResponse(order)));
+        eventPublisher.publishEvent(new PortfolioChangedEvent(this, user.getUsername()));
 
         String msg = orderType.isConditional()
                 ? "Đặt lệnh " + orderType + " BÁN thành công! Đang chờ điều kiện kích hoạt."
@@ -273,6 +284,16 @@ public class OrderService {
                 .timeInForce(tif).ocoGroupId(groupId).expiryDate(expiryDate)
                 .build();
         orderRepository.save(order2);
+
+        // Publish events for real-time updates
+        String username = user.getUsername();
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order1)));
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order2)));
+        if (side == OrderSide.BUY) {
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username));
+        } else {
+            eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
+        }
 
         return ApiResponse.success("Đặt lệnh OCO thành công! 2 lệnh liên kết đã được tạo.",
                 toOrderResponse(order1));
@@ -377,6 +398,14 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+
+        // Publish events for real-time updates
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order)));
+        if (order.getSide() == OrderSide.BUY) {
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username));
+        } else {
+            eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
+        }
 
         return ApiResponse.success(
                 "Đã hủy lệnh #" + orderId + " thành công! Hoàn " + remainingQty +
@@ -487,6 +516,15 @@ public class OrderService {
         newOrder.setPrice(newPrice);
         newOrder.setStatus(OrderStatus.ACTIVE);
         orderRepository.save(newOrder);
+
+        // Publish events for real-time updates
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(oldOrder)));
+        eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(newOrder)));
+        if (newOrder.getSide() == OrderSide.BUY) {
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username));
+        } else {
+            eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
+        }
 
         return ApiResponse.success(
                 "Đã sửa lệnh thành công! Lệnh cũ #" + orderId + " → hủy, lệnh mới #" + newOrder.getId(),

@@ -3,7 +3,6 @@ package com.stocklab.controller;
 import com.stocklab.dto.ApiResponse;
 import com.stocklab.dto.DepositRequest;
 import com.stocklab.dto.WalletTransactionResponse;
-import com.stocklab.service.OtpService;
 import com.stocklab.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class WalletController {
 
     private final WalletService walletService;
-    private final OtpService otpService;
 
     @PostMapping("/deposit")
     public ApiResponse<WalletTransactionResponse> deposit(

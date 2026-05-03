@@ -32,6 +32,7 @@ public class PostTradeProcessor {
     private final StockRepository stockRepository;
     private final OrderRepository orderRepository;
     private final PlatformTokenService platformTokenService;
+    private final org.springframework.context.ApplicationEventPublisher eventPublisher;
 
     /**
      * Xử lý 1 MatchResult sau khi khớp lệnh
@@ -75,6 +76,16 @@ public class PostTradeProcessor {
         // 6. OCO: khi 1 lệnh FILLED → hủy lệnh còn lại cùng group
         cancelOcoSiblings(buyOrder);
         cancelOcoSiblings(sellOrder);
+
+        // 7. Publish events cho WebSocket Realtime Updates
+        eventPublisher.publishEvent(new com.stocklab.event.OrderUpdatedEvent(this, buyer.getUsername(), toOrderResponse(buyOrder)));
+        eventPublisher.publishEvent(new com.stocklab.event.OrderUpdatedEvent(this, seller.getUsername(), toOrderResponse(sellOrder)));
+        
+        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, buyer.getUsername()));
+        eventPublisher.publishEvent(new com.stocklab.event.PortfolioChangedEvent(this, buyer.getUsername()));
+        
+        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, seller.getUsername()));
+        eventPublisher.publishEvent(new com.stocklab.event.PortfolioChangedEvent(this, seller.getUsername()));
     }
 
     /**
@@ -234,5 +245,29 @@ public class PostTradeProcessor {
 
         stock.setVolume(stock.getVolume() + matchQty);
         stockRepository.save(stock);
+    }
+
+    private com.stocklab.dto.OrderResponse toOrderResponse(Order order) {
+        return com.stocklab.dto.OrderResponse.builder()
+                .id(order.getId())
+                .ticker(order.getStock().getTicker())
+                .companyName(order.getStock().getCompanyName())
+                .side(order.getSide().name())
+                .orderType(order.getOrderType().name())
+                .quantity(order.getQuantity())
+                .filledQuantity(order.getFilledQuantity())
+                .price(order.getPrice())
+                .status(order.getStatus().name())
+                .timeInForce(order.getTimeInForce() != null ? order.getTimeInForce().name() : null)
+                .stopPrice(order.getStopPrice())
+                .trailingDelta(order.getTrailingDelta())
+                .activationPrice(order.getActivationPrice())
+                .ocoGroupId(order.getOcoGroupId())
+                .triggered(order.getTriggered())
+                .triggeredAt(order.getTriggeredAt())
+                .expiryDate(order.getExpiryDate())
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .build();
     }
 }

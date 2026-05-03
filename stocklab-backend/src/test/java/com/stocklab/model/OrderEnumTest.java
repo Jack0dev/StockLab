@@ -33,11 +33,11 @@ class OrderEnumTest {
     void orderStatusShouldHaveFiveValues() {
         OrderStatus[] values = OrderStatus.values();
         assertEquals(5, values.length);
-        assertEquals(OrderStatus.PENDING, OrderStatus.valueOf("PENDING"));
-        assertEquals(OrderStatus.PARTIAL, OrderStatus.valueOf("PARTIAL"));
+        assertEquals(OrderStatus.ACTIVE, OrderStatus.valueOf("PENDING"));
+        assertEquals(OrderStatus.PARTIALLY_FILLED, OrderStatus.valueOf("PARTIAL"));
         assertEquals(OrderStatus.FILLED, OrderStatus.valueOf("FILLED"));
         assertEquals(OrderStatus.CANCELLED, OrderStatus.valueOf("CANCELLED"));
-        assertEquals(OrderStatus.REJECTED, OrderStatus.valueOf("REJECTED"));
+        assertEquals(OrderStatus.CANCELLED, OrderStatus.valueOf("REJECTED"));
     }
 
     @Test

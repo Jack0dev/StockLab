@@ -343,7 +343,7 @@ class OrderServiceTest {
                     .quantity(100)
                     .filledQuantity(30)
                     .price(new BigDecimal("85000.00"))
-                    .status(OrderStatus.PARTIAL)
+                    .status(OrderStatus.PARTIALLY_FILLED)
                     .build();
 
             OrderResponse response = orderService.toOrderResponse(order);
@@ -374,7 +374,7 @@ class OrderServiceTest {
                     .side(OrderSide.BUY).orderType(OrderType.LIMIT)
                     .quantity(10).filledQuantity(0)
                     .price(new BigDecimal("85000.00"))
-                    .status(OrderStatus.PENDING).build();
+                    .status(OrderStatus.ACTIVE).build();
 
             when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
             when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
@@ -398,7 +398,7 @@ class OrderServiceTest {
                     .side(OrderSide.SELL).orderType(OrderType.LIMIT)
                     .quantity(50).filledQuantity(0)
                     .price(new BigDecimal("90000.00"))
-                    .status(OrderStatus.PENDING).build();
+                    .status(OrderStatus.ACTIVE).build();
 
             when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
             when(orderRepository.findById(2L)).thenReturn(Optional.of(order));
@@ -421,7 +421,7 @@ class OrderServiceTest {
                     .side(OrderSide.BUY).orderType(OrderType.LIMIT)
                     .quantity(10).filledQuantity(4) // Đã khớp 4, còn 6
                     .price(new BigDecimal("85000.00"))
-                    .status(OrderStatus.PARTIAL).build();
+                    .status(OrderStatus.PARTIALLY_FILLED).build();
 
             when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
             when(orderRepository.findById(3L)).thenReturn(Optional.of(order));
@@ -462,7 +462,7 @@ class OrderServiceTest {
                     .side(OrderSide.BUY).orderType(OrderType.LIMIT)
                     .quantity(10).filledQuantity(0)
                     .price(new BigDecimal("85000.00"))
-                    .status(OrderStatus.PENDING).build();
+                    .status(OrderStatus.ACTIVE).build();
 
             when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
             when(orderRepository.findById(5L)).thenReturn(Optional.of(order));

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { adminOrderAPI, orderAPI } from '../api/api';
-import { useWebSocket } from '../hooks/useWebSocket';
+import { useMultiWebSocket } from '../hooks/useWebSocket';
 
 const ModalOverlay = ({ children, onClose }) => (
     <div style={{
@@ -42,12 +42,15 @@ const AdminOrdersPage = () => {
         fetchOrders();
     }, []);
 
-    // Realtime: khi có giao dịch khớp → tự động cập nhật danh sách lệnh
-    const handleTradeUpdate = useCallback(() => {
-        fetchOrdersSilent();
+    // Realtime: tự động cập nhật khi có giao dịch khớp hoặc bot đặt lệnh mới
+    // Bỏ WebSocket ở đây vì bot call quá nhiều có thể gây giật lag
+    // Sử dụng polling mỗi 2 giây để luôn lấy data realtime mượt mà
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchOrdersSilent();
+        }, 2000);
+        return () => clearInterval(interval);
     }, []);
-
-    useWebSocket('/topic/trades', handleTradeUpdate);
 
     // Fetch không hiện loading (cho realtime update)
     const fetchOrdersSilent = async () => {
@@ -139,12 +142,6 @@ const AdminOrdersPage = () => {
         <div style={{ padding: '20px', color: '#fff' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <h2>Quản lý Lệnh (All Orders)</h2>
-                <button 
-                    onClick={fetchOrders}
-                    style={{ padding: '8px 16px', backgroundColor: '#1890ff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-                >
-                    ↻ Cập nhật
-                </button>
             </div>
             
             <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
@@ -233,7 +230,7 @@ const AdminOrdersPage = () => {
                                     >📊 Sổ Lệnh</button>
                                 </td>
                                 <td style={{ padding: '12px' }}>{order.orderType === 'MARKET' ? 'MP' : order.price?.toLocaleString('vi-VN')}</td>
-                                <td style={{ padding: '12px' }}>{order.quantity?.toLocaleString('vi-VN')} / <span style={{color: '#52c41a'}}>{order.filledQty?.toLocaleString('vi-VN') || 0}</span></td>
+                                <td style={{ padding: '12px' }}>{order.quantity?.toLocaleString('vi-VN')} / <span style={{color: '#52c41a'}}>{(order.status === 'FILLED' ? order.quantity : (order.filledQuantity || 0)).toLocaleString('vi-VN')}</span></td>
                                 <td style={{ padding: '12px' }}>
                                     <span style={{ 
                                         color: order.status === 'FILLED' ? '#52c41a' : 

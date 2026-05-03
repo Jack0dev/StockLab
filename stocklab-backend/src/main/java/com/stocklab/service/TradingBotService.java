@@ -51,8 +51,7 @@ public class TradingBotService {
                     totalOrdersPlaced.get(),
                     intervalMs,
                     getBotUsername(),
-                    recentOrders.size()
-            );
+                    recentOrders.size());
         }
     }
 
@@ -78,10 +77,12 @@ public class TradingBotService {
     private String[] randomBotPair() {
         int a = random.nextInt(BOT_COUNT) + 1;
         int b;
-        do { b = random.nextInt(BOT_COUNT) + 1; } while (b == a);
-        return new String[]{
-            String.format("%s%02d", BOT_PREFIX, a),
-            String.format("%s%02d", BOT_PREFIX, b)
+        do {
+            b = random.nextInt(BOT_COUNT) + 1;
+        } while (b == a);
+        return new String[] {
+                String.format("%s%02d", BOT_PREFIX, a),
+                String.format("%s%02d", BOT_PREFIX, b)
         };
     }
 
@@ -97,11 +98,13 @@ public class TradingBotService {
      */
     @Scheduled(fixedDelayString = "${app.bot.interval-ms:5000}")
     public void runBotTask() {
-        if (!botEnabled) return;
+        if (!botEnabled)
+            return;
 
         try {
             List<Stock> stocks = stockRepository.findAll();
-            if (stocks.isEmpty()) return;
+            if (stocks.isEmpty())
+                return;
 
             // Mỗi cycle: tạo 5 cặp giao dịch (10 lệnh) trên các CP khác nhau
             int pairsPerCycle = 5;
@@ -167,7 +170,8 @@ public class TradingBotService {
     /**
      * Đặt 1 lệnh cho bot
      */
-    private void placeBotOrder(String botName, Stock stock, OrderSide side, int quantity, BigDecimal price, OrderType orderType) {
+    private void placeBotOrder(String botName, Stock stock, OrderSide side, int quantity, BigDecimal price,
+            OrderType orderType) {
         OrderRequest request = new OrderRequest();
         request.setTicker(stock.getTicker());
         request.setSide(side.name());
@@ -184,14 +188,11 @@ public class TradingBotService {
         // Log
         BotOrderLog entry = new BotOrderLog(
                 stock.getTicker(), side.name(), quantity,
-                price, LocalDateTime.now(), botName, orderType.name()
-        );
+                price, LocalDateTime.now(), botName, orderType.name());
         recentOrders.addFirst(entry);
         while (recentOrders.size() > MAX_LOG_SIZE) {
             recentOrders.removeLast();
         }
-
-        log.info("🤖 {} {} {} {} CP {} @ {}", botName, orderType, side, quantity, stock.getTicker(), price);
 
         // Broadcast WebSocket
         if (webSocketService != null) {
@@ -219,6 +220,6 @@ public class TradingBotService {
             BigDecimal price,
             LocalDateTime timestamp,
             String botName,
-            String orderType
-    ) {}
+            String orderType) {
+    }
 }

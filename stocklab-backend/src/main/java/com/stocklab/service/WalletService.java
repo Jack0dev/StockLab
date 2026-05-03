@@ -24,6 +24,7 @@ public class WalletService {
     private final UserRepository userRepository;
     private final WalletTransactionRepository walletTransactionRepository;
     private final OtpService otpService;
+    private final org.springframework.context.ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public ApiResponse<WalletTransactionResponse> deposit(String username, DepositRequest request) {
@@ -111,6 +112,8 @@ public class WalletService {
         userRepository.save(user);
         WalletTransaction savedTx = walletTransactionRepository.save(transaction);
 
+        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, username));
+
         return ApiResponse.success("Rút tiền thành công! Mã giao dịch: " + txCode, toResponse(savedTx));
     }
 
@@ -132,6 +135,8 @@ public class WalletService {
         User user = tx.getUser();
         user.setBalance(user.getBalance().add(tx.getAmount()));
         userRepository.save(user);
+        
+        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, user.getUsername()));
     }
 
     @Transactional

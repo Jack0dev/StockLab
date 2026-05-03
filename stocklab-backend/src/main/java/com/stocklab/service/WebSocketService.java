@@ -105,4 +105,28 @@ public class WebSocketService {
             log.error("❌ WebSocket broadcast bot-status error: {}", e.getMessage());
         }
     }
+
+    public void broadcastUserBalance(String username, com.stocklab.dto.ws.BalanceWsDTO dto) {
+        try {
+            messagingTemplate.convertAndSendToUser(username, "/queue/balance", dto);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast balance error for {}: {}", username, e.getMessage());
+        }
+    }
+
+    public void broadcastUserPortfolio(String username, com.stocklab.dto.ws.PortfolioWsDTO dto) {
+        try {
+            messagingTemplate.convertAndSendToUser(username, "/queue/portfolio", dto);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast portfolio error for {}: {}", username, e.getMessage());
+        }
+    }
+
+    public void broadcastUserOrder(String username, com.stocklab.dto.ws.OrderWsDTO dto) {
+        try {
+            messagingTemplate.convertAndSendToUser(username, "/queue/orders", dto);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast order error for {}: {}", username, e.getMessage());
+        }
+    }
 }

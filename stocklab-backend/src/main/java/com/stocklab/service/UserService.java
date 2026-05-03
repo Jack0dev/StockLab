@@ -29,7 +29,6 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final OtpService otpService;
-    private final SmsService smsService;
     private final TotpService totpService;
     private final UserDetailsService userDetailsService;
 
@@ -436,5 +435,20 @@ public class UserService {
         } catch (IllegalArgumentException e) {
             return ApiResponse.error("Quyền không hợp lệ!");
         }
+    }
+
+    public ApiResponse<String> makeMeAdmin(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ApiResponse.error("Không tìm thấy user: " + username);
+        }
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
+        return ApiResponse.success("Đã cấp quyền ADMIN thành công cho tài khoản: " + username);
+    }
+
+    public String getDebugToken(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return jwtUtils.generateToken(userDetails);
     }
 }

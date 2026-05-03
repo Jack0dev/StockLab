@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { orderAPI, stockAPI } from '../api/api';
 import { usePageTour } from '../hooks/usePageTour';
+import { useWebSocket } from '../hooks/useWebSocket';
 import './OrderBookPage.css';
 
 export default function OrderBookPage() {
@@ -36,13 +37,20 @@ export default function OrderBookPage() {
     }
   };
 
-  // Auto refresh
+  // Auto refresh via Polling
   useEffect(() => {
     if (autoRefresh && ticker) {
       intervalRef.current = setInterval(() => fetchOrderBook(ticker), 5000);
     }
     return () => clearInterval(intervalRef.current);
   }, [autoRefresh, ticker]);
+
+  // Realtime updates via WebSocket
+  const { connected } = useWebSocket('/topic/trades', (trade) => {
+    if (autoRefresh && ticker && trade && trade.ticker === ticker) {
+      fetchOrderBook(ticker);
+    }
+  });
 
   // Search autocomplete
   const handleSearchChange = (val) => {
