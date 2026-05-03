@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { orderAPI } from '../api/api';
 import { usePageTour } from '../hooks/usePageTour';
+import { useBatchWebSocket } from '../hooks/useBatchWebSocket';
+import { useWebSocket } from '../context/WebSocketContext';
 import './OrderHistoryPage.css';
 
 export default function OrderHistoryPage() {
   const { restartTour } = usePageTour('orders');
+  const { lastResyncTime } = useWebSocket();
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(0);
@@ -22,7 +25,28 @@ export default function OrderHistoryPage() {
 
   useEffect(() => {
     fetchOrders();
-  }, [page, statusFilter]);
+  }, [page, statusFilter, lastResyncTime]);
+
+  // Cập nhật order item theo ID thay vì load lại toàn bộ
+  useBatchWebSocket('/user/queue/orders', (batches) => {
+    if (batches.length > 0) {
+      setOrders(prev => {
+        let newOrders = [...prev];
+        batches.forEach(b => {
+          const updatedOrder = b.order;
+          const idx = newOrders.findIndex(o => o.id === updatedOrder.id);
+          if (idx !== -1) {
+            newOrders[idx] = updatedOrder;
+          } else if (page === 0 && (statusFilter === '' || updatedOrder.status === statusFilter)) {
+            // Nếu đang ở trang đầu và filter khớp (hoặc không filter), thêm vào đầu danh sách
+            newOrders.unshift(updatedOrder);
+            if (newOrders.length > PAGE_SIZE) newOrders.pop();
+          }
+        });
+        return newOrders;
+      });
+    }
+  });
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -46,7 +70,7 @@ export default function OrderHistoryPage() {
       const res = await orderAPI.cancelOrder(orderId);
       if (res.data.success) {
         alert(res.data.message);
-        fetchOrders();
+        // fetchOrders(); -> Đã được handle qua WebSocket
       } else {
         alert(res.data.message || 'Hủy lệnh thất bại');
       }
@@ -74,7 +98,7 @@ export default function OrderHistoryPage() {
       if (res.data.success) {
         alert(res.data.message);
         setModifyingOrder(null);
-        fetchOrders();
+        // fetchOrders(); -> Đã được handle qua WebSocket
       } else {
         alert(res.data.message || 'Sửa lệnh thất bại');
       }

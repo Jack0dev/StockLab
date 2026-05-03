@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { stockAPI, tradeAPI, orderAPI, userAPI, otpAPI } from '../api/api';
 import { usePageTour } from '../hooks/usePageTour';
+import { useWebSocket } from '../context/WebSocketContext';
+import { useBatchWebSocket } from '../hooks/useBatchWebSocket';
 import './TradingPage.css';
 
 export default function TradingPage() {
   const { user } = useAuth();
+  const { lastResyncTime } = useWebSocket();
   const { restartTour } = usePageTour('trading');
   const [activeTab, setActiveTab] = useState('BUY');
   const [orderType, setOrderType] = useState('LIMIT');
@@ -29,7 +32,7 @@ export default function TradingPage() {
     fetchBalance();
     fetchPortfolio();
     fetchRecentOrders();
-  }, []);
+  }, [lastResyncTime]);
 
   useEffect(() => {
     if (activeTab === 'SELL') {
@@ -70,6 +73,39 @@ export default function TradingPage() {
       console.error('Lỗi tải lệnh:', err);
     }
   };
+
+  useBatchWebSocket('/user/queue/balance', (batches) => {
+    if (batches.length > 0) {
+      const latest = batches[batches.length - 1];
+      setBalance(latest.balance);
+      setLockedBalance(latest.lockedBalance);
+    }
+  });
+
+  useBatchWebSocket('/user/queue/portfolio', (batches) => {
+    if (batches.length > 0) {
+      const latest = batches[batches.length - 1];
+      setPortfolio(latest.portfolios || []);
+    }
+  });
+
+  useBatchWebSocket('/user/queue/orders', (batches) => {
+    if (batches.length > 0) {
+      setRecentOrders(prev => {
+        let newOrders = [...prev];
+        batches.forEach(b => {
+           const updatedOrder = b.order;
+           const idx = newOrders.findIndex(o => o.id === updatedOrder.id);
+           if (idx !== -1) {
+             newOrders[idx] = updatedOrder;
+           } else {
+             newOrders.unshift(updatedOrder);
+           }
+        });
+        return newOrders.slice(0, 5); // Keep top 5 latest
+      });
+    }
+  });
 
   // Search stocks with debounce
   useEffect(() => {
@@ -187,9 +223,7 @@ export default function TradingPage() {
         resetForm();
         setOtpCode('');
         setOtpSent(false);
-        fetchBalance();
-        fetchPortfolio();
-        fetchRecentOrders();
+        // Note: fetchBalance, fetchPortfolio, fetchRecentOrders are now handled automatically via WebSocket
       } else {
         setMessage({ type: 'error', text: res.data.message });
       }

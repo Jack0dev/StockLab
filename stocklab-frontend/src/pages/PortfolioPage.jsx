@@ -4,6 +4,8 @@ import { tradeAPI, userAPI } from '../api/api';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { usePageTour } from '../hooks/usePageTour';
+import { useBatchWebSocket } from '../hooks/useBatchWebSocket';
+import { useWebSocket } from '../context/WebSocketContext';
 import './PortfolioPage.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -11,6 +13,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function PortfolioPage() {
   const navigate = useNavigate();
   const { restartTour } = usePageTour('portfolio');
+  const { lastResyncTime } = useWebSocket();
   const [portfolio, setPortfolio] = useState([]);
   const [summary, setSummary] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -18,7 +21,25 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [lastResyncTime]);
+
+  useBatchWebSocket('/user/queue/portfolio', (batches) => {
+    if (batches.length > 0) {
+      const latest = batches[batches.length - 1];
+      setPortfolio(latest.portfolios || []);
+      // Refetch summary as it contains calculated allocations
+      tradeAPI.getPortfolioSummary().then(res => {
+         if(res.data.success) setSummary(res.data.data);
+      }).catch(err => console.error(err));
+    }
+  });
+
+  useBatchWebSocket('/user/queue/balance', (batches) => {
+    if (batches.length > 0) {
+      const latest = batches[batches.length - 1];
+      setBalance(latest.balance);
+    }
+  });
 
   const fetchData = async () => {
     setLoading(true);

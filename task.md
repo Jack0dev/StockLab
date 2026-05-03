@@ -11,14 +11,14 @@
 - [x] Cấu hình `@TransactionalEventListener` để lắng nghe event và gọi `WebSocketService`.
 
 ## 2. Frontend: Global WebSocket Context
-- [ ] Tạo file/context quản lý Global WebSocket Connection (với Reconnect + JWT + Auto-resync).
-- [ ] Tạo cơ chế Batch Update (queue + setInterval).
+- [x] Tạo file/context quản lý Global WebSocket Connection (với Reconnect + JWT + Auto-resync).
+- [x] Tạo cơ chế Batch Update (queue + setInterval).
 
 ## 3. Frontend: Cập nhật các Pages
-- [ ] `TradingPage.jsx`: Áp dụng hook WS, xóa bỏ cơ chế fetch thủ công sau mỗi lệnh.
-- [ ] `WalletPage.jsx`: Cập nhật bảng và số dư theo WS.
-- [ ] `OrderHistoryPage.jsx`: Update order array item theo ID thay vì load lại toàn bộ mảng.
-- [ ] `PortfolioPage.jsx` & `DashboardPage.jsx`: Cập nhật số lượng và tính PnL real-time.
+- [x] `TradingPage.jsx`: Áp dụng hook WS, xóa bỏ cơ chế fetch thủ công sau mỗi lệnh.
+- [x] `WalletPage.jsx`: Cập nhật bảng và số dư theo WS.
+- [x] `OrderHistoryPage.jsx`: Update order array item theo ID thay vì load lại toàn bộ mảng.
+- [x] `PortfolioPage.jsx` & `DashboardPage.jsx`: Cập nhật số lượng và tính PnL real-time.
 
 ## 4. Verification & Testing
 - [ ] Test đặt lệnh & khớp lệnh với 2 users (Multi-user security).
