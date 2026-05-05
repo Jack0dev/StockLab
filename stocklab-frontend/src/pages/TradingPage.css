@@ -833,3 +833,68 @@
     align-items: flex-start;
   }
 }
+
+/* Trade Steps (Progress) */
+.trade-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.trade-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.trade-step.active {
+  opacity: 1;
+}
+
+.trade-step-number {
+  width: 28px;
+  height: 28px;
+  background-color: #3b4252;
+  color: #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.trade-step.active .trade-step-number {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.trade-step.buy.active .trade-step-number {
+  background-color: var(--success);
+}
+
+.trade-step.sell.active .trade-step-number {
+  background-color: var(--danger);
+}
+
+.trade-step-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.trade-step-line {
+  width: 60px;
+  height: 2px;
+  background-color: #3b4252;
+  transition: all 0.3s ease;
+}
+
+.trade-step-line.active {
+  background-color: #e2e8f0;
+}
+

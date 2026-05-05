@@ -187,7 +187,7 @@ export default function OrderHistoryPage() {
   return (
     <div className="order-history-page fade-in">
       <div className="oh-header">
-        <h2>📋 Sổ lệnh</h2>
+        <h2>📋 Lịch Sử Lệnh</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span className="oh-subtitle">Quản lý và theo dõi các lệnh đặt</span>
           <button className="page-tour-btn" onClick={restartTour} title="Hướng dẫn trang này">?</button>

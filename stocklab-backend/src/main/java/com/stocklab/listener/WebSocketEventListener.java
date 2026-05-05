@@ -6,6 +6,8 @@ import com.stocklab.dto.ws.PortfolioWsDTO;
 import com.stocklab.event.BalanceChangedEvent;
 import com.stocklab.event.OrderUpdatedEvent;
 import com.stocklab.event.PortfolioChangedEvent;
+import com.stocklab.event.OrderBookUpdatedEvent;
+import com.stocklab.event.TransactionCreatedEvent;
 import com.stocklab.model.User;
 import com.stocklab.repository.UserRepository;
 import com.stocklab.service.OrderService;
@@ -34,7 +36,8 @@ public class WebSocketEventListener {
             String username = event.getUsername();
             User user = userRepository.findByUsername(username).orElse(null);
             if (user != null) {
-                BalanceWsDTO dto = new BalanceWsDTO(user.getBalance(), user.getAvailableBalance(), user.getLockedBalance());
+                String reason = event.getReason() != null ? event.getReason().name() : null;
+                BalanceWsDTO dto = new BalanceWsDTO(user.getBalance(), user.getAvailableBalance(), user.getLockedBalance(), reason);
                 webSocketService.broadcastUserBalance(username, dto);
             }
         } catch (Exception e) {
@@ -64,6 +67,24 @@ public class WebSocketEventListener {
             webSocketService.broadcastUserOrder(username, dto);
         } catch (Exception e) {
             log.error("Error handling OrderUpdatedEvent for user {}: {}", event.getUsername(), e.getMessage());
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleOrderBookUpdated(OrderBookUpdatedEvent event) {
+        try {
+            webSocketService.broadcastOrderBookUpdate(event.getTicker());
+        } catch (Exception e) {
+            log.error("Error handling OrderBookUpdatedEvent for ticker {}: {}", event.getTicker(), e.getMessage());
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleTransactionCreated(TransactionCreatedEvent event) {
+        try {
+            webSocketService.broadcastUserTransaction(event.getUsername(), event.getTransactionResponse());
+        } catch (Exception e) {
+            log.error("Error handling TransactionCreatedEvent for user {}: {}", event.getUsername(), e.getMessage());
         }
     }
 }

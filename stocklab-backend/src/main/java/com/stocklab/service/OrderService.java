@@ -178,7 +178,8 @@ public class OrderService {
 
         // Publish events for real-time updates
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, user.getUsername(), toOrderResponse(order)));
-        eventPublisher.publishEvent(new BalanceChangedEvent(this, user.getUsername()));
+        eventPublisher.publishEvent(new BalanceChangedEvent(this, user.getUsername(), com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_LOCK));
+        eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, stock.getTicker()));
 
         String msg = orderType.isConditional()
                 ? "Đặt lệnh " + orderType + " MUA thành công! Đang chờ điều kiện kích hoạt."
@@ -211,6 +212,7 @@ public class OrderService {
         // Publish events for real-time updates
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, user.getUsername(), toOrderResponse(order)));
         eventPublisher.publishEvent(new PortfolioChangedEvent(this, user.getUsername()));
+        eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, stock.getTicker()));
 
         String msg = orderType.isConditional()
                 ? "Đặt lệnh " + orderType + " BÁN thành công! Đang chờ điều kiện kích hoạt."
@@ -290,10 +292,11 @@ public class OrderService {
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order1)));
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order2)));
         if (side == OrderSide.BUY) {
-            eventPublisher.publishEvent(new BalanceChangedEvent(this, username));
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_LOCK));
         } else {
             eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
         }
+        eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, stock.getTicker()));
 
         return ApiResponse.success("Đặt lệnh OCO thành công! 2 lệnh liên kết đã được tạo.",
                 toOrderResponse(order1));
@@ -402,10 +405,11 @@ public class OrderService {
         // Publish events for real-time updates
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order)));
         if (order.getSide() == OrderSide.BUY) {
-            eventPublisher.publishEvent(new BalanceChangedEvent(this, username));
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_UNLOCK));
         } else {
             eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
         }
+        eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, order.getStock().getTicker()));
 
         return ApiResponse.success(
                 "Đã hủy lệnh #" + orderId + " thành công! Hoàn " + remainingQty +
@@ -521,10 +525,11 @@ public class OrderService {
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(oldOrder)));
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(newOrder)));
         if (newOrder.getSide() == OrderSide.BUY) {
-            eventPublisher.publishEvent(new BalanceChangedEvent(this, username));
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_UNLOCK));
         } else {
             eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
         }
+        eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, newOrder.getStock().getTicker()));
 
         return ApiResponse.success(
                 "Đã sửa lệnh thành công! Lệnh cũ #" + orderId + " → hủy, lệnh mới #" + newOrder.getId(),
@@ -678,6 +683,8 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+
+        eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, order.getStock().getTicker()));
 
         return ApiResponse.success("Admin đã cưỡng chế hủy lệnh #" + orderId + " thành công!", toOrderResponse(order));
     }

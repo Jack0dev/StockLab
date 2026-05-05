@@ -72,6 +72,20 @@ public class MatchingEngine {
                 break; // Vì đã sort, nên các cặp sau cũng không khớp
             }
 
+            // [ANTI-WASH TRADING] Không cho phép tự khớp lệnh của cùng 1 user
+            if (buyOrder.getUser().getId().equals(sellOrder.getUser().getId())) {
+                log.warn("[WASH TRADE] Prevented self-matching for user {}: BUY #{} vs SELL #{}",
+                        buyOrder.getUser().getId(), buyOrder.getId(), sellOrder.getId());
+                
+                // Bỏ qua cặp này, ưu tiên tăng index của lệnh đặt sau
+                if (buyOrder.getCreatedAt().isAfter(sellOrder.getCreatedAt())) {
+                    buyIdx++;
+                } else {
+                    sellIdx++;
+                }
+                continue;
+            }
+
             // Tính số lượng khớp = min(remaining BUY, remaining SELL)
             int matchQty = Math.min(buyOrder.getRemainingQuantity(), sellOrder.getRemainingQuantity());
 

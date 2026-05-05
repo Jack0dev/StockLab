@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { tradeAPI } from '../api/api';
 import { usePageTour } from '../hooks/usePageTour';
+import { useBatchWebSocket } from '../hooks/useBatchWebSocket';
+import { useRef } from 'react';
 import './TransactionHistoryPage.css';
 
 const TYPE_FILTERS = [
@@ -17,6 +19,7 @@ export default function TransactionHistoryPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [typeFilter, setTypeFilter] = useState('');
+  const processedIds = useRef(new Set());
 
   useEffect(() => {
     fetchTransactions();
@@ -31,6 +34,9 @@ export default function TransactionHistoryPage() {
         setTransactions(data.content);
         setTotalPages(data.totalPages);
         setTotalElements(data.totalElements);
+
+        // Populate processedIds
+        data.content.forEach(tx => processedIds.current.add(tx.id));
       }
     } catch (err) {
       console.error('Lỗi tải lịch sử giao dịch:', err);
@@ -38,6 +44,32 @@ export default function TransactionHistoryPage() {
       setLoading(false);
     }
   };
+
+  useBatchWebSocket('/user/queue/transactions', (batches) => {
+    if (batches.length === 0) return;
+
+    setTransactions(prev => {
+      const newTxs = [];
+      batches.forEach(b => {
+        if (b.type === 'NEW_TRANSACTION' && b.data) {
+          const tx = b.data;
+          // Dedupe event
+          if (!processedIds.current.has(tx.id)) {
+            processedIds.current.add(tx.id);
+            // Áp dụng bộ lọc type (nếu đang lọc)
+            if (!typeFilter || tx.type === typeFilter) {
+              newTxs.push(tx);
+            }
+          }
+        }
+      });
+
+      if (newTxs.length === 0) return prev;
+      
+      setTotalElements(curr => curr + newTxs.length);
+      return [...newTxs, ...prev];
+    });
+  });
 
   const formatPrice = (price) => {
     if (!price) return '0';

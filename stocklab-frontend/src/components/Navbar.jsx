@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -59,7 +60,7 @@ export default function Navbar() {
     },
     {
       icon: '📋',
-      title: 'Lịch Sử Lệnh',
+      title: 'Lịch Sử Giao Dịch',
       desc: 'Tra cứu lịch sử giao dịch',
       path: '/transactions',
     },
@@ -129,6 +130,7 @@ export default function Navbar() {
 
         {/* User Menu */}
         <div className="navbar-user" ref={dropdownRef}>
+          {user?.role !== 'ADMIN' && <NotificationBell />}
           <button className="user-trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
             {user?.avatarUrl ? (
               <img src={user.avatarUrl} alt="" className="user-avatar user-avatar-img" />
@@ -148,7 +150,7 @@ export default function Navbar() {
               <div className="dropdown-header">
                 <div className="dropdown-name">{user?.fullName || user?.username}</div>
                 <div className="dropdown-email">{user?.email}</div>
-                
+
                 {/* WAL-4: Hiển thị cả 2 số dư */}
                 <div className="dropdown-balances">
                   <div className="balance-row">

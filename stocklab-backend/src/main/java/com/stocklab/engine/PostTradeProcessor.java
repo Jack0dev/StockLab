@@ -81,11 +81,14 @@ public class PostTradeProcessor {
         eventPublisher.publishEvent(new com.stocklab.event.OrderUpdatedEvent(this, buyer.getUsername(), toOrderResponse(buyOrder)));
         eventPublisher.publishEvent(new com.stocklab.event.OrderUpdatedEvent(this, seller.getUsername(), toOrderResponse(sellOrder)));
         
-        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, buyer.getUsername()));
+        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, buyer.getUsername(), com.stocklab.event.BalanceChangedEvent.BalanceReason.TRADE));
         eventPublisher.publishEvent(new com.stocklab.event.PortfolioChangedEvent(this, buyer.getUsername()));
         
-        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, seller.getUsername()));
+        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, seller.getUsername(), com.stocklab.event.BalanceChangedEvent.BalanceReason.TRADE));
         eventPublisher.publishEvent(new com.stocklab.event.PortfolioChangedEvent(this, seller.getUsername()));
+
+        // Publish OrderBook Update
+        eventPublisher.publishEvent(new com.stocklab.event.OrderBookUpdatedEvent(this, stock.getTicker()));
     }
 
     /**
@@ -130,6 +133,23 @@ public class PostTradeProcessor {
                 .totalAmount(totalAmount)
                 .build();
         transactionRepository.save(sellTx);
+
+        // Publish Transaction Events
+        eventPublisher.publishEvent(new com.stocklab.event.TransactionCreatedEvent(this, buyer.getUsername(), toTransactionResponse(buyTx)));
+        eventPublisher.publishEvent(new com.stocklab.event.TransactionCreatedEvent(this, seller.getUsername(), toTransactionResponse(sellTx)));
+    }
+
+    private com.stocklab.dto.TransactionResponse toTransactionResponse(Transaction tx) {
+        return com.stocklab.dto.TransactionResponse.builder()
+                .id(tx.getId())
+                .ticker(tx.getStock().getTicker())
+                .companyName(tx.getStock().getCompanyName())
+                .type(tx.getType().name())
+                .quantity(tx.getQuantity())
+                .price(tx.getPrice())
+                .totalAmount(tx.getTotalAmount())
+                .createdAt(tx.getCreatedAt() != null ? tx.getCreatedAt() : java.time.LocalDateTime.now())
+                .build();
     }
 
     /**

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { walletAPI, vnpayAPI, bankAPI } from '../api/api';
 import { usePageTour } from '../hooks/usePageTour';
+import OtpInput from '../components/OtpInput';
 import './WalletPage.css';
 
 export default function WalletPage() {
@@ -70,7 +71,7 @@ export default function WalletPage() {
     setIsLookupLoading(true);
     setLookupError('');
     setBeneficiaryName('');
-    
+
     try {
       const res = await bankAPI.lookupAccount(withdrawBankName, withdrawBankAccount);
       if (res.data.success) {
@@ -256,19 +257,19 @@ export default function WalletPage() {
               className={`wallet-tab ${activeTab === 'deposit' ? 'active' : ''}`}
               onClick={() => { setActiveTab('deposit'); setMessage({ type: '', text: '' }); }}
             >
-              Nạp tiền
+              Nạp Tiền
             </button>
             <button
               className={`wallet-tab ${activeTab === 'withdraw' ? 'active' : ''}`}
               onClick={() => { setActiveTab('withdraw'); setMessage({ type: '', text: '' }); }}
             >
-              Rút tiền
+              Rút Tiền
             </button>
             <button
               className={`wallet-tab ${activeTab === 'history' ? 'active' : ''}`}
               onClick={() => { setActiveTab('history'); setMessage({ type: '', text: '' }); }}
             >
-              Lịch sử
+              Lịch Sử Nạp Rút
             </button>
           </div>
 
@@ -633,38 +634,24 @@ export default function WalletPage() {
                   </form>
                 ) : (
                   <form className="withdraw-horizontal-form" onSubmit={handleWithdraw}>
-                    <div className="otp-auth-layout">
-                      <div className="otp-auth-title">Xác thực giao dịch</div>
-                      <div className="otp-auth-desc">Vui lòng kiểm tra email của bạn để lấy mã OTP và nhập vào ô bên dưới.</div>
+                    <OtpInput
+                      value={otpCode}
+                      onChange={setOtpCode}
+                      onSendOtp={handleSendOtp}
+                      isSending={isSendingOtp}
+                      title="Xác thực giao dịch"
+                      desc="Vui lòng kiểm tra email của bạn để lấy mã OTP và nhập vào ô bên dưới."
+                    />
 
-                      <div className="otp-input-group">
-                        <input
-                          type="text"
-                          className="otp-input"
-                          placeholder="Nhập 6 số OTP..."
-                          maxLength="6"
-                          value={otpCode}
-                          onChange={(e) => setOtpCode(e.target.value)}
-                          required
-                        />
-                        <button
-                          type="button"
-                          className="btn-otp-action"
-                          onClick={handleSendOtp}
-                          disabled={countdown > 0 || isSendingOtp}
-                        >
-                          {isSendingOtp ? 'Đang gửi...' : countdown > 0 ? `Chờ ${countdown}s` : 'Gửi mã OTP'}
-                        </button>
-                      </div>
 
-                      <div className="action-row">
-                        <button type="button" className="btn-withdraw-back" onClick={() => setWithdrawStep(1)}>
-                          Quay lại
-                        </button>
-                        <button type="submit" className="btn-withdraw-action" disabled={loading || !otpCode}>
-                          {loading ? 'Đang xử lý...' : 'Xác nhận Rút Lợi Nhuận'}
-                        </button>
-                      </div>
+
+                    <div className="action-row">
+                      <button type="button" className="btn-withdraw-back" onClick={() => setWithdrawStep(1)}>
+                        Quay lại
+                      </button>
+                      <button type="submit" className="btn-withdraw-action" disabled={loading || !otpCode}>
+                        {loading ? 'Đang xử lý...' : 'Xác nhận Rút Lợi Nhuận'}
+                      </button>
                     </div>
                   </form>
                 )}

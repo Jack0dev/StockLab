@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import { useAuth } from './AuthContext';
 
 const WebSocketContext = createContext(null);
@@ -23,7 +24,8 @@ export function WebSocketProvider({ children }) {
         }
 
         const client = new Client({
-            brokerURL: 'ws://localhost:8080/ws', // Backend WS endpoint
+            // Sử dụng SockJS thay vì raw WebSocket url vì backend config .withSockJS()
+            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
             connectHeaders: {
                 Authorization: `Bearer ${token}` // Truyền JWT vào header
             },

@@ -70,6 +70,23 @@ public class WebSocketService {
     }
 
     /**
+     * 📡 Broadcast sự kiện thay đổi sổ lệnh → /topic/orderbook
+     */
+    public void broadcastOrderBookUpdate(String ticker) {
+        try {
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("ticker", ticker);
+            payload.put("type", "ORDERBOOK_UPDATE");
+            payload.put("timestamp", LocalDateTime.now().toString());
+
+            messagingTemplate.convertAndSend("/topic/orderbook", payload);
+            log.debug("📡 WS broadcast orderbook update: {}", ticker);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast orderbook error: {}", e.getMessage());
+        }
+    }
+
+    /**
      * 🤖 Broadcast lệnh bot → /topic/bot
      */
     public void broadcastBotOrder(String ticker, String side, int quantity, BigDecimal price) {
@@ -127,6 +144,18 @@ public class WebSocketService {
             messagingTemplate.convertAndSendToUser(username, "/queue/orders", dto);
         } catch (Exception e) {
             log.error("❌ WebSocket broadcast order error for {}: {}", username, e.getMessage());
+        }
+    }
+
+    public void broadcastUserTransaction(String username, com.stocklab.dto.TransactionResponse dto) {
+        try {
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("type", "NEW_TRANSACTION");
+            payload.put("data", dto);
+
+            messagingTemplate.convertAndSendToUser(username, "/queue/transactions", payload);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast transaction error for {}: {}", username, e.getMessage());
         }
     }
 }

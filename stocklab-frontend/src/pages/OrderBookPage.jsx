@@ -12,7 +12,6 @@ export default function OrderBookPage() {
   const [orderBook, setOrderBook] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [autoRefresh, setAutoRefresh] = useState(true);
   const intervalRef = useRef(null);
   const debounceRef = useRef(null);
 
@@ -37,18 +36,13 @@ export default function OrderBookPage() {
     }
   };
 
-  // Auto refresh via Polling
-  useEffect(() => {
-    if (autoRefresh && ticker) {
-      intervalRef.current = setInterval(() => fetchOrderBook(ticker), 5000);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [autoRefresh, ticker]);
-
-  // Realtime updates via WebSocket
-  const { connected } = useWebSocket('/topic/trades', (trade) => {
-    if (autoRefresh && ticker && trade && trade.ticker === ticker) {
-      fetchOrderBook(ticker);
+  // Realtime updates via WebSocket (with Debounce)
+  const { connected } = useWebSocket('/topic/orderbook', (msg) => {
+    if (ticker && msg && msg.ticker === ticker) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        fetchOrderBook(ticker);
+      }, 300);
     }
   });
 
@@ -134,12 +128,6 @@ export default function OrderBookPage() {
           )}
         </form>
 
-        {ticker && (
-          <label className="ob-auto-refresh">
-            <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} />
-            Tự động refresh (5s)
-          </label>
-        )}
       </div>
 
       {/* Error */}
