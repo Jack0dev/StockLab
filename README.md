@@ -1,6 +1,6 @@
 # 📈 StockLab — Hệ thống mô phỏng sàn giao dịch chứng khoán
 
-> Ứng dụng fullstack mô phỏng sàn giao dịch chứng khoán với Matching Engine, WebSocket realtime, xác thực 2FA và thanh toán VNPay Sandbox.
+> Ứng dụng fullstack mô phỏng sàn giao dịch chứng khoán với Matching Engine, WebSocket realtime, AI Assistant (Gemini + Ollama), ML Pipeline dự đoán giá, xác thực 2FA và thanh toán VNPay Sandbox.
 
 ---
 
@@ -8,116 +8,83 @@
 
 - [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
 - [Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
-- [Cách 1 — Chạy bằng Docker (Khuyến nghị)](#-cách-1--chạy-bằng-docker-khuyến-nghị)
-- [Cách 2 — Chạy thủ công (Local)](#-cách-2--chạy-thủ-công-local)
+- [Cài đặt & Chạy dự án](#-cài-đặt--chạy-dự-án)
 - [Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
 - [Các module chính](#-các-module-chính)
+- [Cấu trúc dự án](#-cấu-trúc-dự-án)
+- [Tổng kết](#-tổng-kết)
 
 ---
 
 ## 🛠 Công nghệ sử dụng
 
-| Layer     | Công nghệ                                   |
-|-----------|----------------------------------------------|
-| Frontend  | React 19, Vite 8, Chart.js, WebSocket (STOMP) |
-| Backend   | Spring Boot 3.2.5, Java 21, Spring Security, JPA |
-| Database  | MySQL 8.0                                    |
-| Cache     | Redis 6                                      |
-| Thanh toán| VNPay Sandbox                                |
-| Container | Docker, Docker Compose                       |
+| Layer        | Công nghệ                                                  |
+|--------------|-------------------------------------------------------------|
+| Frontend     | React 19, Vite 8, Chart.js, WebSocket (STOMP)              |
+| Backend      | Spring Boot 3.2.5, Java 21, Spring Security, Spring AI, JPA|
+| AI / LLM     | Google Gemini 2.5 Flash, Ollama (Qwen 2.5), RAG Pipeline   |
+| ML Pipeline  | Python 3.11, FastAPI, scikit-learn, pandas, XGBoost         |
+| Database     | MySQL 8.0                                                   |
+| Cache        | Redis 7                                                     |
+| Thanh toán   | VNPay Sandbox                                               |
+| DevOps       | Docker, Docker Compose                                      |
 
 ---
 
 ## 📦 Yêu cầu hệ thống
 
-### Chạy bằng Docker (Cách 1)
-
 - **Docker Desktop** ≥ 4.x ([tải tại đây](https://www.docker.com/products/docker-desktop/))
-- **Docker Compose** (đi kèm Docker Desktop)
-
-### Chạy thủ công (Cách 2)
-
 - **Java JDK** 21+
 - **Maven** 3.9+
 - **Node.js** 20.19+
-- **MySQL** 8.0
-- **Redis** 6+
+- **Python** 3.11+ (cho ML module)
 
 ---
 
-## 🐳 Cách 1 — Chạy bằng Docker (Khuyến nghị)
+## 🚀 Cài đặt & Chạy dự án
 
-> Chỉ cần 1 lệnh để khởi động toàn bộ hệ thống (MySQL, Redis, Backend, Frontend).
-
-### Bước 1: Kiểm tra Docker
+### Bước 1: Clone repository
 
 ```bash
-docker --version          # Docker Engine ≥ 24.x
-docker compose version    # Docker Compose ≥ 2.x
+git clone https://github.com/Jack0dev/StockLab.git
+cd StockLab
 ```
 
-### Bước 2: Tắt MySQL / Redis local (nếu đang chạy)
+### Bước 2: Khởi động Infrastructure bằng Docker
 
-Docker sẽ dùng port `3306` (MySQL), `6379` (Redis), `8080` (Backend), `80` (Frontend). Nếu các port này đang bị chiếm, cần tắt trước:
+Docker Compose sẽ khởi động **MySQL, Redis, phpMyAdmin, Redis Commander** — các service hạ tầng cho toàn bộ dự án.
 
-**Windows:**
-```powershell
-# Tắt MySQL service
+```bash
+# Tắt MySQL / Redis local nếu đang chạy (tránh conflict port)
+# Windows:
 net stop MySQL80
-
-# Tắt Redis service
 net stop Redis
 
-# Hoặc kill theo PID (tìm PID bằng netstat)
-netstat -ano | findstr "3306 6379"
-taskkill /PID <PID> /F
+# Khởi động infrastructure
+docker compose up -d
 ```
 
-**macOS / Linux:**
-```bash
-# Tắt MySQL
-sudo systemctl stop mysql    # hoặc: brew services stop mysql
+> ⏱ Lần đầu sẽ mất **1–2 phút** để pull image.
 
-# Tắt Redis
-sudo systemctl stop redis    # hoặc: brew services stop redis
-```
-
-### Bước 3: Build & Khởi động
+**Kiểm tra trạng thái:**
 
 ```bash
-# Di chuyển đến thư mục gốc dự án (nơi có file docker-compose.yml)
-cd StockLap
-
-# Build image và chạy tất cả containers
-docker compose up --build -d
-```
-
-> ⏱ Lần đầu build sẽ mất **2–5 phút** (tải Maven dependencies + npm packages).
-
-### Bước 4: Kiểm tra trạng thái
-
-```bash
-# Xem trạng thái containers
 docker compose ps
-
-# Xem logs realtime
 docker compose logs -f
-
-# Xem log riêng từng service
-docker compose logs -f backend
-docker compose logs -f frontend
 ```
 
-### Bước 5: Truy cập ứng dụng
+**Truy cập các service:**
 
-| Service       | URL                          |
-|---------------|------------------------------|
-| 🌐 Frontend  | http://localhost              |
-| ⚙️ Backend API| http://localhost:8080         |
-| 🗄 MySQL      | `localhost:3306` (user: `root`, pass: `root`) |
-| 📦 Redis      | `localhost:6379`             |
+| Service           | URL / Connection                                       |
+|-------------------|--------------------------------------------------------|
+| 🗄 MySQL          | `localhost:3307` (user: `stocklab`, pass: `stocklab2026`) |
+| 📦 Redis          | `localhost:6380`                                       |
+| 🔧 phpMyAdmin     | http://localhost:8081 (root / stocklab2026)             |
+| 🔧 Redis Commander| http://localhost:8082                                  |
 
-### Các lệnh Docker hữu ích
+> **Lưu ý:** MySQL dùng port `3307`, Redis dùng port `6380` để tránh conflict với Laragon local (3306/6379).
+
+**Các lệnh Docker hữu ích:**
 
 ```bash
 # Dừng tất cả containers
@@ -126,32 +93,16 @@ docker compose down
 # Dừng và xóa cả volumes (reset database)
 docker compose down -v
 
-# Rebuild lại 1 service cụ thể
-docker compose up --build -d backend
-
 # Restart 1 service
-docker compose restart backend
+docker compose restart mysql
 ```
 
----
-
-## 💻 Cách 2 — Chạy thủ công (Local)
-
-### Bước 1: Cài đặt MySQL & Redis
-
-1. Cài **MySQL 8.0** (hoặc dùng [Laragon](https://laragon.org/))
-2. Tạo database:
-   ```sql
-   CREATE DATABASE stock_lap;
-   ```
-3. Cài **Redis** ([tải cho Windows](https://github.com/tporadowski/redis/releases))
-
-### Bước 2: Chạy Backend
+### Bước 3: Chạy Backend (Spring Boot)
 
 ```bash
 cd stocklab-backend
 
-# Build & chạy bằng Maven
+# Build & chạy
 mvn clean install -DskipTests
 mvn spring-boot:run
 ```
@@ -161,17 +112,16 @@ mvn spring-boot:run
 **Cấu hình kết nối** (file `src/main/resources/application.properties`):
 
 ```properties
-# MySQL
+# MySQL (qua Docker)
 spring.datasource.url=jdbc:mysql://localhost:3306/stock_lap?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 spring.datasource.username=root
 spring.datasource.password=           # để trống nếu dùng Laragon
 
-# Redis
-spring.data.redis.host=localhost
-spring.data.redis.port=6379
+# Redis (qua Docker)
+spring.data.redis.url=redis://localhost:6379
 ```
 
-### Bước 3: Chạy Frontend
+### Bước 4: Chạy Frontend (React + Vite)
 
 ```bash
 cd stocklab-frontend
@@ -185,130 +135,260 @@ npm run dev
 
 > Frontend sẽ chạy tại **http://localhost:5173**
 
+### Bước 5: Chạy ML Service (Tùy chọn)
+
+```bash
+cd stocklab-ml
+
+# Tạo virtual environment
+python -m venv .venv
+
+# Kích hoạt (Windows)
+.venv\Scripts\activate
+
+# Cài dependencies
+pip install -r requirements.txt
+
+# Chạy FastAPI server
+uvicorn api.main:app --reload --port 8000
+```
+
+> ML API sẽ chạy tại **http://localhost:8000**
+
+### Bước 6: Cài đặt AI Local (Tùy chọn)
+
+Để sử dụng AI Assistant chạy local (không tốn API key):
+
+```bash
+# Cài Ollama: https://ollama.com/download
+
+# Pull model
+ollama pull qwen2.5:3b
+ollama pull nomic-embed-text
+```
+
+> AI cũng hỗ trợ **Google Gemini 2.5 Flash** (cấu hình API key trong `application.properties`).
+
 ---
 
 ## 🧠 Kiến trúc hệ thống
 
 ### Tổng quan
 
-Hệ thống **StockLab** được xây dựng theo kiến trúc **Client – Server**, kết hợp xử lý **Realtime (WebSocket)** và mô phỏng **Order Matching Engine** giống sàn giao dịch thực tế.
-
 ```
-┌──────────────┐     HTTP/WS      ┌──────────────────────┐     SQL      ┌─────────┐
-│   Frontend   │ ◄──────────────► │   Spring Boot API    │ ◄──────────► │  MySQL  │
-│  (React 19)  │                  │  Controller→Service  │              │   8.0   │
-│  Port: 5173  │                  │  →Repository→JPA     │   Cache      ├─────────┤
-│  (hoặc :80)  │                  │      Port: 8080      │ ◄──────────► │  Redis  │
-└──────────────┘                  └──────────────────────┘              └─────────┘
+┌──────────────┐    HTTP/WS     ┌──────────────────────┐    SQL     ┌──────────┐
+│   Frontend   │ ◄────────────► │   Spring Boot API    │ ◄────────► │  MySQL   │
+│  (React 19)  │                │  Controller→Service  │            │   8.0    │
+│  Port: 5173  │                │  →Repository→JPA     │   Cache    ├──────────┤
+└──────────────┘                │      Port: 8080      │ ◄────────► │  Redis 7 │
+                                └──────────┬───────────┘            └──────────┘
+                                           │
+                            ┌──────────────┼──────────────┐
+                            ▼              ▼              ▼
+                     ┌────────────┐ ┌────────────┐ ┌────────────┐
+                     │  Matching  │ │ AI Service │ │ ML Service │
+                     │  Engine    │ │ Gemini /   │ │  (FastAPI)  │
+                     │            │ │ Ollama RAG │ │  Port: 8000 │
+                     └────────────┘ └────────────┘ └────────────┘
 ```
 
 ### Luồng giao dịch (Trading Flow)
 
-```text
+```
 User đặt lệnh → Frontend → Backend API
 → Service → OMS → Matching Engine
 → Cập nhật Database + Redis
 → Gửi realtime qua WebSocket → Frontend cập nhật UI
 ```
 
+### Luồng AI Chat
+
+```
+User hỏi → Frontend → AI Controller
+→ Smart Router (chọn Gemini hoặc Ollama)
+→ RAG Pipeline (tìm context từ knowledge base)
+→ Tool Calling (giá cổ phiếu, tin tức, portfolio)
+→ Stream response → Frontend hiển thị
+```
+
 ---
 
 ## 🧩 Các module chính
 
-### 1. Request/Response (HTTP API)
+### 1. Trading Engine
 
-```text
-User → Frontend → Spring Boot API → Controller → Service → Repository → MySQL
-```
-
-- **Controller**: nhận request, mapping endpoints
-- **Service**: xử lý business logic
-- **Repository**: truy vấn database (JPA/Hibernate)
+- **OMS (Order Management System):** Quản lý lệnh Mua/Bán, kiểm tra số dư & khối lượng
+- **Matching Engine:** Khớp lệnh theo Price-Time Priority
+- **9 loại lệnh:** Market, Limit, ATO, ATC, MP, MOK, MAK, PLO, Conditional
+- **Conditional Orders:** Stop Loss, Take Profit, Trailing Stop, OCO
 
 ### 2. Realtime (WebSocket)
 
-```text
-Backend → WebSocket Server (STOMP) → Frontend
-```
+- STOMP WebSocket protocol
+- Cập nhật giá cổ phiếu, trạng thái lệnh, thông báo realtime
+- Batch updates cho hiệu năng cao
 
-- Gửi dữ liệu realtime: giá cổ phiếu, trạng thái lệnh
-- Frontend cập nhật UI tức thời (không cần reload)
+### 3. AI Assistant
 
-### 3. OMS — Order Management System
+- **Dual LLM:** Google Gemini 2.5 Flash (cloud) + Ollama Qwen 2.5 (local)
+- **RAG Pipeline:** 15 tài liệu kiến thức chứng khoán Việt Nam
+- **Tool Calling:** Tra giá cổ phiếu, lấy tin tức tài chính, xem portfolio
+- **Smart Router:** Tự động chọn LLM phù hợp, fallback khi lỗi
+- **Chat Widget:** Floating widget + trang chat toàn màn hình
 
-- Quản lý lệnh: Mua (Buy) / Bán (Sell)
-- Kiểm tra: Số dư, Khối lượng
-- Lưu trạng thái lệnh
+### 4. ML Pipeline (Python)
 
-### 4. Matching Engine
+- **Data Ingestion:** Import dữ liệu OHLCV, đồng bộ hàng ngày
+- **Feature Engineering:** Tính toán 50+ technical indicators (RSI, MACD, Bollinger...)
+- **Model Training:** XGBoost, Random Forest — dự đoán xu hướng giá
+- **FastAPI:** REST API phục vụ prediction cho backend
 
-- Khớp lệnh theo giá & thời gian (Price-Time Priority)
-- So sánh: Giá mua ↔ Giá bán
-- Tạo giao dịch khi match, cập nhật giá & khối lượng
+### 5. Technical Indicators
 
-### 5. Redis Cache
+- RSI, MACD, Bollinger Bands, SMA, EMA
+- Hiển thị trực tiếp trên biểu đồ chi tiết cổ phiếu
 
-- Cache dữ liệu realtime
-- Tăng hiệu năng, giảm tải database
+### 6. Tin tức tài chính (News)
 
-### 6. Bảo mật
+- Crawl tin tức từ các nguồn tài chính
+- Hiển thị trên trang chi tiết cổ phiếu
+- Tích hợp với AI để phân tích sentiment
+
+### 7. Bảo mật
 
 - JWT Authentication
-- Xác thực 2FA (Google Authenticator)
+- Xác thực 2FA (TOTP — Google Authenticator)
+- OTP qua Email & SMS (Twilio)
 - CORS configuration
+- Role-based access (User / Admin)
 
-### 7. Thanh toán
+### 8. Thanh toán & Ví
 
 - Tích hợp VNPay Sandbox
-- Nạp tiền vào tài khoản giao dịch
+- Nạp/rút tiền vào tài khoản giao dịch
+- Lịch sử giao dịch chi tiết
 
----
+### 9. Admin Dashboard
 
-## 🎯 Tổng kết
-
-Hệ thống gồm 3 phần cốt lõi:
-
-1. **API Layer (Spring Boot)** → xử lý request
-2. **Core Engine (OMS + Matching Engine)** → mô phỏng giao dịch
-3. **Realtime Layer (WebSocket)** → cập nhật dữ liệu tức thời
-
-👉 Kiến trúc này cho phép hệ thống:
-
-- Mô phỏng giao dịch giống sàn thật
-- Xử lý realtime
-- Dễ mở rộng (scale)
-- Triển khai nhanh bằng Docker
+- Quản lý Users, Stocks, Orders
+- Export báo cáo
+- Monitoring Trading Bot
 
 ---
 
 ## 📂 Cấu trúc dự án
 
 ```
-StockLap/
-├── docker-compose.yml              # Docker Compose config
+StockLab/
+├── docker-compose.yml                # Docker Compose — MySQL, Redis, phpMyAdmin, Redis Commander
 ├── README.md
+├── doc/                              # Tài liệu dự án
+│   ├── database_schema.sql           # Schema database
+│   ├── project_documentation.md      # Tài liệu chi tiết
+│   ├── scaleup_plan.md               # Kế hoạch mở rộng
+│   └── migrations/                   # SQL migrations
 │
-├── stocklab-backend/
-│   ├── Dockerfile                   # Docker build cho backend
-│   ├── pom.xml                      # Maven dependencies
+├── stocklab-backend/                 # Spring Boot Backend
+│   ├── pom.xml                       # Maven dependencies
 │   └── src/main/
-│       ├── java/com/stocklab/       # Source code Java
-│       │   ├── config/              # Cấu hình (CORS, Redis, VNPay...)
-│       │   ├── controller/          # REST API endpoints
-│       │   ├── dto/                 # Data Transfer Objects
-│       │   ├── model/               # Entity classes
-│       │   ├── repository/          # JPA Repositories
-│       │   ├── security/            # JWT, Authentication
-│       │   └── service/             # Business logic
+│       ├── java/com/stocklab/
+│       │   ├── config/               # Cấu hình (CORS, Redis, Security, AI...)
+│       │   ├── controller/           # REST API endpoints
+│       │   │   ├── AuthController        # Đăng nhập, đăng ký, 2FA
+│       │   │   ├── StockController       # CRUD cổ phiếu, giá realtime
+│       │   │   ├── OrderController       # Đặt lệnh, quản lý lệnh
+│       │   │   ├── AIController          # AI Chat, streaming
+│       │   │   ├── NewsController        # Tin tức tài chính
+│       │   │   ├── WalletController      # Nạp/rút tiền
+│       │   │   ├── VnPayController       # Thanh toán VNPay
+│       │   │   └── Admin*Controller      # Quản trị hệ thống
+│       │   ├── dto/                  # Data Transfer Objects
+│       │   ├── engine/               # Matching Engine
+│       │   ├── model/                # Entity classes (JPA)
+│       │   ├── repository/           # JPA Repositories
+│       │   ├── scheduler/            # Scheduled tasks
+│       │   ├── security/             # JWT, Authentication filters
+│       │   └── service/              # Business logic
+│       │       ├── OrderService          # Xử lý lệnh, matching
+│       │       ├── AIAssistantService    # AI orchestration
+│       │       ├── NewsService           # Crawl & serve tin tức
+│       │       ├── TechnicalIndicatorService  # RSI, MACD, Bollinger...
+│       │       ├── WebSocketService      # Realtime messaging
+│       │       └── ai/                   # AI sub-module
+│       │           ├── SmartAIRouterService   # Chọn Gemini/Ollama
+│       │           ├── GeminiClient           # Google Gemini API
+│       │           ├── RagTrainingService     # RAG pipeline
+│       │           ├── ToolExecutor           # Function calling
+│       │           └── tools/                 # AI Tools (giá, tin, portfolio)
 │       └── resources/
-│           └── application.properties
+│           ├── application.properties    # Cấu hình ứng dụng
+│           └── docs/                     # Knowledge base cho RAG (15 tài liệu)
 │
-└── stocklab-frontend/
-    ├── Dockerfile                   # Docker build cho frontend
-    ├── nginx.conf                   # Nginx config (production)
-    ├── package.json
-    └── src/
-        ├── components/              # React components
-        ├── pages/                   # Page components
-        └── main.jsx                 # Entry point
+├── stocklab-frontend/                # React Frontend
+│   ├── package.json
+│   └── src/
+│       ├── api/                      # API client (Axios)
+│       ├── components/               # Shared components
+│       │   ├── Navbar                    # Navigation bar
+│       │   ├── AIChatWidget              # Floating AI chat widget
+│       │   ├── SearchBar                 # Tìm kiếm cổ phiếu
+│       │   ├── NotificationBell          # Thông báo realtime
+│       │   └── TourOverlay               # Hướng dẫn người mới
+│       ├── context/                  # React Context (Auth, WebSocket)
+│       ├── hooks/                    # Custom hooks
+│       ├── pages/                    # Page components
+│       │   ├── TradingPage               # Giao diện giao dịch chính
+│       │   ├── StockDetailPage           # Chi tiết cổ phiếu + biểu đồ
+│       │   ├── StockListPage             # Danh sách cổ phiếu
+│       │   ├── AIChatPage                # Trang AI Chat toàn màn hình
+│       │   ├── PortfolioPage             # Danh mục đầu tư
+│       │   ├── WalletPage                # Quản lý ví
+│       │   ├── OrderHistoryPage          # Lịch sử lệnh
+│       │   ├── ConditionalOrderPage      # Lệnh điều kiện
+│       │   └── Admin*Page                # Trang quản trị
+│       ├── routes/                   # React Router + Protected Routes
+│       └── styles/                   # Global styles
+│
+└── stocklab-ml/                      # Python ML Pipeline
+    ├── requirements.txt              # Python dependencies
+    ├── .env.example                  # Cấu hình mẫu
+    ├── api/                          # FastAPI endpoints
+    │   └── main.py                       # ML API server
+    ├── config/                       # DB, Redis, Settings
+    ├── data_ingestion/               # Import & sync dữ liệu OHLCV
+    ├── features/                     # Feature engineering & store
+    ├── models/                       # Train & predict
+    ├── scripts/                      # Migration & test scripts
+    └── tests/                        # Unit tests
 ```
+
+---
+
+## 🎯 Tổng kết
+
+Hệ thống **StockLab** gồm 4 phần cốt lõi:
+
+1. **API Layer (Spring Boot)** → Xử lý request, authentication, authorization
+2. **Core Engine (OMS + Matching Engine)** → Mô phỏng giao dịch chứng khoán thực tế
+3. **AI Layer (Gemini + Ollama + RAG)** → Trợ lý AI thông minh với kiến thức chứng khoán VN
+4. **ML Pipeline (FastAPI + XGBoost)** → Dự đoán xu hướng giá bằng Machine Learning
+5. **Realtime Layer (WebSocket)** → Cập nhật dữ liệu tức thời
+
+👉 **Kiến trúc này cho phép hệ thống:**
+
+- ✅ Mô phỏng giao dịch giống sàn thật (9 loại lệnh)
+- ✅ Xử lý realtime qua WebSocket
+- ✅ AI tư vấn đầu tư thông minh (RAG + Tool Calling)
+- ✅ ML dự đoán xu hướng giá
+- ✅ Dễ mở rộng (microservice-ready)
+- ✅ Triển khai nhanh bằng Docker
+
+---
+
+## 📄 License
+
+This project is for educational purposes.
+
+## 👨‍💻 Author
+
+**Jack0dev** — [GitHub](https://github.com/Jack0dev)
