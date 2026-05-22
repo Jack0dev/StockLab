@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { watchlistAPI } from '../api/api';
+import { usePageTour } from '../hooks/usePageTour';
 import './WatchlistPage.css';
 
 export default function WatchlistPage() {
   const navigate = useNavigate();
+  const { restartTour } = usePageTour('watchlist');
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +69,10 @@ export default function WatchlistPage() {
     <div className="watchlist-page fade-in">
       <div className="wl-header">
         <h2>⭐ Danh sách theo dõi</h2>
-        <span className="wl-count">{watchlist.length} cổ phiếu</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span className="wl-count">{watchlist.length} cổ phiếu</span>
+          <button className="page-tour-btn" onClick={restartTour} title="Hướng dẫn trang này">?</button>
+        </div>
       </div>
 
       {watchlist.length === 0 ? (

@@ -37,12 +37,26 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/stocks/**").permitAll()
+                        .requestMatchers("/api/orders/book/**").permitAll()
+                        .requestMatchers("/api/webhook/**").permitAll()
+                        .requestMatchers("/api/vnpay/ipn", "/api/vnpay/return").permitAll()
+                        .requestMatchers("/api/bot/**").permitAll()
+                        .requestMatchers("/api/platform-token/**").permitAll()
+                        .requestMatchers("/api/signals/**").permitAll()
+                        .requestMatchers("/api/news").permitAll()
+                        .requestMatchers("/api/ai/**").authenticated()
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/trade/**").authenticated()
                         .requestMatchers("/api/watchlist/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> 
+                                response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                        )
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

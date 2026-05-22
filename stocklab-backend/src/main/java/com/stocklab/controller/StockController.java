@@ -2,6 +2,7 @@ package com.stocklab.controller;
 
 import com.stocklab.dto.*;
 import com.stocklab.service.StockService;
+import com.stocklab.service.TechnicalIndicatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,11 +19,8 @@ import java.util.List;
 public class StockController {
 
     private final StockService stockService;
+    private final TechnicalIndicatorService technicalIndicatorService;
 
-    /**
-     * GET /api/stocks?page=0&size=20&sort=ticker&exchange=HOSE
-     * Lấy danh sách cổ phiếu (hỗ trợ pagination, sorting, filter theo sàn)
-     */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<StockResponse>>> getAllStocks(
             @RequestParam(defaultValue = "0") int page,
@@ -42,14 +40,9 @@ public class StockController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * GET /api/stocks/search?keyword=vin
-     * Tìm kiếm cổ phiếu theo ticker hoặc tên công ty
-     */
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<StockResponse>>> searchStocks(
             @RequestParam String keyword) {
-
         ApiResponse<List<StockResponse>> response = stockService.searchStocks(keyword);
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);
@@ -57,14 +50,9 @@ public class StockController {
         return ResponseEntity.badRequest().body(response);
     }
 
-    /**
-     * GET /api/stocks/{ticker}
-     * Lấy chi tiết cổ phiếu theo mã ticker
-     */
     @GetMapping("/{ticker}")
     public ResponseEntity<ApiResponse<StockResponse>> getStockByTicker(
             @PathVariable String ticker) {
-
         ApiResponse<StockResponse> response = stockService.getStockByTicker(ticker);
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);
@@ -72,16 +60,25 @@ public class StockController {
         return ResponseEntity.badRequest().body(response);
     }
 
-    /**
-     * GET /api/stocks/{ticker}/history?range=1M
-     * Lấy lịch sử giá cổ phiếu cho biểu đồ nến
-     */
     @GetMapping("/{ticker}/history")
     public ResponseEntity<ApiResponse<List<StockPriceHistoryResponse>>> getPriceHistory(
             @PathVariable String ticker,
             @RequestParam(defaultValue = "1M") String range) {
-
         ApiResponse<List<StockPriceHistoryResponse>> response = stockService.getPriceHistory(ticker, range);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    /**
+     * GET /api/stocks/{ticker}/indicators
+     * Tính chỉ số kỹ thuật từ dữ liệu DB: RSI, MACD, SMA, Bollinger, Volume
+     */
+    @GetMapping("/{ticker}/indicators")
+    public ResponseEntity<ApiResponse<TechnicalIndicatorsResponse>> getIndicators(
+            @PathVariable String ticker) {
+        ApiResponse<TechnicalIndicatorsResponse> response = technicalIndicatorService.getIndicators(ticker);
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);
         }

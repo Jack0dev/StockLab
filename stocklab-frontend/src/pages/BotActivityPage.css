@@ -1,0 +1,327 @@
+/* ===== Bot Activity Page ===== */
+
+.bot-page {
+  padding: 24px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bot-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 0;
+  color: #8b95a5;
+}
+
+.bot-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(41, 98, 255, 0.15);
+  border-top-color: #2962ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.bot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.bot-header-left h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e2e5ea;
+}
+
+.bot-subtitle {
+  color: #8b95a5;
+  font-size: 0.85rem;
+}
+
+.bot-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.bot-live-badge.live {
+  background: rgba(0, 200, 83, 0.12);
+  color: #00c853;
+  animation: pulse-live 2s ease infinite;
+}
+
+.bot-live-badge.offline {
+  background: rgba(255, 61, 0, 0.12);
+  color: #ff3d00;
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Stats Grid */
+.bot-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.bot-stat-card {
+  background: #1a1f2e;
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.2s;
+}
+
+.bot-stat-card:hover {
+  border-color: #3a3f4e;
+}
+
+.bot-status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bot-status-dot.active {
+  background: #00c853;
+  box-shadow: 0 0 8px rgba(0, 200, 83, 0.5);
+  animation: pulse-green 2s ease infinite;
+}
+
+.bot-status-dot.inactive {
+  background: #ff3d00;
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 4px rgba(0, 200, 83, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(0, 200, 83, 0.6); }
+}
+
+.bot-stat-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.bot-stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bot-stat-label {
+  font-size: 0.75rem;
+  color: #8b95a5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bot-stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e5ea;
+}
+
+.bot-stat-value.text-success { color: #00c853; }
+.bot-stat-value.text-danger { color: #ff3d00; }
+
+.bot-username {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: #7b8aff;
+}
+
+/* Activity Card */
+.bot-activity-card {
+  background: #1a1f2e;
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.bot-activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #2a2f3e;
+}
+
+.bot-activity-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e2e5ea;
+}
+
+.bot-activity-count {
+  font-size: 0.8rem;
+  color: #8b95a5;
+  background: #252a3a;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.bot-empty {
+  text-align: center;
+  padding: 48px 0;
+  color: #8b95a5;
+}
+
+.bot-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+/* Table */
+.bot-table-wrapper {
+  overflow-x: auto;
+}
+
+.bot-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bot-table thead th {
+  padding: 10px 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8b95a5;
+  text-align: left;
+  background: #151a28;
+  border-bottom: 1px solid #2a2f3e;
+}
+
+.bot-table tbody tr {
+  border-bottom: 1px solid #1e2333;
+  transition: background 0.15s;
+}
+
+.bot-table tbody tr:hover {
+  background: rgba(41, 98, 255, 0.05);
+}
+
+.bot-table td {
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  color: #c8ccda;
+}
+
+/* New row animation */
+.bot-row-new {
+  animation: flash-new 1.5s ease-out;
+}
+
+@keyframes flash-new {
+  0% { background: rgba(41, 98, 255, 0.2); }
+  100% { background: transparent; }
+}
+
+.bot-time {
+  color: #8b95a5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.bot-ticker {
+  font-weight: 700;
+  color: #e2e5ea;
+  background: #252a3a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.bot-side-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.bot-side-badge.buy {
+  background: rgba(0, 200, 83, 0.12);
+  color: #00c853;
+}
+
+.bot-side-badge.sell {
+  background: rgba(255, 61, 0, 0.12);
+  color: #ff3d00;
+}
+
+.bot-qty {
+  font-weight: 600;
+  color: #e2e5ea;
+}
+
+.bot-price {
+  font-family: 'JetBrains Mono', monospace;
+  color: #c8ccda;
+}
+
+.bot-total {
+  font-weight: 600;
+  color: #7b8aff;
+}
+
+.bot-status-badge {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bot-status-badge.success {
+  background: rgba(0, 200, 83, 0.12);
+  color: #00c853;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .bot-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .bot-page {
+    padding: 16px;
+  }
+  .bot-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .bot-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

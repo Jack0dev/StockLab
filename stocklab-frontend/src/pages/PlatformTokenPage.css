@@ -1,0 +1,416 @@
+/* ===== SLP Token Page ===== */
+.slp-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.slp-loading,
+.slp-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 400px;
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+/* ===== Hero Section ===== */
+.slp-hero {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  padding: 48px 40px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.slp-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(600px circle at 80% 40%, rgba(99, 102, 241, 0.15), transparent 60%),
+    radial-gradient(400px circle at 20% 80%, rgba(168, 85, 247, 0.1), transparent 50%);
+  animation: heroPulse 8s ease-in-out infinite;
+}
+
+@keyframes heroPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.slp-hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.slp-token-badge {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.slp-token-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+}
+
+.slp-icon-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.slp-icon-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  opacity: 0.3;
+  filter: blur(8px);
+  animation: iconGlow 3s ease-in-out infinite;
+}
+
+@keyframes iconGlow {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.15); opacity: 0.5; }
+}
+
+.slp-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0 0 4px 0;
+}
+
+.slp-ticker {
+  font-size: 0.95rem;
+  color: #a78bfa;
+  font-weight: 600;
+  background: rgba(139, 92, 246, 0.15);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.slp-price-section {
+  text-align: right;
+}
+
+.slp-current-price {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.slp-currency {
+  font-size: 1rem;
+  color: #64748b;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.slp-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.slp-change.positive {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.slp-change.negative {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.slp-change.neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+.slp-change-pct {
+  opacity: 0.8;
+}
+
+/* ===== Stats Grid ===== */
+.slp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.slp-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 14px;
+  transition: all 0.3s ease;
+}
+
+.slp-stat-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.slp-stat-icon {
+  font-size: 2rem;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.slp-stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slp-stat-label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.slp-stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.slp-stat-value.highlight {
+  color: #a78bfa;
+}
+
+/* ===== Revenue Section ===== */
+.slp-revenue-section,
+.slp-info-section {
+  margin-bottom: 32px;
+}
+
+.slp-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0 0 20px 0;
+}
+
+.slp-section-icon {
+  font-size: 1.5rem;
+}
+
+.slp-revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.slp-revenue-card {
+  padding: 24px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 14px;
+  transition: all 0.3s ease;
+}
+
+.slp-revenue-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+}
+
+.slp-revenue-card.total-fees {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(49, 46, 129, 0.3));
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.slp-revenue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.slp-revenue-label {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.slp-revenue-badge {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.2);
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+.slp-revenue-badge.today {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.slp-revenue-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.slp-revenue-unit {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.slp-revenue-bar {
+  height: 6px;
+  background: rgba(99, 102, 241, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.slp-revenue-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  border-radius: 3px;
+  transition: width 1s ease;
+  min-width: 2%;
+}
+
+/* ===== Info Cards ===== */
+.slp-info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.slp-info-card {
+  padding: 28px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.slp-info-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+}
+
+.slp-info-step {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.slp-info-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0 0 10px 0;
+}
+
+.slp-info-card p {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.slp-info-card code {
+  background: rgba(99, 102, 241, 0.2);
+  color: #a78bfa;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .slp-hero {
+    padding: 28px 20px;
+  }
+
+  .slp-hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .slp-token-badge {
+    flex-direction: column;
+  }
+
+  .slp-price-section {
+    text-align: center;
+  }
+
+  .slp-current-price {
+    font-size: 2.2rem;
+  }
+
+  .slp-revenue-card.total-fees {
+    grid-column: span 1;
+  }
+}
+
+/* ===== Animations ===== */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

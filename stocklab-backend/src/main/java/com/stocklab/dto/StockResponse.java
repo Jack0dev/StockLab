@@ -24,4 +24,5 @@ public class StockResponse {
     private Long volume;
     private BigDecimal change;
     private Double changePercent;
+    private boolean isActive;
 }

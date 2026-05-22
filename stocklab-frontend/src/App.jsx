@@ -1,17 +1,15 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import Navbar from './components/Navbar'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
+import TourOverlay from './components/TourOverlay'
+import AIChatWidget from './components/AIChatWidget'
 
-import ProfilePage from './pages/ProfilePage'
-import StockListPage from './pages/StockListPage'
-import StockDetailPage from './pages/StockDetailPage'
-import TradingPage from './pages/TradingPage'
-import TransactionHistoryPage from './pages/TransactionHistoryPage'
-import PortfolioPage from './pages/PortfolioPage'
-import WatchlistPage from './pages/WatchlistPage'
+// Route modules — mỗi module quản lý route riêng, tránh conflict
+import publicRoutes from './routes/PublicRoutes'
+import protectedRoutes from './routes/ProtectedRoutes'
+import adminRoutes from './routes/AdminRoutes'
 
 // Layout chính (có Navbar) cho các trang sau khi đăng nhập
 function AppLayout() {
@@ -21,12 +19,15 @@ function AppLayout() {
       <main style={{ flex: 1 }}>
         <Outlet />
       </main>
+      <TourOverlay />
+      <AIChatWidget />
     </>
   )
 }
 
+
 function App() {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, user, loading } = useAuth()
 
   if (loading) {
     return (
@@ -39,8 +40,9 @@ function App() {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/stocks" /> : <LoginPage />} />
-      <Route path="/register" element={isAuthenticated ? <Navigate to="/stocks" /> : <RegisterPage />} />
+      {publicRoutes.map(({ path, page: Page }) => (
+        <Route key={path} path={path} element={isAuthenticated ? <Navigate to={user?.role === 'ADMIN' ? '/admin/stocks' : '/stocks'} /> : <Page />} />
+      ))}
 
       {/* Protected routes */}
       <Route element={
@@ -48,18 +50,22 @@ function App() {
           <AppLayout />
         </ProtectedRoute>
       }>
+        {protectedRoutes.map(({ path, element }) => (
+          <Route key={path} path={path} element={element} />
+        ))}
+      </Route>
 
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/stocks" element={<StockListPage />} />
-        <Route path="/stocks/:ticker" element={<StockDetailPage />} />
-        <Route path="/trading" element={<TradingPage />} />
-        <Route path="/transactions" element={<TransactionHistoryPage />} />
-        <Route path="/portfolio" element={<PortfolioPage />} />
-        <Route path="/watchlist" element={<WatchlistPage />} />
+      {/* Admin routes */}
+      <Route element={<AdminRoute />}>
+        <Route element={<AppLayout />}>
+          {adminRoutes.map(({ path, element }) => (
+            <Route key={path} path={path} element={element} />
+          ))}
+        </Route>
       </Route>
 
       {/* Default redirect */}
-      <Route path="*" element={<Navigate to={isAuthenticated ? "/stocks" : "/login"} />} />
+      <Route path="*" element={<Navigate to={isAuthenticated ? (user?.role === 'ADMIN' ? '/admin/stocks' : '/stocks') : '/login'} />} />
     </Routes>
   )
 }

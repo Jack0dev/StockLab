@@ -56,9 +56,23 @@ public class User {
     @Builder.Default
     private BigDecimal balance = new BigDecimal("10000000.00"); // 10 triệu VND mặc định
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isActive = true;
+
     @Column(nullable = false, precision = 15, scale = 2)
     @Builder.Default
     private BigDecimal lockedBalance = BigDecimal.ZERO; // Tiền bị lock cho lệnh BUY đang PENDING
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String avatarUrl;
+
+    @Column(name = "is2fa_enabled", nullable = false)
+    @Builder.Default
+    private boolean is2faEnabled = false;
+
+    @Column(name = "two_fa_secret")
+    private String twoFaSecret;
 
     /**
      * Số dư khả dụng = tổng số dư - tiền đang lock

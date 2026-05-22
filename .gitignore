@@ -20,6 +20,23 @@ target/
 .DS_Store
 Thumbs.db
 
-# Env
+# Env & Secrets
 .env
 .env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ML Artifacts (không commit model files lớn)
+*.pkl
+*.joblib
+stocklab-ml/models/*.json
+stocklab-ml/models/*.bin
+
+# Docker
+docker-compose.override.yml

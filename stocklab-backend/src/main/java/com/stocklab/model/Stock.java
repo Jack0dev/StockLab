@@ -65,6 +65,10 @@ public class Stock {
     @Builder.Default
     private Double changePercent = 0.0;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isActive = true;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

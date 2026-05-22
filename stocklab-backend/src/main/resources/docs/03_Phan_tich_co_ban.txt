@@ -1,0 +1,132 @@
+PHÂN TÍCH CƠ BẢN CHỨNG KHOÁN (Fundamental Analysis)
+=====================================================
+
+Phân tích cơ bản là phương pháp đánh giá giá trị thực (intrinsic value) của cổ phiếu dựa trên tình hình tài chính, kinh doanh và triển vọng tăng trưởng của doanh nghiệp.
+
+---
+
+1. CHỈ SỐ P/E (Price-to-Earnings Ratio)
+
+Công thức: P/E = Giá cổ phiếu / Lợi nhuận trên mỗi cổ phiếu (EPS)
+
+Ý nghĩa: Nhà đầu tư sẵn sàng trả bao nhiêu đồng cho mỗi đồng lợi nhuận.
+
+Cách đọc:
+- P/E thấp (< 10): Cổ phiếu có thể đang bị định giá thấp (undervalued), hoặc triển vọng tăng trưởng kém
+- P/E trung bình (10-20): Mức định giá hợp lý cho đa số ngành
+- P/E cao (> 20): Cổ phiếu đang được kỳ vọng tăng trưởng mạnh, hoặc đang bị định giá cao (overvalued)
+
+So sánh: Luôn so P/E của cổ phiếu với P/E trung bình ngành. Ví dụ: P/E ngành ngân hàng VN khoảng 8-12, ngành công nghệ khoảng 15-25.
+
+---
+
+2. CHỈ SỐ P/B (Price-to-Book Ratio)
+
+Công thức: P/B = Giá cổ phiếu / Giá trị sổ sách mỗi cổ phiếu
+
+Ý nghĩa: So sánh giá thị trường với giá trị tài sản ròng.
+
+- P/B < 1: Giá thị trường thấp hơn giá trị sổ sách → có thể là cơ hội mua
+- P/B = 1-3: Mức bình thường cho đa số doanh nghiệp
+- P/B > 3: Thị trường đánh giá cao vượt trội tài sản hữu hình → thường là doanh nghiệp có thương hiệu mạnh hoặc tài sản vô hình lớn
+
+---
+
+3. EPS - LỢI NHUẬN TRÊN MỖI CỔ PHIẾU (Earnings Per Share)
+
+Công thức: EPS = (Lợi nhuận sau thuế - Cổ tức ưu đãi) / Số cổ phiếu đang lưu hành
+
+EPS là chỉ số quan trọng nhất phản ánh khả năng sinh lời.
+- EPS tăng liên tục qua các quý → Doanh nghiệp đang phát triển tốt
+- EPS giảm → Doanh nghiệp đang gặp khó khăn
+- EPS âm → Doanh nghiệp đang thua lỗ
+
+---
+
+4. ROE - LỢI NHUẬN TRÊN VỐN CHỦ SỞ HỮU (Return on Equity)
+
+Công thức: ROE = Lợi nhuận sau thuế / Vốn chủ sở hữu × 100%
+
+Ý nghĩa: Đo hiệu quả sử dụng vốn của cổ đông.
+
+- ROE > 15%: Rất tốt, doanh nghiệp sử dụng vốn hiệu quả
+- ROE 10-15%: Khá tốt
+- ROE < 10%: Hiệu quả sử dụng vốn thấp
+- Warren Buffett thường chọn cổ phiếu có ROE ổn định trên 15% trong 5-10 năm
+
+---
+
+5. ROA - LỢI NHUẬN TRÊN TỔNG TÀI SẢN (Return on Assets)
+
+Công thức: ROA = Lợi nhuận sau thuế / Tổng tài sản × 100%
+
+- ROA > 10%: Xuất sắc
+- ROA 5-10%: Tốt
+- ROA < 5%: Trung bình hoặc yếu
+- Ngành ngân hàng thường có ROA thấp (1-2%) vì đòn bẩy tài chính cao
+
+---
+
+6. TỶ SỐ NỢ TRÊN VỐN CHỦ SỞ HỮU (Debt-to-Equity Ratio - D/E)
+
+Công thức: D/E = Tổng nợ / Vốn chủ sở hữu
+
+- D/E < 1: Doanh nghiệp ít sử dụng đòn bẩy tài chính, rủi ro thấp
+- D/E = 1-2: Mức trung bình
+- D/E > 2: Đòn bẩy cao, rủi ro tài chính lớn, dễ bị tổn thương khi lãi suất tăng
+
+---
+
+7. BIÊN LỢI NHUẬN GỘP (Gross Margin)
+
+Công thức: Gross Margin = (Doanh thu - Giá vốn hàng bán) / Doanh thu × 100%
+
+- Gross Margin cao → Doanh nghiệp có lợi thế cạnh tranh, có thể định giá sản phẩm cao
+- Gross Margin ổn định qua các năm → Kinh doanh bền vững
+- Gross Margin giảm → Cạnh tranh tăng hoặc chi phí đầu vào tăng
+
+---
+
+8. BIÊN LỢI NHUẬN RÒNG (Net Margin)
+
+Công thức: Net Margin = Lợi nhuận sau thuế / Doanh thu × 100%
+
+- Net Margin > 20%: Xuất sắc
+- Net Margin 10-20%: Tốt
+- Net Margin 5-10%: Trung bình
+- Net Margin < 5%: Thấp, doanh nghiệp có thể gặp áp lực chi phí
+
+---
+
+9. DÒNG TIỀN TỰ DO (Free Cash Flow - FCF)
+
+Công thức: FCF = Dòng tiền từ hoạt động kinh doanh - Chi phí đầu tư tài sản cố định
+
+Ý nghĩa: Tiền mặt thực sự mà doanh nghiệp tạo ra sau khi duy trì hoạt động.
+- FCF dương và tăng trưởng → Doanh nghiệp khỏe mạnh, có tiền trả cổ tức và đầu tư
+- FCF âm liên tục → Doanh nghiệp đang "đốt tiền", cần cẩn trọng
+
+---
+
+10. TỶ LỆ CHI TRẢ CỔ TỨC (Dividend Payout Ratio)
+
+Công thức: Payout Ratio = Cổ tức mỗi cổ phiếu / EPS × 100%
+
+- Payout 30-50%: Cân bằng giữa trả cổ tức và tái đầu tư
+- Payout > 80%: Chi trả nhiều, ít tái đầu tư → tăng trưởng có thể chậm lại
+- Payout < 20%: Giữ lại phần lớn lợi nhuận để tái đầu tư → phù hợp công ty tăng trưởng
+
+---
+
+11. ĐỊNH GIÁ CỔ PHIẾU THEO PHƯƠNG PHÁP DCF (Discounted Cash Flow)
+
+Nguyên lý: Giá trị cổ phiếu = Tổng giá trị hiện tại của tất cả dòng tiền tương lai.
+
+Các bước:
+1. Dự phóng dòng tiền tự do trong 5-10 năm tới
+2. Xác định tỷ lệ chiết khấu (WACC)
+3. Tính giá trị cuối kỳ (Terminal Value)
+4. Chiết khấu tất cả về hiện tại
+5. Chia cho số cổ phiếu → Giá trị nội tại mỗi cổ phiếu
+
+Nếu giá thị trường < giá trị DCF → Cổ phiếu đang bị định giá thấp (Margin of Safety)

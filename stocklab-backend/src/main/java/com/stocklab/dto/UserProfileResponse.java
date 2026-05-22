@@ -18,5 +18,9 @@ public class UserProfileResponse {
     private String phone;
     private String role;
     private BigDecimal balance;
+    private BigDecimal lockedBalance;
+    private BigDecimal availableBalance;
+    private boolean isActive;
+    private String avatarUrl;
     private LocalDateTime createdAt;
 }

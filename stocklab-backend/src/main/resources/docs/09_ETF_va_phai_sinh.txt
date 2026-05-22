@@ -1,0 +1,101 @@
+ETF VÀ CÁC SẢN PHẨM TÀI CHÍNH PHÁI SINH TẠI VIỆT NAM
+=========================================================
+
+1. ETF - QUỸ HOÁN ĐỔI DANH MỤC
+
+ETF (Exchange-Traded Fund) là quỹ đầu tư được giao dịch trên sàn chứng khoán giống như cổ phiếu. ETF theo dõi một chỉ số (index) và giúp nhà đầu tư đa dạng hóa dễ dàng.
+
+Các ETF phổ biến tại Việt Nam:
+
+a) FUEVFVND (VanEck Vietnam ETF): 
+- Theo dõi nhóm cổ phiếu Việt Nam lớn
+- Nhà đầu tư nước ngoài thường sử dụng
+
+b) E1VFVN30 (VFMVN30 ETF):
+- Theo dõi chỉ số VN30 (30 cổ phiếu blue-chip)
+- Thanh khoản cao nhất trong các ETF nội
+- Phù hợp cho nhà đầu tư muốn đầu tư dài hạn vào blue-chip mà không cần chọn từng mã
+
+c) FUEVN100 (VFM VN100 ETF):
+- Theo dõi chỉ số VN100 (100 cổ phiếu lớn nhất)
+- Đa dạng hơn VN30
+
+d) FUESSVFL (SSIAM VNFin Lead ETF):
+- Tập trung vào cổ phiếu tài chính, ngân hàng
+- Phù hợp khi kỳ vọng ngành ngân hàng tăng trưởng
+
+Ưu điểm ETF:
+- Đa dạng hóa tự động: Mua 1 ETF = mua 30-100 cổ phiếu
+- Phí quản lý thấp (0.5-1%/năm)
+- Minh bạch: Danh mục công khai hàng ngày
+- Giao dịch linh hoạt như cổ phiếu
+
+---
+
+2. CHỨNG QUYỀN CÓ BẢO ĐẢM (Covered Warrants - CW)
+
+Chứng quyền là quyền MUA hoặc BÁN một cổ phiếu cơ sở tại mức giá xác định trước trong một khoảng thời gian nhất định.
+
+Thuật ngữ:
+- Call Warrant: Quyền MUA → Lãi khi giá cổ phiếu tăng
+- Put Warrant: Quyền BÁN → Lãi khi giá cổ phiếu giảm
+- Giá thực hiện (Strike Price): Mức giá được quy định để mua/bán cổ phiếu
+- Ngày đáo hạn (Expiry): Ngày chứng quyền hết hiệu lực
+- Tỷ lệ chuyển đổi: Bao nhiêu CW = 1 cổ phiếu cơ sở
+
+Ví dụ: CW trên VCB, Strike = 90,000, Tỷ lệ 2:1
+- Mua 2 CW giá 3,000 mỗi CW → Tổng chi 6,000
+- Nếu VCB tăng lên 100,000 → Lãi = (100,000 - 90,000) / 2 - 3,000 = 2,000/CW (+67%)
+- Nếu VCB giảm dưới 90,000 → Mất 100% vốn mua CW
+
+Rủi ro CW: Đòn bẩy cao, có thể mất 100% vốn, time decay (giá trị giảm theo thời gian).
+
+---
+
+3. HỢP ĐỒNG TƯƠNG LAI (Futures)
+
+VN30F1M: Hợp đồng tương lai trên chỉ số VN30, thanh toán hàng tháng.
+
+Đặc điểm:
+- Giao dịch hai chiều: Có thể LONG (mua) hoặc SHORT (bán khống)
+- Đòn bẩy: Ký quỹ ~15-20%, tức đòn bẩy 5-7 lần
+- Thanh toán bù trừ hàng ngày (Mark-to-Market)
+- Hợp đồng hiện tại, tháng sau, quý hiện tại, quý sau
+
+Chiến lược sử dụng:
+- Đầu cơ: Long VN30F khi kỳ vọng tăng, Short khi kỳ vọng giảm
+- Phòng hộ (Hedging): Đang nắm danh mục cổ phiếu, short VN30F để bảo vệ khi lo ngại giảm
+- Arbitrage: Lợi dụng chênh lệch giá giữa futures và spot
+
+---
+
+4. TRÁI PHIẾU (Bonds)
+
+a) Trái phiếu Chính phủ: An toàn nhất, lãi suất thấp (3-5%/năm), kỳ hạn 5-30 năm.
+b) Trái phiếu Doanh nghiệp: Lãi suất cao hơn (8-12%/năm), rủi ro cao hơn.
+
+Thuật ngữ:
+- Coupon Rate: Lãi suất danh nghĩa trả định kỳ
+- Yield to Maturity (YTM): Lợi suất thực nếu giữ đến đáo hạn
+- Credit Rating: Xếp hạng tín nhiệm (AAA → D)
+- Duration: Thời gian nhạy cảm với lãi suất
+
+Lưu ý về trái phiếu doanh nghiệp VN:
+- Nhiều doanh nghiệp BĐS phát hành TP lãi suất cao để huy động vốn
+- Cần kiểm tra: mục đích sử dụng vốn, tài sản đảm bảo, xếp hạng tín nhiệm
+- Rủi ro thanh khoản: Khó bán trước hạn
+
+---
+
+5. CHỨNG CHỈ QUỸ (Fund Certificates)
+
+a) Quỹ mở (Open-end Fund): Nhà đầu tư có thể mua/bán lại cho quỹ bất kỳ lúc nào theo NAV.
+b) Quỹ đóng (Closed-end Fund): Chỉ mua bán trên sàn, giá theo cung cầu.
+
+Các quỹ nổi bật:
+- VFMVSF: Quỹ cổ phiếu chọn lọc VFM
+- VinaCapital VEF: Quỹ cổ phiếu Emerging Vietnam
+- Dragon Capital VEIL: Quỹ đầu tư lâu đời nhất VN
+
+Ưu điểm: Được quản lý chuyên nghiệp, phù hợp nhà đầu tư ít kinh nghiệm.
+Nhược điểm: Phí quản lý (1-2%/năm), không chủ động chọn cổ phiếu.

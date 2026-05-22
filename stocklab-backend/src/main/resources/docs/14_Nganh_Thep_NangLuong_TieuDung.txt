@@ -1,0 +1,102 @@
+PHÂN TÍCH NGÀNH THÉP, NĂNG LƯỢNG VÀ TIÊU DÙNG
+=================================================
+
+PHẦN 1: NGÀNH THÉP VÀ VẬT LIỆU XÂY DỰNG
+---
+
+1. CÁC DOANH NGHIỆP THÉP LỚN
+
+HPG (Hòa Phát Group): Nhà sản xuất thép lớn nhất Việt Nam và Đông Nam Á
+- Sản lượng: ~8 triệu tấn thép/năm
+- Chuỗi giá trị khép kín: Khai mỏ → Luyện gang → Cán thép → Sản phẩm cuối
+- Dung Quất Complex: Nhà máy thép hiện đại nhất, sản xuất HRC (thép cuộn cán nóng)
+- Đa ngành: Thép, nông nghiệp, BĐS, nội thất
+- Yếu tố ảnh hưởng: Giá thép thế giới, giá quặng sắt, nhu cầu xây dựng trong nước
+
+HSG (Hoa Sen Group): Top 2 về tôn mạ và ống thép
+- Xuất khẩu > 30% sản lượng
+- Chịu ảnh hưởng thuế chống bán phá giá
+
+NKG (Nam Kim Steel): Tôn mạ, xuất khẩu mạnh sang EU và Mỹ
+
+2. YẾU TỐ QUAN TRỌNG
+
+- Giá HRC (Hot Rolled Coil): Giá thép cán nóng thế giới quyết định biên lợi nhuận. Giá HRC tăng → HPG lãi lớn. Giá HRC giảm → HPG giảm lãi.
+- Nhu cầu xây dựng: Đầu tư công tăng → Nhu cầu thép tăng
+- Giá quặng sắt và than cốc: Chi phí đầu vào chính
+- Thuế chống bán phá giá: Mỹ/EU áp thuế lên thép VN → Ảnh hưởng xuất khẩu
+
+---
+
+PHẦN 2: NGÀNH NĂNG LƯỢNG VÀ DẦU KHÍ
+---
+
+1. NHÓM DẦU KHÍ
+
+GAS (PV Gas): Độc quyền phân phối khí tại VN. Doanh thu ổn định, cổ tức cao (~5%/năm). Chịu ảnh hưởng giá dầu thế giới.
+
+PLX (Petrolimex): Phân phối xăng dầu lớn nhất VN (~50% thị phần). Lợi nhuận phụ thuộc vào chênh lệch giá mua - bán và trích quỹ bình ổn.
+
+PVD (PV Drilling): Khoan dầu khí. Doanh thu phụ thuộc vào giá thuê giàn khoan. Khi giá dầu > 60 USD/thùng → Hoạt động tốt.
+
+PVS (PV Technical Services): Dịch vụ kỹ thuật dầu khí. Backlog hợp đồng lớn.
+
+BSR (Bình Sơn Refinery): Lọc dầu Dung Quất. Biên lợi nhuận phụ thuộc crack spread (chênh lệch giá dầu thô và sản phẩm lọc).
+
+2. NHÓM ĐIỆN
+
+POW (PV Power): Nhà sản xuất điện lớn (nhiệt điện khí, thủy điện)
+REE (REE Corporation): Cơ điện lạnh + đầu tư thủy điện, nước sạch. Doanh thu ổn định.
+PC1 (Power Construction 1): Thi công điện gió, điện mặt trời
+BCG (Bamboo Capital): Điện mặt trời
+
+3. NĂNG LƯỢNG TÁI TẠO
+- Điện gió ngoài khơi: Tiềm năng lớn, VN có bờ biển 3,260 km
+- Điện mặt trời: Đã bùng nổ 2019-2020, hiện đang điều chỉnh chính sách FIT
+- LNG (Khí thiên nhiên hóa lỏng): Xu hướng chuyển đổi từ than sang khí
+
+---
+
+PHẦN 3: NGÀNH TIÊU DÙNG VÀ BÁN LẺ
+---
+
+1. THỰC PHẨM VÀ ĐỒ UỐNG
+
+VNM (Vinamilk): Doanh nghiệp sữa lớn nhất VN
+- Thị phần sữa nước: ~55%
+- Cổ phiếu phòng thủ: Ít biến động, cổ tức đều (~4%/năm)
+- Thách thức: Thị trường sữa bão hòa, tăng trưởng chậm lại
+
+SAB (Sabeco - Bia Sài Gòn): Thuộc ThaiBev
+- Bia 333, Saigon Special, Saigon Export
+- Margin cao nhưng sản lượng tăng trưởng chậm
+
+MSN (Masan Group): Tập đoàn tiêu dùng đa ngành
+- WinCommerce (WinMart/WinMart+): Chuỗi siêu thị lớn nhất VN
+- Masan Consumer: Nước mắm Chin-Su, mì Omachi
+- Phúc Long: Trà và cà phê
+- Techcombank (sở hữu gián tiếp)
+
+DGW (Digiworld): Phân phối công nghệ (Xiaomi, HP, Dell, Apple)
+
+2. BÁN LẺ
+
+MWG (Thế Giới Di Động):
+- Thegioididong.com: Bán lẻ điện thoại
+- Điện Máy Xanh: Bán lẻ điện máy
+- Bách Hóa Xanh: Bán lẻ thực phẩm (đang tái cơ cấu)
+- An Khang: Nhà thuốc
+
+PNJ (Phú Nhuận Jewelry): Bán lẻ trang sức
+- Thị phần trang sức branded: >60%
+- Tăng trưởng ổn định, ROE ~25%
+
+FRT (FPT Retail):
+- FPT Shop: Bán lẻ điện thoại, laptop
+- Long Châu: Chuỗi nhà thuốc lớn nhất VN (~1,800 cửa hàng). Tăng trưởng >30%/năm, động lực chính.
+
+3. YẾU TỐ ẢNH HƯỞNG
+- GDP bình quân đầu người tăng → Sức mua tăng → Tiêu dùng tăng
+- Dân số trẻ (median age ~31): Nhu cầu tiêu dùng lớn
+- Đô thị hóa: Chuyển từ chợ truyền thống sang siêu thị, online
+- E-commerce: Shopee, Lazada, TikTok Shop cạnh tranh với bán lẻ offline

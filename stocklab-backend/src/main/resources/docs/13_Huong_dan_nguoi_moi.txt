@@ -1,0 +1,117 @@
+HƯỚNG DẪN ĐẦU TƯ CHO NGƯỜI MỚI BẮT ĐẦU
+==========================================
+
+1. TRƯỚC KHI BẮT ĐẦU
+
+Câu hỏi cần tự trả lời:
+- Mục tiêu đầu tư là gì? (Bảo toàn vốn, tăng trưởng, thu nhập thụ động?)
+- Thời gian đầu tư bao lâu? (6 tháng, 1 năm, 5 năm, 10 năm?)
+- Chấp nhận mức rủi ro nào? (Sẵn sàng mất bao nhiêu % tài khoản?)
+- Có bao nhiêu tiền nhàn rỗi để đầu tư? (KHÔNG BAO GIỜ đầu tư bằng tiền vay hoặc tiền cần dùng)
+
+---
+
+2. MỞ TÀI KHOẢN CHỨNG KHOÁN
+
+Các bước:
+1. Chọn công ty chứng khoán (CTCK): SSI, VPS, TCBS, VNDirect, MBS, HSC
+2. Đăng ký online (eKYC) hoặc đến quầy giao dịch
+3. Cần: CMND/CCCD, tài khoản ngân hàng
+4. Nạp tiền vào tài khoản chứng khoán
+5. Tải app giao dịch: SSI iBoard, VPS SmartOne, TCBS...
+
+Tiêu chí chọn CTCK:
+- Phí giao dịch thấp (0.15-0.25%)
+- App giao dịch ổn định, dễ dùng
+- Có công cụ phân tích tốt
+- Hỗ trợ margin nếu cần
+- Dịch vụ khách hàng tốt
+
+---
+
+3. QUY TẮC VÀNG CHO NGƯỜI MỚI
+
+a) Quy tắc 10-10-10:
+- 10% thu nhập hàng tháng dành cho đầu tư
+- 10 cổ phiếu tối đa trong danh mục
+- 10 phút mỗi ngày đọc tin tức tài chính
+
+b) Bắt đầu nhỏ:
+- Đầu tư 5-10 triệu VND ban đầu để làm quen
+- Mua ETF VN30 (E1VFVN30) nếu chưa biết chọn cổ phiếu
+- Tăng dần khi đã có kinh nghiệm
+
+c) Không làm:
+- KHÔNG mua theo "tin đồn" hoặc "hội nhóm bơm thổi"
+- KHÔNG all-in vào một cổ phiếu duy nhất
+- KHÔNG giao dịch quá nhiều (overtrading)
+- KHÔNG sử dụng margin khi mới bắt đầu
+- KHÔNG đầu tư bằng tiền vay hoặc tiền cần dùng trong 6 tháng tới
+
+---
+
+4. CÁCH CHỌN CỔ PHIẾU ĐẦU TIÊN
+
+Bước 1: Chọn ngành quen thuộc
+- Bạn làm ngân hàng → Hiểu ngành ngân hàng → Bắt đầu với VCB, TCB
+- Bạn dùng iPhone → Hiểu FPT Retail → Xem xét FRT
+- Bạn uống sữa Vinamilk → Hiểu ngành tiêu dùng → Xem xét VNM
+
+Bước 2: Kiểm tra cơ bản
+- EPS > 0 và tăng trưởng dương
+- ROE > 15%
+- Nợ/Vốn CSH < 1
+- Doanh thu tăng trưởng qua các quý
+
+Bước 3: Kiểm tra kỹ thuật
+- Giá trên SMA 50 (xu hướng tăng)
+- RSI 40-60 (không quá mua, không quá bán)
+- Khối lượng giao dịch ổn định
+
+Bước 4: Mua theo DCA
+- Chia tiền thành 3-4 lần mua
+- Mua mỗi tuần hoặc mỗi tháng
+- Giá trung bình sẽ được san phẳng
+
+---
+
+5. PHÂN BỔ DANH MỤC CHO NGƯỜI MỚI
+
+Danh mục an toàn (Conservative):
+- 40% Blue-chip (VCB, FPT, VNM)
+- 30% ETF VN30
+- 20% Tiền mặt/Trái phiếu
+- 10% Cổ phiếu mid-cap tiềm năng
+
+Danh mục cân bằng (Balanced):
+- 50% Blue-chip
+- 20% Mid-cap tăng trưởng
+- 20% ETF
+- 10% Tiền mặt
+
+---
+
+6. KHI NÀO NÊN BÁN?
+
+Bán khi:
+- Đạt mục tiêu lợi nhuận (ví dụ: +30%)
+- Cổ phiếu chạm stop loss (-7% đến -10%)
+- Cơ bản doanh nghiệp xấu đi (EPS giảm, nợ tăng, ban lãnh đạo bán cổ phiếu)
+- Tìm được cơ hội tốt hơn để chuyển đổi
+
+KHÔNG bán khi:
+- Chỉ vì giá giảm ngắn hạn (nếu cơ bản vẫn tốt)
+- Vì hoảng sợ theo đám đông
+- Vì nghe "chuyên gia" trên mạng xã hội
+
+---
+
+7. LỊCH SỬ KHỦNG HOẢNG THỊ TRƯỜNG VN
+
+2007-2009: Bong bóng chứng khoán VN vỡ. VN-Index từ 1,170 → 235 điểm (-80%). Bài học: Đừng bao giờ dùng đòn bẩy quá mức.
+
+2018: Trade war Mỹ-Trung. VN-Index giảm từ 1,200 → 890 (-25%). Phục hồi trong 2 năm.
+
+2020 (COVID): VN-Index giảm từ 990 → 660 (-33%) trong 1 tháng. Phục hồi V-shape lên 1,500 trong 12 tháng. Bài học: Khủng hoảng = Cơ hội cho người kiên nhẫn.
+
+2022: Khủng hoảng trái phiếu BĐS (Tân Hoàng Minh, FLC, Vạn Thịnh Phát). VN-Index giảm từ 1,530 → 873 (-43%). Bài học: Tránh xa cổ phiếu có rủi ro pháp lý cao.

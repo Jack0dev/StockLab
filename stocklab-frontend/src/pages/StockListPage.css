@@ -314,3 +314,39 @@
     overflow-x: auto;
   }
 }
+
+/* ===== WebSocket Live Animations [Module 5] ===== */
+
+.ws-live-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #00c853;
+  background: rgba(0, 200, 83, 0.1);
+  padding: 2px 10px;
+  border-radius: 12px;
+  animation: pulse-live 2s ease infinite;
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Flash animation when price changes */
+.flash-up {
+  animation: flash-green 0.8s ease-out;
+}
+
+.flash-down {
+  animation: flash-red 0.8s ease-out;
+}
+
+@keyframes flash-green {
+  0% { background: rgba(0, 200, 83, 0.35); }
+  100% { background: transparent; }
+}
+
+@keyframes flash-red {
+  0% { background: rgba(255, 61, 0, 0.35); }
+  100% { background: transparent; }
+}

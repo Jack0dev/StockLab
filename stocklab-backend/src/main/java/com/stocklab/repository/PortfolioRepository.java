@@ -12,6 +12,8 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
     List<Portfolio> findByUserId(Long userId);
 
+    boolean existsByUserId(Long userId);
+
     Optional<Portfolio> findByUserIdAndStockId(Long userId, Long stockId);
 
     Optional<Portfolio> findByUserIdAndStockTicker(Long userId, String ticker);

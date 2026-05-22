@@ -1,0 +1,88 @@
+TÂM LÝ GIAO DỊCH VÀ KỶ LUẬT ĐẦU TƯ
+=======================================
+
+1. TÂM LÝ THỊ TRƯỜNG (Market Psychology)
+
+Thị trường chứng khoán vận hành theo chu kỳ tâm lý:
+
+Lạc quan (Optimism) → Hứng khởi (Excitement) → Phấn khích (Thrill) → Hưng phấn (Euphoria)
+→ Lo lắng (Anxiety) → Từ chối (Denial) → Sợ hãi (Fear) → Tuyệt vọng (Desperation)
+→ Hoảng loạn (Panic) → Đầu hàng (Capitulation) → Chán nản (Depression)
+→ Hy vọng (Hope) → Lạc quan (Optimism) → ...lặp lại
+
+Điểm MUA tốt nhất: Khi đám đông đang ở giai đoạn Tuyệt vọng/Hoảng loạn/Đầu hàng.
+Điểm BÁN tốt nhất: Khi đám đông đang ở giai đoạn Phấn khích/Hưng phấn.
+
+Warren Buffett: "Be fearful when others are greedy, and greedy when others are fearful."
+
+---
+
+2. CÁC THIÊN KIẾN TÂM LÝ PHẢI TRÁNH
+
+a) Confirmation Bias (Thiên kiến xác nhận):
+Bạn mua VCB → Chỉ đọc tin tốt về VCB → Bỏ qua cảnh báo rủi ro.
+Cách khắc phục: Chủ động tìm lý do KHÔNG NÊN MUA trước khi quyết định.
+
+b) Anchoring Bias (Thiên kiến neo giá):
+Bạn mua FPT giá 120,000. Giá giảm về 100,000. Bạn không bán vì "chờ về 120,000."
+Thực tế: Giá mua không liên quan đến giá trị hiện tại. Hãy hỏi: "Nếu chưa có cổ phiếu này, tôi có mua ở giá hiện tại không?"
+
+c) Loss Aversion (Sợ thua lỗ):
+Nghiên cứu cho thấy nỗi đau mất 1 triệu = 2.5 lần niềm vui khi lãi 1 triệu.
+Hậu quả: Giữ cổ phiếu thua lỗ quá lâu (hy vọng hồi), bán cổ phiếu lãi quá sớm (sợ mất lãi).
+Cách khắc phục: Đặt stop loss TRƯỚC KHI MUA.
+
+d) Recency Bias (Thiên kiến gần đây):
+Thị trường tăng 3 tháng liên tiếp → Bạn nghĩ "sẽ tiếp tục tăng mãi."
+Thị trường giảm 2 tuần → Bạn nghĩ "thế giới sắp sụp đổ."
+Cách khắc phục: Nhìn dữ liệu dài hạn (1-5 năm), không phản ứng theo tuần.
+
+e) Herd Mentality (Tâm lý bầy đàn):
+Thấy mọi người mua HPG → Bạn cũng mua HPG.
+Thấy mọi người bán → Bạn cũng bán.
+Cách khắc phục: Có kế hoạch giao dịch TRƯỚC, tuân thủ kế hoạch, không thay đổi vì đám đông.
+
+f) Overconfidence (Tự tin thái quá):
+Lãi 3 lệnh liên tiếp → "Tôi giỏi quá" → Tăng kích thước lệnh → Thua lỗ nặng.
+Cách khắc phục: Luôn tuân thủ quy tắc 2% mỗi lệnh, bất kể win streak.
+
+g) Sunk Cost Fallacy (Ngụy biện chi phí chìm):
+"Tôi đã lỗ 30% rồi, bán bây giờ phí quá. Chờ hồi lại."
+Sự thật: Tiền đã mất không quay lại. Câu hỏi đúng: "Nếu có tiền mặt bây giờ, tôi có mua cổ phiếu này không?"
+
+---
+
+3. KỶ LUẬT GIAO DỊCH
+
+a) Trading Plan (Kế hoạch giao dịch):
+Mỗi lệnh phải có trước khi mua:
+1. Lý do mua (WHY): Cơ bản tốt? Kỹ thuật đẹp? Catalyst?
+2. Giá mua (ENTRY): Mức giá cụ thể
+3. Stop Loss (EXIT nếu sai): Mức giá cắt lỗ
+4. Take Profit (EXIT nếu đúng): Mức giá chốt lời
+5. Kích thước (SIZE): Bao nhiêu cổ phiếu?
+
+b) Trading Journal (Nhật ký giao dịch):
+Ghi lại MỌI giao dịch:
+- Ngày, mã, giá mua, giá bán, lý do, kết quả
+- Cảm xúc khi mua/bán
+- Bài học rút ra
+→ Review hàng tháng để cải thiện
+
+c) Quy tắc nghỉ ngơi:
+- Thua 3 lệnh liên tiếp → Nghỉ 1 tuần
+- Drawdown > 10% trong tháng → Dừng giao dịch, review chiến lược
+- Cảm thấy tức giận hoặc lo lắng → KHÔNG GIAO DỊCH
+
+---
+
+4. QUẢN LÝ CẢM XÚC
+
+Trước khi đặt lệnh, tự hỏi:
+- "Tôi đang mua vì phân tích hay vì FOMO?"
+- "Nếu mất hết số tiền này, cuộc sống tôi có bị ảnh hưởng không?"
+- "Tôi có đang cố gỡ gạc từ lệnh trước không?"
+
+Nếu câu trả lời là "có" cho bất kỳ câu nào → KHÔNG ĐẶT LỆNH.
+
+Mindset đúng: Giao dịch là marathon, không phải sprint. Mục tiêu là sống sót lâu dài trên thị trường, không phải giàu nhanh.

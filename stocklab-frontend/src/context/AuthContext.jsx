@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { authAPI } from '../api/api';
 
 const AuthContext = createContext(null);
 
@@ -11,11 +12,27 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    
+    const initAuth = async () => {
+      if (savedToken && savedUser) {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+        
+        try {
+          const res = await authAPI.getProfile();
+          if (res.data.success) {
+            const userData = res.data.data;
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
+          }
+        } catch (err) {
+          console.error("Lỗi đồng bộ profile:", err);
+        }
+      }
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = (userData, jwtToken) => {
@@ -32,10 +49,23 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user');
   };
 
+  const fetchUserProfile = async () => {
+    try {
+      const res = await authAPI.getProfile();
+      if (res.data.success) {
+        const userData = res.data.data;
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+    } catch (err) {
+      console.error("Lỗi cập nhật profile:", err);
+    }
+  };
+
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, fetchUserProfile, isAuthenticated, loading }}>
       {children}
     </AuthContext.Provider>
   );

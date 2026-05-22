@@ -1,0 +1,112 @@
+.report-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+  font-family: 'Inter', sans-serif;
+}
+
+.report-container h2 {
+  margin-top: 0;
+  color: #1a1a1a;
+}
+
+.report-subtext {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+
+.report-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  border-color: #dee2e6;
+}
+
+.report-card.disabled {
+  opacity: 0.6;
+}
+
+.report-card-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.15rem;
+  color: #2b3035;
+}
+
+.report-card-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+  max-width: 450px;
+  line-height: 1.5;
+}
+
+.download-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.download-btn:active {
+  transform: scale(0.98);
+}
+
+.download-btn:disabled {
+  cursor: not-allowed;
+  filter: grayscale();
+  box-shadow: none;
+}
+
+.excel-btn {
+  background: #107c41; /* Microsoft Excel Green */
+  color: white;
+}
+
+.excel-btn:hover:not(:disabled) {
+  background: #185c37;
+  box-shadow: 0 4px 10px rgba(16, 124, 65, 0.3);
+}
+
+.pdf-btn {
+  background: #e1dfdd;
+  color: #323130;
+}
+
+.beta-badge {
+  background: #ffc107;
+  color: #212529;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-left: 10px;
+  font-weight: bold;
+  vertical-align: text-bottom;
+}
+
+.error-alert {
+  background: #f8d7da;
+  color: #842029;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-weight: 500;
+  border: 1px solid #f5c2c7;
+}

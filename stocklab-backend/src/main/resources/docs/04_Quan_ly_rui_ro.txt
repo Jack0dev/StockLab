@@ -1,0 +1,99 @@
+QUẢN LÝ RỦI RO TRONG ĐẦU TƯ CHỨNG KHOÁN
+============================================
+
+1. NGUYÊN TẮC QUẢN LÝ RỦI RO
+
+Quy tắc 2%: Không bao giờ mạo hiểm quá 2% tổng tài khoản cho một giao dịch đơn lẻ.
+Ví dụ: Tài khoản 100 triệu → Mức lỗ tối đa mỗi lệnh = 2 triệu.
+
+Quy tắc 6%: Tổng rủi ro của tất cả các vị thế đang mở không vượt quá 6% tài khoản.
+Ví dụ: Tài khoản 100 triệu → Tối đa 3 vị thế, mỗi vị thế rủi ro 2%.
+
+---
+
+2. STOP LOSS (Dừng lỗ)
+
+Là lệnh tự động bán cổ phiếu khi giá giảm đến mức xác định trước.
+
+Các phương pháp đặt Stop Loss:
+- Stop Loss cố định: Đặt mức lỗ cố định, ví dụ -5% hoặc -7%
+- Stop Loss theo ATR: Đặt ở mức Giá mua - (2 × ATR). Phương pháp này linh hoạt hơn vì tự điều chỉnh theo biến động thị trường
+- Stop Loss theo hỗ trợ: Đặt ngay dưới mức hỗ trợ gần nhất
+- Trailing Stop: Stop loss di chuyển theo giá lên, nhưng không di chuyển xuống. Giúp bảo vệ lợi nhuận khi xu hướng vẫn còn mạnh
+
+---
+
+3. POSITION SIZING (Quản lý kích thước vị thế)
+
+Công thức: Số cổ phiếu tối đa = (Tài khoản × 2%) / (Giá mua - Giá Stop Loss)
+
+Ví dụ thực tế:
+- Tài khoản: 100 triệu VND
+- Mua VCB giá 90,000 VND
+- Stop Loss: 85,000 VND (giảm 5,000 VND)
+- Số CP tối đa = (100,000,000 × 2%) / 5,000 = 400 cổ phiếu
+- Giá trị vị thế = 400 × 90,000 = 36 triệu (36% tài khoản)
+
+---
+
+4. TỶ LỆ RISK/REWARD (Rủi ro/Lợi nhuận)
+
+Risk/Reward = Khoảng cách đến Stop Loss / Khoảng cách đến Take Profit
+
+Nguyên tắc: Chỉ vào lệnh khi Risk/Reward ≥ 1:2 (chấp nhận rủi ro 1 để lời 2).
+
+Ví dụ:
+- Mua VNM giá 80,000
+- Stop Loss: 76,000 (rủi ro 4,000)
+- Take Profit: 88,000 (lợi nhuận 8,000)
+- R/R = 4,000 / 8,000 = 1:2 ✓ Chấp nhận được
+
+---
+
+5. ĐA DẠNG HÓA DANH MỤC (Diversification)
+
+Nguyên tắc phân bổ:
+- Không đầu tư quá 20% vào một cổ phiếu duy nhất
+- Đầu tư vào ít nhất 5-10 cổ phiếu khác ngành
+- Phân bổ theo ngành: Ngân hàng 20%, Bất động sản 15%, Công nghệ 15%, Tiêu dùng 15%, Năng lượng 10%, khác 25%
+- Giữ 10-20% tiền mặt để chớp cơ hội khi thị trường điều chỉnh
+
+Tương quan (Correlation): Chọn cổ phiếu có mức tương quan thấp với nhau. Nếu tất cả cổ phiếu trong danh mục cùng tăng/giảm → đa dạng hóa không hiệu quả.
+
+---
+
+6. DRAWDOWN TỐI ĐA (Maximum Drawdown)
+
+Drawdown = (Giá trị đỉnh - Giá trị đáy) / Giá trị đỉnh × 100%
+
+Ý nghĩa: Mức sụt giảm lớn nhất từ đỉnh đến đáy.
+
+Ngưỡng an toàn:
+- Drawdown < 10%: Quản lý rủi ro tốt
+- Drawdown 10-20%: Chấp nhận được
+- Drawdown 20-30%: Cảnh báo, cần xem lại chiến lược
+- Drawdown > 30%: Nguy hiểm, nên dừng giao dịch và đánh giá lại
+
+Lưu ý toán học: Nếu thua lỗ 50%, bạn cần lãi 100% để hòa vốn. Nếu thua lỗ 80%, bạn cần lãi 400%.
+
+---
+
+7. SHARPE RATIO (Tỷ lệ Sharpe)
+
+Công thức: Sharpe = (Lợi nhuận danh mục - Lãi suất phi rủi ro) / Độ lệch chuẩn lợi nhuận
+
+- Sharpe > 1: Tốt
+- Sharpe > 2: Rất tốt
+- Sharpe > 3: Xuất sắc
+- Sharpe < 0: Lợi nhuận thấp hơn gửi tiết kiệm
+
+---
+
+8. CÁC SAI LẦM TÂM LÝ THƯỜNG GẶP
+
+- FOMO (Fear Of Missing Out): Sợ bỏ lỡ cơ hội, mua đuổi giá khi cổ phiếu đã tăng mạnh
+- Anchoring Bias: Bám vào giá mua gốc, không chịu cắt lỗ vì "sẽ về giá cũ"
+- Confirmation Bias: Chỉ tìm kiếm thông tin ủng hộ quyết định đã có
+- Loss Aversion: Đau buồn khi thua lỗ gấp 2.5 lần niềm vui khi có lãi
+- Overtrading: Giao dịch quá nhiều, phí commission ăn mòn lợi nhuận
+- Revenge Trading: Giao dịch để "gỡ gạc" sau khi thua lỗ, thường dẫn đến thua thêm

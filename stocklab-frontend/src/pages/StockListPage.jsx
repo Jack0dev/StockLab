@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { stockAPI } from '../api/api';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { usePageTour } from '../hooks/usePageTour';
 import SearchBar from '../components/SearchBar';
 import './StockListPage.css';
 
@@ -8,6 +10,7 @@ const EXCHANGES = ['Tất cả', 'HOSE', 'HNX', 'UPCOM'];
 
 export default function StockListPage() {
   const navigate = useNavigate();
+  const { restartTour } = usePageTour('stocks');
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -15,6 +18,39 @@ export default function StockListPage() {
   const [totalElements, setTotalElements] = useState(0);
   const [selectedExchange, setSelectedExchange] = useState('Tất cả');
   const pageSize = 20;
+  const [flashMap, setFlashMap] = useState({}); // ticker -> 'flash-up' | 'flash-down'
+  const prevPricesRef = useRef({}); // ticker -> previousPrice
+
+  // WebSocket: subscribe /topic/prices
+  const handlePriceUpdate = useCallback((data) => {
+    if (!Array.isArray(data)) return;
+    const prevPrices = prevPricesRef.current;
+    const newFlash = {};
+
+    setStocks(prev => {
+      return prev.map(stock => {
+        const live = data.find(d => d.ticker === stock.ticker);
+        if (!live) return stock;
+
+        // Detect price change for flash animation
+        const oldPrice = prevPrices[stock.ticker] || stock.currentPrice;
+        const newPrice = live.currentPrice;
+        if (newPrice > oldPrice) newFlash[stock.ticker] = 'flash-up';
+        else if (newPrice < oldPrice) newFlash[stock.ticker] = 'flash-down';
+
+        prevPrices[stock.ticker] = newPrice;
+
+        return { ...stock, ...live };
+      });
+    });
+
+    if (Object.keys(newFlash).length > 0) {
+      setFlashMap(newFlash);
+      setTimeout(() => setFlashMap({}), 800);
+    }
+  }, []);
+
+  const { connected } = useWebSocket('/topic/prices', handlePriceUpdate);
 
   useEffect(() => {
     fetchStocks();
@@ -95,6 +131,7 @@ export default function StockListPage() {
         <h2>
           📊 Bảng giá
           <span className="stock-count">({totalElements} mã)</span>
+          {connected && <span className="ws-live-badge">🟢 LIVE</span>}
         </h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <SearchBar />
@@ -109,6 +146,7 @@ export default function StockListPage() {
               </button>
             ))}
           </div>
+          <button className="page-tour-btn" onClick={restartTour} title="Hướng dẫn trang này">?</button>
         </div>
       </div>
 
@@ -167,7 +205,7 @@ export default function StockListPage() {
                           {stock.exchange}
                         </span>
                       </td>
-                      <td className={`price-cell ${priceClass}`}>
+                      <td className={`price-cell ${priceClass} ${flashMap[stock.ticker] || ''}`}>
                         {formatPrice(stock.currentPrice)}
                       </td>
                       <td className="price-cell price-ref">

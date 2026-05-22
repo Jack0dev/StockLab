@@ -39,7 +39,7 @@ class OrderTest {
                     .orderType(OrderType.LIMIT)
                     .build();
 
-            assertEquals(OrderStatus.PENDING, order.getStatus());
+            assertEquals(OrderStatus.ACTIVE, order.getStatus());
         }
 
         @Test
@@ -56,7 +56,7 @@ class OrderTest {
             assertEquals(OrderType.LIMIT, order.getOrderType());
             assertEquals(100, order.getQuantity());
             assertEquals(new BigDecimal("25000.00"), order.getPrice());
-            assertEquals(OrderStatus.PENDING, order.getStatus());
+            assertEquals(OrderStatus.ACTIVE, order.getStatus());
             assertEquals(0, order.getFilledQuantity());
         }
 
@@ -123,7 +123,7 @@ class OrderTest {
         @DisplayName("Lệnh PENDING → có thể hủy")
         void shouldBeCancellableWhenPending() {
             Order order = Order.builder()
-                    .status(OrderStatus.PENDING)
+                    .status(OrderStatus.ACTIVE)
                     .quantity(100)
                     .build();
 
@@ -134,7 +134,7 @@ class OrderTest {
         @DisplayName("Lệnh PARTIAL → có thể hủy")
         void shouldBeCancellableWhenPartial() {
             Order order = Order.builder()
-                    .status(OrderStatus.PARTIAL)
+                    .status(OrderStatus.PARTIALLY_FILLED)
                     .quantity(100)
                     .filledQuantity(30)
                     .build();
@@ -169,7 +169,7 @@ class OrderTest {
         @DisplayName("Lệnh REJECTED → KHÔNG thể hủy")
         void shouldNotBeCancellableWhenRejected() {
             Order order = Order.builder()
-                    .status(OrderStatus.REJECTED)
+                    .status(OrderStatus.CANCELLED)
                     .quantity(100)
                     .build();
 
@@ -188,13 +188,13 @@ class OrderTest {
         void shouldUpdateToPartialStatus() {
             Order order = Order.builder()
                     .quantity(100)
-                    .status(OrderStatus.PENDING)
+                    .status(OrderStatus.ACTIVE)
                     .build();
 
             order.setFilledQuantity(30);
-            order.setStatus(OrderStatus.PARTIAL);
+            order.setStatus(OrderStatus.PARTIALLY_FILLED);
 
-            assertEquals(OrderStatus.PARTIAL, order.getStatus());
+            assertEquals(OrderStatus.PARTIALLY_FILLED, order.getStatus());
             assertEquals(30, order.getFilledQuantity());
             assertEquals(70, order.getRemainingQuantity());
         }
@@ -205,7 +205,7 @@ class OrderTest {
             Order order = Order.builder()
                     .quantity(100)
                     .filledQuantity(30)
-                    .status(OrderStatus.PARTIAL)
+                    .status(OrderStatus.PARTIALLY_FILLED)
                     .build();
 
             order.setFilledQuantity(100);

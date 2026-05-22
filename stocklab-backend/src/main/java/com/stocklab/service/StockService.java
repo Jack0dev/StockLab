@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,6 +103,71 @@ public class StockService {
         return ApiResponse.success("Lấy lịch sử giá thành công", history);
     }
 
+    // ===== Admin Thao tác (ADM-3) =====
+
+    @Transactional
+    public ApiResponse<StockResponse> createStock(CreateStockRequest request) {
+        if (stockRepository.existsByTicker(request.getTicker().toUpperCase())) {
+            return ApiResponse.error("Mã cổ phiếu đã tồn tại!");
+        }
+
+        Stock stock = Stock.builder()
+                .ticker(request.getTicker().toUpperCase())
+                .companyName(request.getCompanyName())
+                .exchange(request.getExchange())
+                .currentPrice(request.getBasePrice())
+                .referencePrice(request.getBasePrice())
+                .build();
+
+        stockRepository.save(stock);
+        return ApiResponse.success("Thêm mã cổ phiếu thành công!", toStockResponse(stock));
+    }
+
+    @Transactional
+    public ApiResponse<StockResponse> updateStock(Long id, CreateStockRequest request) {
+         Stock stock = stockRepository.findById(id).orElse(null);
+         if (stock == null) return ApiResponse.error("Không tìm thấy cổ phiếu!");
+         
+         if (!stock.getTicker().equalsIgnoreCase(request.getTicker()) && 
+             stockRepository.existsByTicker(request.getTicker().toUpperCase())) {
+             return ApiResponse.error("Mã cổ phiếu mới đã tồn tại!");
+         }
+         
+         stock.setTicker(request.getTicker().toUpperCase());
+         stock.setCompanyName(request.getCompanyName());
+         stock.setExchange(request.getExchange());
+         // Tuỳ chọn update giá cơ sở (optional)
+         stock.setReferencePrice(request.getBasePrice());
+         
+         stockRepository.save(stock);
+         
+         return ApiResponse.success("Cập nhật mã cổ phiếu thành công!", toStockResponse(stock));
+    }
+
+    @Transactional
+    public ApiResponse<String> toggleStockStatus(Long id) {
+         Stock stock = stockRepository.findById(id).orElse(null);
+         if (stock == null) return ApiResponse.error("Không tìm thấy cổ phiếu!");
+         
+         stock.setActive(!stock.isActive());
+         stockRepository.save(stock);
+         String action = stock.isActive() ? "Mở khoá" : "Khoá";
+         return ApiResponse.success(action + " mã cổ phiếu " + stock.getTicker() + " thành công!");
+    }
+
+    @Transactional
+    public ApiResponse<String> deleteStock(Long id) {
+         Stock stock = stockRepository.findById(id).orElse(null);
+         if (stock == null) return ApiResponse.error("Không tìm thấy cổ phiếu!");
+         try {
+             stockRepository.delete(stock);
+             stockRepository.flush(); // Bắt buộc lưu ngay xuống DB để tóm lỗi Foreign Key
+             return ApiResponse.success("Xóa vĩnh viễn mã cổ phiếu " + stock.getTicker() + " thành công!");
+         } catch (Exception e) {
+             return ApiResponse.error("Không thể xóa vĩnh viễn cổ phiếu này vì đã dính líu đến các bản ghi Lịch sử giá hoặc Giao dịch!");
+         }
+    }
+
     // ===== Helper Methods =====
 
     private LocalDate calculateStartDate(LocalDate endDate, String range) {
@@ -132,6 +198,7 @@ public class StockService {
                 .volume(stock.getVolume())
                 .change(stock.getChange())
                 .changePercent(stock.getChangePercent())
+                .isActive(stock.isActive())
                 .build();
     }
 

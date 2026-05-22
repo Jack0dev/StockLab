@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { userAPI } from '../api/api';
 import './ProfilePage.css';
 
 export default function ProfilePage() {
-  const { user: authUser } = useAuth();
+  const { user: authUser, fetchUserProfile } = useAuth();
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ fullName: '', phone: '', email: '' });
@@ -12,6 +12,8 @@ export default function ProfilePage() {
   const [showPwModal, setShowPwModal] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     fetchProfile();
@@ -42,6 +44,7 @@ export default function ProfilePage() {
         setMessage({ type: 'success', text: 'Cập nhật thành công!' });
         setEditing(false);
         fetchProfile();
+        fetchUserProfile(); // Cập nhật lại AuthContext
       } else {
         setMessage({ type: 'error', text: res.data.message });
       }
@@ -51,6 +54,62 @@ export default function ProfilePage() {
       setLoading(false);
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     }
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Vui lòng chọn file ảnh (JPG, PNG, GIF)!' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+      return;
+    }
+
+    // Validate size (2MB max)
+    if (file.size > 2 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Ảnh quá lớn! Vui lòng chọn ảnh dưới 2MB.' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+      return;
+    }
+
+    setAvatarUploading(true);
+
+    try {
+      // Convert to base64
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = event.target.result;
+        try {
+          const res = await userAPI.uploadAvatar(base64);
+          if (res.data.success) {
+            setMessage({ type: 'success', text: 'Cập nhật ảnh đại diện thành công!' });
+            fetchProfile();
+            fetchUserProfile(); // Cập nhật lại AuthContext
+          } else {
+            setMessage({ type: 'error', text: res.data.message });
+          }
+        } catch (err) {
+          setMessage({ type: 'error', text: 'Upload ảnh thất bại!' });
+        } finally {
+          setAvatarUploading(false);
+          setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setAvatarUploading(false);
+      setMessage({ type: 'error', text: 'Lỗi đọc file ảnh!' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    }
+
+    // Reset input
+    e.target.value = '';
   };
 
   const handleChangePassword = async (e) => {
@@ -113,16 +172,51 @@ export default function ProfilePage() {
         {/* Profile Card */}
         <div className="card profile-card">
           <div className="profile-avatar-section">
-            <div className="profile-avatar-large">
-              {(profile.fullName || profile.username).charAt(0).toUpperCase()}
+            {/* Avatar Upload */}
+            <div className="avatar-upload-wrapper" onClick={handleAvatarClick}>
+              {profile.avatarUrl ? (
+                <img
+                  src={profile.avatarUrl}
+                  alt="Avatar"
+                  className="profile-avatar-img"
+                />
+              ) : (
+                <div className="profile-avatar-large">
+                  {(profile.fullName || profile.username).charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="avatar-overlay">
+                {avatarUploading ? (
+                  <div className="avatar-spinner"></div>
+                ) : (
+                  <>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span>Đổi ảnh</span>
+                  </>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                style={{ display: 'none' }}
+              />
             </div>
             <h3>{profile.fullName || profile.username}</h3>
             <span className="role-badge">{profile.role}</span>
           </div>
           <div className="profile-stats">
             <div className="stat-item">
-              <span className="stat-label">Số dư tài khoản</span>
-              <span className="stat-value text-success">{formatBalance(profile.balance)}</span>
+              <span className="stat-label">Số dư khả dụng</span>
+              <span className="stat-value text-success">{formatBalance(profile.availableBalance)}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Tổng tài khoản</span>
+              <span className="stat-value text-muted" style={{fontSize: '18px'}}>{formatBalance(profile.balance)}</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Ngày tham gia</span>
