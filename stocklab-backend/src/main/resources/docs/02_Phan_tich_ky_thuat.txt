@@ -1,0 +1,133 @@
+PHÂN TÍCH KỸ THUẬT CHỨNG KHOÁN (Technical Analysis)
+=====================================================
+
+Phân tích kỹ thuật là phương pháp dự đoán xu hướng giá cổ phiếu dựa trên dữ liệu lịch sử về giá và khối lượng giao dịch. Dưới đây là các chỉ báo kỹ thuật quan trọng nhất được sử dụng trong hệ thống StockLab.
+
+---
+
+1. SMA - ĐƯỜNG TRUNG BÌNH ĐỘNG ĐƠN GIẢN (Simple Moving Average)
+
+Công thức: SMA(n) = Tổng giá đóng cửa n ngày gần nhất / n
+
+Cách sử dụng:
+- SMA 10 ngày: Xu hướng ngắn hạn
+- SMA 20 ngày: Xu hướng trung hạn
+- SMA 50 ngày: Xu hướng dài hạn
+
+Tín hiệu giao dịch:
+- Khi giá cắt lên trên SMA → Tín hiệu MUA (Bullish)
+- Khi giá cắt xuống dưới SMA → Tín hiệu BÁN (Bearish)
+- "Golden Cross": SMA ngắn hạn cắt lên trên SMA dài hạn → Tín hiệu MUA mạnh
+- "Death Cross": SMA ngắn hạn cắt xuống dưới SMA dài hạn → Tín hiệu BÁN mạnh
+
+---
+
+2. EMA - ĐƯỜNG TRUNG BÌNH ĐỘNG HÀM MŨ (Exponential Moving Average)
+
+EMA phản ứng nhanh hơn SMA vì đặt trọng số lớn hơn cho dữ liệu gần đây nhất. Thường dùng EMA 12 và EMA 26 ngày.
+
+EMA nhạy cảm hơn với biến động giá gần đây → phù hợp cho giao dịch ngắn hạn.
+
+---
+
+3. RSI - CHỈ SỐ SỨC MẠNH TƯƠNG ĐỐI (Relative Strength Index)
+
+Thang đo: 0 đến 100
+
+Vùng quan trọng:
+- RSI > 70: Quá mua (Overbought) → Cổ phiếu đã tăng quá mạnh, có khả năng điều chỉnh giảm. Cân nhắc CHỐT LỜI.
+- RSI < 30: Quá bán (Oversold) → Cổ phiếu đã giảm quá mạnh, có khả năng phục hồi. Cân nhắc MUA VÀO.
+- RSI = 50: Vùng trung tính, không có xu hướng rõ ràng.
+
+Phân kỳ RSI (Divergence):
+- Phân kỳ dương: Giá tạo đáy mới thấp hơn nhưng RSI tạo đáy cao hơn → Tín hiệu đảo chiều TĂNG
+- Phân kỳ âm: Giá tạo đỉnh mới cao hơn nhưng RSI tạo đỉnh thấp hơn → Tín hiệu đảo chiều GIẢM
+
+---
+
+4. MACD - ĐỘ HỘI TỤ PHÂN KỲ TRUNG BÌNH ĐỘNG (Moving Average Convergence Divergence)
+
+Cấu trúc:
+- Đường MACD = EMA(12) - EMA(26)
+- Đường Signal = EMA(9) của đường MACD
+- Histogram = MACD - Signal
+
+Tín hiệu giao dịch:
+- MACD cắt lên trên Signal → Tín hiệu MUA (Bullish crossover)
+- MACD cắt xuống dưới Signal → Tín hiệu BÁN (Bearish crossover)
+- MACD > 0: Xu hướng tăng đang chiếm ưu thế
+- MACD < 0: Xu hướng giảm đang chiếm ưu thế
+- Histogram tăng dần → Động lượng tăng đang mạnh lên
+- Histogram giảm dần → Động lượng tăng đang yếu đi
+
+---
+
+5. BOLLINGER BANDS - DẢI BOLLINGER
+
+Cấu trúc:
+- Dải giữa: SMA(20)
+- Dải trên (Upper Band): SMA(20) + 2 × Độ lệch chuẩn(20)
+- Dải dưới (Lower Band): SMA(20) - 2 × Độ lệch chuẩn(20)
+
+Cách đọc:
+- Giá chạm dải trên → Cổ phiếu đang ở vùng quá mua, có thể điều chỉnh
+- Giá chạm dải dưới → Cổ phiếu đang ở vùng quá bán, có thể phục hồi
+- Dải thu hẹp (Squeeze) → Biến động thấp, thường báo hiệu sắp có biến động lớn
+- Dải mở rộng → Biến động cao, thị trường đang có xu hướng mạnh
+
+---
+
+6. ATR - PHẠM VI DAO ĐỘNG TRUNG BÌNH (Average True Range)
+
+ATR đo lường mức độ biến động giá trung bình trong 14 phiên giao dịch gần nhất.
+
+Cách sử dụng:
+- ATR cao → Thị trường đang biến động mạnh, rủi ro cao
+- ATR thấp → Thị trường đang ổn định, biến động nhẹ
+- Dùng ATR để đặt mức dừng lỗ (Stop Loss): Thường đặt SL = Giá hiện tại - (2 × ATR)
+
+---
+
+7. KHỐI LƯỢNG GIAO DỊCH (Volume)
+
+Khối lượng xác nhận xu hướng giá:
+- Giá TĂNG + Khối lượng TĂNG → Xu hướng tăng MẠNH, đáng tin cậy
+- Giá TĂNG + Khối lượng GIẢM → Xu hướng tăng YẾU, cẩn thận đảo chiều
+- Giá GIẢM + Khối lượng TĂNG → Xu hướng giảm MẠNH, áp lực bán lớn
+- Giá GIẢM + Khối lượng GIẢM → Áp lực bán đang cạn, có thể đảo chiều tăng
+
+Volume Spike (Đột biến khối lượng): Khối lượng tăng đột ngột gấp 2-3 lần trung bình → thường xảy ra tại đỉnh hoặc đáy quan trọng.
+
+---
+
+8. MOMENTUM - ĐỘNG LƯỢNG
+
+Momentum(10) = Giá hiện tại - Giá 10 ngày trước
+
+- Momentum > 0: Giá đang trong xu hướng tăng
+- Momentum < 0: Giá đang trong xu hướng giảm
+- Momentum đang tăng: Lực tăng mạnh dần
+- Momentum đang giảm: Lực tăng yếu dần
+
+---
+
+9. MÔ HÌNH NẾN NHẬT BẢN (Candlestick Patterns)
+
+Các mô hình đảo chiều tăng (Bullish Reversal):
+- Hammer (Búa): Thân nhỏ phía trên, bóng dưới dài ≥ 2 lần thân → bên mua đang hấp thụ lực bán
+- Morning Star (Sao mai): Mô hình 3 nến: nến giảm dài → nến nhỏ (Doji) → nến tăng dài
+- Bullish Engulfing: Nến tăng hoàn toàn "nuốt" nến giảm trước đó
+
+Các mô hình đảo chiều giảm (Bearish Reversal):
+- Shooting Star (Sao băng): Thân nhỏ phía dưới, bóng trên dài → bên bán đang áp đảo
+- Evening Star (Sao hôm): Mô hình 3 nến: nến tăng dài → nến nhỏ → nến giảm dài
+- Bearish Engulfing: Nến giảm hoàn toàn "nuốt" nến tăng trước đó
+
+---
+
+10. HỖ TRỢ VÀ KHÁNG CỰ (Support & Resistance)
+
+- Mức hỗ trợ (Support): Vùng giá mà lực mua đủ mạnh để ngăn giá giảm thêm. Giá thường "nảy" lên khi chạm support.
+- Mức kháng cự (Resistance): Vùng giá mà lực bán đủ mạnh để ngăn giá tăng thêm. Giá thường "bật" xuống khi chạm resistance.
+- Breakout: Khi giá phá vỡ mức kháng cự hoặc hỗ trợ với khối lượng lớn → tín hiệu xu hướng mới mạnh.
+- Kháng cự cũ thành hỗ trợ mới: Khi giá phá qua kháng cự, mức đó thường trở thành hỗ trợ.

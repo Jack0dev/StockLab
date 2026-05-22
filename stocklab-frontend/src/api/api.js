@@ -69,6 +69,7 @@ export const stockAPI = {
   search: (keyword) => api.get('/stocks/search', { params: { keyword } }),
   getPriceHistory: (ticker, range = '1M') =>
     api.get(`/stocks/${ticker}/history`, { params: { range } }),
+  getIndicators: (ticker) => api.get(`/stocks/${ticker}/indicators`),
 };
 
 // ===== Trade APIs (migrated to OrderService) =====
@@ -178,6 +179,72 @@ export const adminOrderAPI = {
 // ===== Export APIs =====
 export const exportAPI = {
   exportTransactions: () => api.get('/reports/transactions/export', { responseType: 'blob' }),
+};
+
+
+
+
+// ===== News APIs =====
+export const newsAPI = {
+  getLatest: () => api.get('/news'),
+};
+
+// ===== AI Assistant APIs (Hybrid RAG) =====
+export const aiAPI = {
+  chat: (message) => api.post('/ai/chat', { message }),
+  chatStream: async (message, signal) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${API_BASE_URL}/ai/chat/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ message }),
+      signal
+    });
+  },
+  getTools: () => api.get('/ai/tools'),
+  getQuota: () => api.get('/ai/quota'),
+  clearHistory: () => api.delete('/ai/history'),
+
+  // Local AI Endpoints
+  trainLocalModel: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/ai/local/train', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
+  chatLocalStream: async (message, signal) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${API_BASE_URL}/ai/local/chat/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ message }),
+      signal
+    });
+  },
+
+  // Smart AI Router (auto-selects Local or Gemini)
+  chatSmartStream: async (message, signal) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${API_BASE_URL}/ai/smart/chat/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ message }),
+      signal
+    });
+  },
+  getRouterStatus: () => api.get('/ai/router/status'),
 };
 
 export default api;

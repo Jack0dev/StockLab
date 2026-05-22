@@ -1,0 +1,71 @@
+THUẬT NGỮ CƠ BẢN CHỨNG KHOÁN VIỆT NAM
+========================================
+
+1. CỔ PHIẾU (Stock/Share)
+Là chứng chỉ xác nhận quyền sở hữu một phần vốn của công ty cổ phần. Khi bạn mua cổ phiếu, bạn trở thành cổ đông và có quyền nhận cổ tức, tham gia biểu quyết tại đại hội cổ đông.
+
+2. GIÁ THAM CHIẾU (Reference Price)
+Là mức giá đóng cửa của phiên giao dịch ngày hôm trước. Được dùng làm cơ sở để tính biên độ dao động giá trong ngày hôm nay.
+
+3. GIÁ TRẦN (Ceiling Price)
+Là mức giá cao nhất mà cổ phiếu được phép tăng trong một phiên giao dịch:
+- Sàn HOSE (HCM): Biên độ ±7% so với giá tham chiếu
+- Sàn HNX (Hà Nội): Biên độ ±10% so với giá tham chiếu
+- Sàn UPCOM: Biên độ ±15% so với giá tham chiếu
+
+4. GIÁ SÀN (Floor Price)
+Là mức giá thấp nhất mà cổ phiếu được phép giảm trong một phiên giao dịch. Ngược lại với giá trần.
+
+5. LÔ GIAO DỊCH (Trading Lot)
+- Lô chẵn: Bội số của 100 cổ phiếu trên HOSE, 100 trên HNX
+- Lô lẻ: Dưới 100 cổ phiếu, chỉ giao dịch trên hệ thống lô lẻ
+
+6. LỆNH THỊ TRƯỜNG (Market Order - MP)
+Lệnh mua/bán tại mức giá tốt nhất hiện tại trên thị trường. Ưu tiên khớp ngay lập tức nhưng không đảm bảo giá.
+
+7. LỆNH GIỚI HẠN (Limit Order - LO)
+Lệnh mua/bán tại mức giá cụ thể do nhà đầu tư đặt. Chỉ khớp khi thị trường đạt đến mức giá đó hoặc tốt hơn.
+
+8. LỆNH ATO (At The Opening)
+Lệnh đặt mua hoặc bán cổ phiếu tại mức giá khớp lệnh mở cửa. Chỉ có hiệu lực trong phiên khớp lệnh định kỳ mở cửa (9:00 - 9:15).
+
+9. LỆNH ATC (At The Close)
+Lệnh đặt mua hoặc bán cổ phiếu tại mức giá khớp lệnh đóng cửa. Chỉ có hiệu lực trong phiên khớp lệnh định kỳ đóng cửa (14:30 - 14:45).
+
+10. KHỚP LỆNH LIÊN TỤC (Continuous Matching)
+Phương thức khớp lệnh diễn ra liên tục trong phiên giao dịch (9:15 - 14:30 trên HOSE). Lệnh được khớp ngay khi có lệnh đối ứng phù hợp.
+
+11. KHỚP LỆNH ĐỊNH KỲ (Periodic Matching)
+Phương thức tập hợp tất cả lệnh mua và bán trong một khoảng thời gian, sau đó xác định một mức giá duy nhất để khớp với khối lượng giao dịch lớn nhất.
+
+12. T+2 (Settlement Cycle)
+Quy tắc thanh toán bù trừ: sau khi mua cổ phiếu, bạn phải đợi 2 ngày làm việc mới có thể bán lại. Tiền bán cổ phiếu cũng cần T+2 để về tài khoản.
+
+13. CỔ TỨC (Dividend)
+Phần lợi nhuận của công ty được chia cho cổ đông. Có 3 hình thức:
+- Cổ tức tiền mặt: Nhận tiền trực tiếp
+- Cổ tức cổ phiếu: Nhận thêm cổ phiếu mới
+- Cổ tức tài sản: Hiếm gặp, nhận bằng tài sản khác
+
+14. NGÀY GIAO DỊCH KHÔNG HƯỞNG QUYỀN (Ex-date)
+Ngày mà nếu bạn mua cổ phiếu, bạn sẽ không được nhận cổ tức hoặc quyền mua cổ phiếu mới. Giá cổ phiếu thường giảm tương ứng với giá trị cổ tức vào ngày này.
+
+15. ROOM NGOẠI (Foreign Ownership Limit)
+Tỷ lệ sở hữu tối đa mà nhà đầu tư nước ngoài được phép nắm giữ tại một công ty. Thông thường là 49% tổng số cổ phiếu lưu hành, một số ngành đặc biệt có tỷ lệ thấp hơn.
+
+16. VN-INDEX
+Chỉ số đại diện cho thị trường chứng khoán Việt Nam, tính từ tất cả cổ phiếu niêm yết trên Sở Giao dịch Chứng khoán TP.HCM (HOSE). Giá trị cơ sở 100 điểm vào ngày 28/07/2000.
+
+17. VN30-INDEX
+Chỉ số gồm 30 cổ phiếu có vốn hóa lớn nhất và thanh khoản cao nhất trên HOSE. Đại diện cho "blue-chip" của thị trường Việt Nam.
+
+18. MARGIN (Ký quỹ)
+Vay tiền từ công ty chứng khoán để mua cổ phiếu. Tỷ lệ ký quỹ thường từ 50-70%, nghĩa là bạn chỉ cần bỏ ra 30-50% giá trị giao dịch, phần còn lại vay. Rủi ro: nếu giá giảm mạnh, bạn có thể bị "call margin" (yêu cầu nộp thêm tiền).
+
+19. THANH KHOẢN (Liquidity)
+Khả năng mua bán nhanh chóng mà không ảnh hưởng đáng kể đến giá. Cổ phiếu thanh khoản cao = dễ mua bán, spread nhỏ. Cổ phiếu thanh khoản thấp = khó mua bán, spread lớn.
+
+20. GIÁ MUA (Bid) VÀ GIÁ BÁN (Ask/Offer)
+- Bid: Mức giá cao nhất mà người mua sẵn sàng trả
+- Ask: Mức giá thấp nhất mà người bán sẵn sàng chấp nhận
+- Spread (Chênh lệch): Khoảng cách giữa Bid và Ask. Spread càng nhỏ = thanh khoản càng tốt

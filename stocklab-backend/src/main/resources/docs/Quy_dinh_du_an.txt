@@ -1,0 +1,20 @@
+QUY ĐỊNH BẢO MẬT DỰ ÁN STOCKLAB
+
+1. Giới thiệu
+StockLab là nền tảng giao dịch chứng khoán ảo tích hợp AI, được phát triển nội bộ. Mọi thông tin về cấu trúc thư mục, thuật toán và API key đều được coi là tài sản bảo mật cao nhất (Mức 1).
+
+2. Quy định dành cho đội ngũ phát triển (Dev Team)
+- Không được phép đẩy (push) bất kỳ file .env hoặc application.properties chứa API Key thật lên Github.
+- Mọi API call liên quan đến ML Service phải sử dụng admin-token nội bộ là "change_me_too".
+- Khi triển khai trên Railway, phải thiết lập các biến môi trường thông qua dashboard, tuyệt đối không hardcode trong mã nguồn.
+
+3. Điểm đánh giá rủi ro (Risk Score)
+Ngưỡng rủi ro tối đa (Risk score threshold) cho các lệnh giao dịch nội bộ là 0.65. Nếu thuật toán Machine Learning trả về điểm rủi ro >= 0.65, hệ thống sẽ tự động chặn lệnh (Block Order) để bảo vệ tài khoản người dùng khỏi các quyết định quá mạo hiểm.
+
+4. Thông tin hệ thống
+- Database: MySQL (Port 3306)
+- Caching/Session: Redis (Port 6379)
+- Local AI Model: Qwen2.5 7B
+- Local AI Embedding Model: Nomic Embed Text
+
+Vui lòng tuân thủ nghiêm ngặt các quy định trên để đảm bảo an toàn cho dự án StockLab.

@@ -1,0 +1,77 @@
+PHÂN TÍCH NGÀNH NGÂN HÀNG VIỆT NAM
+=====================================
+
+1. TỔNG QUAN NGÀNH NGÂN HÀNG
+
+Ngành ngân hàng chiếm khoảng 30% vốn hóa VN-Index, là ngành có ảnh hưởng lớn nhất đến chỉ số chung. Việt Nam có 31 ngân hàng thương mại, chia thành 3 nhóm:
+
+Nhóm Big 4 (Nhà nước sở hữu > 50%):
+- VCB (Vietcombank): Ngân hàng số 1 về vốn hóa, chất lượng tài sản tốt nhất, nợ xấu thấp nhất (~0.8%). ROE ~25%. Cổ phiếu "vua" ngành ngân hàng.
+- BID (BIDV): Quy mô tổng tài sản lớn nhất, mạng lưới rộng nhất. Tăng trưởng tín dụng ổn định. ROE ~18%.
+- CTG (VietinBank): Mạnh về bán lẻ và SME. Casa ratio đang cải thiện. ROE ~16%.
+- AGR (Agribank): Chưa niêm yết, phục vụ chủ yếu nông nghiệp nông thôn.
+
+Nhóm tư nhân hàng đầu:
+- TCB (Techcombank): Casa ratio cao nhất ngành (~50%), phí dịch vụ mạnh, không phụ thuộc tín dụng. ROE ~18%.
+- MBB (MB Bank): Tăng trưởng nhanh nhất, mạnh bảo hiểm (MBAgeas). ROE ~22%.
+- VPB (VPBank): Sở hữu FE Credit (tài chính tiêu dùng), NIM cao nhưng nợ xấu cũng cao hơn. ROE ~15%.
+- ACB: Ngân hàng bán lẻ truyền thống, ổn định, rủi ro thấp. ROE ~20%.
+- HDB (HDBank): Mạnh về cho vay tiêu dùng và hợp tác với Vietjet. ROE ~18%.
+
+Nhóm nhỏ và vừa:
+- TPB (TPBank): Ngân hàng số, LiveBank. ROE ~16%.
+- STB (Sacombank): Đang tái cơ cấu sau sáp nhập. P/B thấp, tiềm năng phục hồi.
+- SHB, LPB, MSB, OCB, VIB, EIB...
+
+---
+
+2. CÁC CHỈ SỐ QUAN TRỌNG NGÀNH NGÂN HÀNG
+
+a) NIM (Net Interest Margin) - Biên lãi ròng:
+NIM = (Thu nhập lãi - Chi phí lãi) / Tài sản sinh lãi bình quân
+- NIM > 4%: Rất tốt (VPB, TCB)
+- NIM 3-4%: Tốt (MBB, ACB)
+- NIM < 3%: Thấp (Big 4 thường thấp hơn do lãi suất cho vay thấp)
+
+b) CASA Ratio (Current Account Savings Account):
+Tỷ lệ tiền gửi không kỳ hạn / Tổng tiền gửi
+- CASA cao → Chi phí huy động thấp → NIM cao → Lợi nhuận tốt
+- TCB dẫn đầu (~50%), MBB (~40%), VCB (~35%)
+
+c) Tỷ lệ nợ xấu (NPL - Non-Performing Loan):
+- NPL < 1%: Xuất sắc (VCB ~0.8%)
+- NPL 1-2%: Tốt
+- NPL 2-3%: Trung bình
+- NPL > 3%: Cảnh báo
+
+d) Tỷ lệ bao phủ nợ xấu (LLR - Loan Loss Reserve):
+LLR = Dự phòng rủi ro / Nợ xấu
+- LLR > 200%: An toàn cao (VCB ~350%)
+- LLR 100-200%: Bình thường
+- LLR < 100%: Rủi ro
+
+e) CIR (Cost-to-Income Ratio):
+CIR = Chi phí hoạt động / Thu nhập hoạt động
+- CIR < 40%: Hiệu quả cao (TCB ~30%)
+- CIR 40-50%: Bình thường
+- CIR > 50%: Kém hiệu quả
+
+---
+
+3. CHU KỲ NGÂN HÀNG
+
+- Lãi suất giảm → Ngân hàng HƯỞNG LỢI: Chi phí huy động giảm nhanh hơn lãi suất cho vay → NIM tăng
+- Lãi suất tăng → Ngân hàng BỊ ẢNH HƯỞNG: NIM co lại, nợ xấu tăng do doanh nghiệp khó trả nợ
+- Tăng trưởng tín dụng: NHNN quy định room tín dụng hàng năm (thường 14-15%). Ngân hàng nào được cấp room cao → tăng trưởng tốt hơn.
+
+---
+
+4. ĐỊNH GIÁ NGÂN HÀNG
+
+Phương pháp phổ biến: P/B (Price-to-Book)
+- VCB: P/B ~3.0-3.5 (premium vì chất lượng tài sản tốt nhất)
+- TCB, MBB: P/B ~1.5-2.0
+- ACB, HDB: P/B ~1.2-1.5
+- STB, SHB: P/B < 1.0 (tái cơ cấu)
+
+Không dùng P/E đơn thuần cho ngân hàng vì lợi nhuận bị ảnh hưởng lớn bởi trích lập dự phòng (có thể thay đổi theo chính sách).

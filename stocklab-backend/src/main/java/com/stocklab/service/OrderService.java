@@ -122,7 +122,8 @@ public class OrderService {
 
         // 9. Initial status
         OrderStatus initialStatus = orderType.isConditional()
-                ? OrderStatus.PENDING_TRIGGER : OrderStatus.ACTIVE;
+                ? OrderStatus.PENDING_TRIGGER
+                : OrderStatus.ACTIVE;
 
         // 10. Parse expiryDate cho GTD
         LocalDateTime expiryDate = null;
@@ -178,7 +179,8 @@ public class OrderService {
 
         // Publish events for real-time updates
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, user.getUsername(), toOrderResponse(order)));
-        eventPublisher.publishEvent(new BalanceChangedEvent(this, user.getUsername(), com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_LOCK));
+        eventPublisher.publishEvent(new BalanceChangedEvent(this, user.getUsername(),
+                com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_LOCK));
         eventPublisher.publishEvent(new OrderBookUpdatedEvent(this, stock.getTicker()));
 
         String msg = orderType.isConditional()
@@ -292,7 +294,8 @@ public class OrderService {
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order1)));
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order2)));
         if (side == OrderSide.BUY) {
-            eventPublisher.publishEvent(new BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_LOCK));
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username,
+                    com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_LOCK));
         } else {
             eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
         }
@@ -383,9 +386,10 @@ public class OrderService {
         if (order.getSide() == OrderSide.BUY) {
             // Hoàn tiền locked = (remaining * price) + fee của phần đó
             BigDecimal refundSubTotal = order.getPrice().multiply(BigDecimal.valueOf(remainingQty));
-            BigDecimal refundFee = refundSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal refundFee = refundSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2,
+                    RoundingMode.HALF_UP);
             BigDecimal totalRefund = refundSubTotal.add(refundFee);
-            
+
             user.setLockedBalance(user.getLockedBalance().subtract(totalRefund));
             userRepository.save(user);
         } else {
@@ -405,7 +409,8 @@ public class OrderService {
         // Publish events for real-time updates
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(order)));
         if (order.getSide() == OrderSide.BUY) {
-            eventPublisher.publishEvent(new BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_UNLOCK));
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username,
+                    com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_UNLOCK));
         } else {
             eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
         }
@@ -455,9 +460,10 @@ public class OrderService {
 
         if (oldOrder.getSide() == OrderSide.BUY) {
             BigDecimal refundSubTotal = oldOrder.getPrice().multiply(BigDecimal.valueOf(remainingQty));
-            BigDecimal refundFee = refundSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal refundFee = refundSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2,
+                    RoundingMode.HALF_UP);
             BigDecimal totalRefund = refundSubTotal.add(refundFee);
-            
+
             user.setLockedBalance(user.getLockedBalance().subtract(totalRefund));
         } else {
             Portfolio portfolio = portfolioRepository
@@ -481,14 +487,15 @@ public class OrderService {
             BigDecimal newSubTotal = newPrice.multiply(BigDecimal.valueOf(newQuantity));
             BigDecimal newFee = newSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2, RoundingMode.HALF_UP);
             BigDecimal lockAmount = newSubTotal.add(newFee);
-            
+
             BigDecimal available = user.getBalance().subtract(user.getLockedBalance());
             if (available.compareTo(lockAmount) < 0) {
                 // Rollback cancel — unlock đã xảy ra nên phải lock lại
                 // Nhưng vì đã cancel rồi, trả error cho user biết
                 userRepository.save(user);
                 return ApiResponse.error("Không đủ số dư để đặt lệnh mới (Bao gồm phí). Lệnh cũ đã được hủy. " +
-                        "Số dư khả dụng: " + formatCurrency(available) + " VND, cần: " + formatCurrency(lockAmount) + " VND");
+                        "Số dư khả dụng: " + formatCurrency(available) + " VND, cần: " + formatCurrency(lockAmount)
+                        + " VND");
             }
             user.setLockedBalance(user.getLockedBalance().add(lockAmount));
         } else {
@@ -525,7 +532,8 @@ public class OrderService {
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(oldOrder)));
         eventPublisher.publishEvent(new OrderUpdatedEvent(this, username, toOrderResponse(newOrder)));
         if (newOrder.getSide() == OrderSide.BUY) {
-            eventPublisher.publishEvent(new BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_UNLOCK));
+            eventPublisher.publishEvent(new BalanceChangedEvent(this, username,
+                    com.stocklab.event.BalanceChangedEvent.BalanceReason.ORDER_UNLOCK));
         } else {
             eventPublisher.publishEvent(new PortfolioChangedEvent(this, username));
         }
@@ -666,9 +674,10 @@ public class OrderService {
         User orderOwner = order.getUser();
         if (order.getSide() == OrderSide.BUY) {
             BigDecimal refundSubTotal = order.getPrice().multiply(BigDecimal.valueOf(remainingQty));
-            BigDecimal refundFee = refundSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal refundFee = refundSubTotal.multiply(PlatformTokenService.FEE_RATE).setScale(2,
+                    RoundingMode.HALF_UP);
             BigDecimal totalRefund = refundSubTotal.add(refundFee);
-            
+
             orderOwner.setLockedBalance(orderOwner.getLockedBalance().subtract(totalRefund));
             userRepository.save(orderOwner);
         } else {
@@ -697,7 +706,8 @@ public class OrderService {
     public ApiResponse<Page<TransactionResponse>> getTransactionHistory(
             String username, Pageable pageable, String type) {
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) return ApiResponse.error("Không tìm thấy người dùng");
+        if (user == null)
+            return ApiResponse.error("Không tìm thấy người dùng");
 
         Page<TransactionResponse> transactions;
         if (type != null && !type.isEmpty()) {
@@ -720,9 +730,11 @@ public class OrderService {
     /**
      * Danh mục đầu tư
      */
+    @Transactional(readOnly = true)
     public ApiResponse<List<PortfolioResponse>> getPortfolio(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) return ApiResponse.error("Không tìm thấy người dùng");
+        if (user == null)
+            return ApiResponse.error("Không tìm thấy người dùng");
 
         List<PortfolioResponse> portfolio = portfolioRepository.findByUserId(user.getId())
                 .stream()
@@ -737,13 +749,14 @@ public class OrderService {
      */
     public ApiResponse<PortfolioSummaryResponse> getPortfolioSummary(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) return ApiResponse.error("Không tìm thấy người dùng");
+        if (user == null)
+            return ApiResponse.error("Không tìm thấy người dùng");
 
         List<Portfolio> holdings = portfolioRepository.findByUserId(user.getId());
 
         String[] chartColors = {
-            "#2962ff", "#00c853", "#ff6d00", "#aa00ff", "#d50000",
-            "#00bfa5", "#6200ea", "#c51162", "#0091ea", "#64dd17"
+                "#2962ff", "#00c853", "#ff6d00", "#aa00ff", "#d50000",
+                "#00bfa5", "#6200ea", "#c51162", "#0091ea", "#64dd17"
         };
 
         BigDecimal totalStockValue = BigDecimal.ZERO;
@@ -783,7 +796,7 @@ public class OrderService {
         BigDecimal totalPnL = totalStockValue.subtract(totalInvested);
         double totalPnLPercent = totalInvested.compareTo(BigDecimal.ZERO) > 0
                 ? totalPnL.divide(totalInvested, 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100)).doubleValue()
+                        .multiply(BigDecimal.valueOf(100)).doubleValue()
                 : 0.0;
 
         PortfolioSummaryResponse summary = PortfolioSummaryResponse.builder()

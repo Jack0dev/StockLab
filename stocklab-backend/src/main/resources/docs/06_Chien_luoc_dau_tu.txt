@@ -1,0 +1,118 @@
+CHIẾN LƯỢC ĐẦU TƯ PHỔ BIẾN
+==============================
+
+1. ĐẦU TƯ GIÁ TRỊ (Value Investing)
+
+Triết lý: Tìm cổ phiếu bị thị trường định giá thấp hơn giá trị thực.
+Người tiên phong: Benjamin Graham, Warren Buffett.
+
+Tiêu chí chọn cổ phiếu:
+- P/E thấp hơn trung bình ngành
+- P/B < 1.5
+- ROE ổn định > 15%
+- Nợ/Vốn CSH < 1
+- Lịch sử trả cổ tức đều đặn
+- Biên an toàn (Margin of Safety) ≥ 30%
+
+Ưu điểm: An toàn, dài hạn, không cần theo dõi liên tục.
+Nhược điểm: Cần kiên nhẫn, có thể phải chờ rất lâu để giá phản ánh giá trị.
+
+---
+
+2. ĐẦU TƯ TĂNG TRƯỞNG (Growth Investing)
+
+Triết lý: Tìm cổ phiếu của công ty có tốc độ tăng trưởng doanh thu và lợi nhuận vượt trội.
+Người tiên phong: Philip Fisher, Peter Lynch.
+
+Tiêu chí chọn cổ phiếu:
+- Tăng trưởng EPS > 20%/năm
+- Tăng trưởng doanh thu > 15%/năm
+- Thuộc ngành có tiềm năng phát triển lớn
+- Ban lãnh đạo có năng lực và tầm nhìn
+- Lợi thế cạnh tranh bền vững (moat)
+
+Ưu điểm: Lợi nhuận tiềm năng rất cao.
+Nhược điểm: P/E thường cao, rủi ro lớn nếu tăng trưởng chậm lại.
+
+---
+
+3. GIAO DỊCH SWING (Swing Trading)
+
+Triết lý: Nắm giữ cổ phiếu từ vài ngày đến vài tuần, tận dụng các đợt sóng giá ngắn hạn.
+
+Phương pháp:
+- Xác định xu hướng chính bằng SMA 50 và SMA 200
+- Tìm điểm vào tại vùng hỗ trợ khi RSI < 30
+- Tìm điểm ra tại vùng kháng cự khi RSI > 70
+- Sử dụng MACD để xác nhận tín hiệu
+- Stop loss chặt: 3-5%
+- Target profit: 8-15%
+
+Ưu điểm: Lợi nhuận khá, không cần theo dõi liên tục như day trading.
+Nhược điểm: Có thể bị whipsaw (bẫy giá).
+
+---
+
+4. ĐẦU TƯ CỔ TỨC (Dividend Investing)
+
+Triết lý: Tập trung vào cổ phiếu trả cổ tức đều đặn và tăng dần.
+
+Tiêu chí:
+- Lợi suất cổ tức (Dividend Yield) > 5%/năm
+- Lịch sử trả cổ tức liên tục > 5 năm
+- Payout Ratio 30-60% (bền vững)
+- Doanh nghiệp có dòng tiền ổn định
+
+Các cổ phiếu cổ tức tốt tại VN: VNM, GAS, PLX, REE, DHG, DPM
+
+Ưu điểm: Thu nhập thụ động ổn định, phù hợp nhà đầu tư ít rủi ro.
+Nhược điểm: Tăng giá vốn thường chậm hơn nhóm tăng trưởng.
+
+---
+
+5. DCA - TRUNG BÌNH GIÁ (Dollar-Cost Averaging)
+
+Triết lý: Đầu tư một khoản tiền cố định theo lịch đều đặn (hàng tháng/quý), bất kể giá lên hay xuống.
+
+Ví dụ: Mua 5 triệu VCB mỗi tháng:
+- Tháng 1: VCB giá 90,000 → Mua 55 CP
+- Tháng 2: VCB giá 85,000 → Mua 58 CP
+- Tháng 3: VCB giá 95,000 → Mua 52 CP
+- Giá trung bình: ~89,800 (thấp hơn giá cao nhất)
+
+Ưu điểm: Giảm rủi ro timing sai, kỷ luật đầu tư tốt.
+Nhược điểm: Trong thị trường tăng liên tục, DCA kém hiệu quả hơn đầu tư một lần.
+
+---
+
+6. CHIẾN LƯỢC CORE-SATELLITE
+
+Phân bổ danh mục:
+- Core (70%): Cổ phiếu blue-chip, ETF VN30, đầu tư dài hạn
+- Satellite (30%): Cổ phiếu mid-cap tiềm năng, giao dịch swing
+
+Ưu điểm: Cân bằng giữa ổn định và tăng trưởng.
+
+---
+
+7. CONTRARIAN INVESTING (Đầu tư ngược dòng)
+
+Triết lý: "Mua khi người ta sợ hãi, bán khi người ta tham lam" (Warren Buffett).
+
+- Mua vào khi thị trường panic sell, VN-Index giảm mạnh > 20%
+- Bán ra khi thị trường euphoria, ai cũng nói về chứng khoán
+- Cần phân biệt giữa "bắt đáy" có cơ sở và "bắt dao rơi" mù quáng
+
+---
+
+8. ĐẦU TƯ THEO MOMENTUM
+
+Triết lý: "Xu hướng đang tăng sẽ tiếp tục tăng" - Mua cổ phiếu đang tăng mạnh nhất.
+
+Tiêu chí:
+- Returns 1 tháng > 0 (momentum dương)
+- Giá trên SMA 50 và SMA 200
+- Khối lượng tăng dần
+- Relative Strength so với VN-Index > 1
+
+Nhược điểm: Dễ bị đảo chiều đột ngột, cần stop loss chặt.

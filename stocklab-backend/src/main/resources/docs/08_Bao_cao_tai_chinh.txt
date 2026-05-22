@@ -1,0 +1,97 @@
+BÁO CÁO TÀI CHÍNH - CÁCH ĐỌC VÀ PHÂN TÍCH
+==============================================
+
+1. CẤU TRÚC BÁO CÁO TÀI CHÍNH
+
+Một bộ BCTC đầy đủ gồm 4 phần:
+a) Bảng cân đối kế toán (Balance Sheet)
+b) Báo cáo kết quả kinh doanh (Income Statement)
+c) Báo cáo lưu chuyển tiền tệ (Cash Flow Statement)
+d) Thuyết minh báo cáo tài chính (Notes)
+
+Doanh nghiệp niêm yết phải công bố BCTC: Hàng quý (Q1-Q4) và cả năm, được kiểm toán bởi công ty kiểm toán độc lập.
+
+---
+
+2. BẢNG CÂN ĐỐI KẾ TOÁN (Balance Sheet)
+
+Công thức cơ bản: TÀI SẢN = NỢ PHẢI TRẢ + VỐN CHỦ SỞ HỮU
+
+a) Tài sản ngắn hạn: Tiền mặt, hàng tồn kho, phải thu ngắn hạn (< 1 năm)
+b) Tài sản dài hạn: Nhà xưởng, máy móc, đầu tư dài hạn, tài sản vô hình
+c) Nợ ngắn hạn: Vay ngắn hạn, phải trả nhà cung cấp (< 1 năm)
+d) Nợ dài hạn: Trái phiếu, vay ngân hàng dài hạn (> 1 năm)
+e) Vốn chủ sở hữu: Vốn điều lệ + Lợi nhuận giữ lại
+
+Chỉ số quan trọng từ Balance Sheet:
+- Current Ratio = Tài sản NH / Nợ NH → > 1.5 là tốt
+- Quick Ratio = (Tài sản NH - Hàng tồn kho) / Nợ NH → > 1 là tốt
+- D/E = Nợ / Vốn CSH → < 1 là an toàn
+
+---
+
+3. BÁO CÁO KẾT QUẢ KINH DOANH (Income Statement)
+
+Cấu trúc:
+Doanh thu thuần
+- Giá vốn hàng bán
+= LỢI NHUẬN GỘP
+- Chi phí bán hàng
+- Chi phí quản lý doanh nghiệp
++ Thu nhập tài chính
+- Chi phí tài chính
+= LỢI NHUẬN TRƯỚC THUẾ
+- Thuế TNDN
+= LỢI NHUẬN SAU THUẾ
+
+Phân tích:
+- Tăng trưởng doanh thu qua các quý → Doanh nghiệp đang mở rộng hay thu hẹp?
+- Gross Margin ổn định hay giảm? → Sức cạnh tranh thay đổi?
+- Chi phí tài chính tăng mạnh → Nợ vay tăng, rủi ro tăng
+- EPS = LNST / Số CP lưu hành → Chỉ số quan trọng nhất
+
+---
+
+4. BÁO CÁO LƯU CHUYỂN TIỀN TỆ (Cash Flow Statement)
+
+3 nhóm dòng tiền:
+
+a) Dòng tiền từ hoạt động kinh doanh (Operating Cash Flow - OCF):
+- Dương: Doanh nghiệp kiếm tiền thật từ hoạt động chính → TỐT
+- Âm: Doanh nghiệp đang "đốt tiền" → CẨN THẬN
+
+b) Dòng tiền từ hoạt động đầu tư (Investing Cash Flow):
+- Âm: Đang đầu tư mở rộng (mua tài sản, nhà máy) → Bình thường nếu doanh nghiệp đang tăng trưởng
+- Dương: Đang bán tài sản → Có thể là dấu hiệu thu hẹp
+
+c) Dòng tiền từ hoạt động tài chính (Financing Cash Flow):
+- Dương: Đang vay thêm hoặc phát hành cổ phiếu
+- Âm: Đang trả nợ hoặc trả cổ tức → Tích cực nếu trả cổ tức
+
+Nguyên tắc vàng: Doanh nghiệp tốt = OCF dương mạnh + Đầu tư hợp lý + Trả được cổ tức.
+
+---
+
+5. CÁC DẤU HIỆU CẢNH BÁO (Red Flags)
+
+- Doanh thu tăng nhưng dòng tiền kinh doanh âm → Có thể là doanh thu ảo
+- Hàng tồn kho tăng nhanh hơn doanh thu → Sản phẩm khó bán
+- Phải thu tăng nhanh hơn doanh thu → Khách hàng chậm trả, nợ xấu tiềm ẩn
+- Vay nợ tăng liên tục nhưng lợi nhuận không tăng tương ứng → Sử dụng vốn kém hiệu quả
+- Kiểm toán đưa ý kiến ngoại trừ hoặc từ chối đưa ý kiến → RỦI RO RẤT CAO
+- Ban lãnh đạo liên tục bán cổ phiếu → Mất niềm tin vào doanh nghiệp
+
+---
+
+6. SO SÁNH DOANH NGHIỆP CÙNG NGÀNH
+
+Khi phân tích, luôn so sánh với đối thủ cùng ngành:
+- P/E, P/B, ROE so với trung bình ngành
+- Gross Margin so với đối thủ → Ai có lợi thế chi phí?
+- Tăng trưởng doanh thu → Ai đang chiếm thị phần?
+- D/E → Ai đang vay nhiều hơn?
+
+Ví dụ so sánh ngân hàng: VCB vs TCB vs MBB
+- VCB: ROE ~25%, nợ xấu thấp nhất, premium pricing
+- TCB: ROE ~18%, Casa ratio cao, phí dịch vụ mạnh
+- MBB: ROE ~20%, tăng trưởng tín dụng nhanh

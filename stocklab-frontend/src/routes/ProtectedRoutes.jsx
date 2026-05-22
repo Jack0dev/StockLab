@@ -12,6 +12,9 @@ import WalletPage from '../pages/WalletPage'
 import ReportPage from '../pages/ReportPage'
 import VnPayResultPage from '../pages/VnPayResultPage'
 
+
+
+
 const protectedRoutes = [
   { path: '/profile', element: <ProfilePage /> },
   { path: '/stocks', element: <StockListPage /> },
@@ -26,6 +29,8 @@ const protectedRoutes = [
   { path: '/wallet', element: <WalletPage /> },
   { path: '/payment-result', element: <VnPayResultPage /> },
   { path: '/reports', element: <ReportPage /> },
+
+
 ]
 
 export default protectedRoutes

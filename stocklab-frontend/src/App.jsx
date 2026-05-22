@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 import Navbar from './components/Navbar'
 import TourOverlay from './components/TourOverlay'
+import AIChatWidget from './components/AIChatWidget'
 
 // Route modules — mỗi module quản lý route riêng, tránh conflict
 import publicRoutes from './routes/PublicRoutes'
@@ -19,9 +20,11 @@ function AppLayout() {
         <Outlet />
       </main>
       <TourOverlay />
+      <AIChatWidget />
     </>
   )
 }
+
 
 function App() {
   const { isAuthenticated, user, loading } = useAuth()

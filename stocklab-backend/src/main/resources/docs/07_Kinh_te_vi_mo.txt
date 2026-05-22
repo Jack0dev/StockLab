@@ -1,0 +1,95 @@
+KINH TẾ VĨ MÔ VÀ TÁC ĐỘNG ĐẾN THỊ TRƯỜNG CHỨNG KHOÁN
+=========================================================
+
+1. LÃI SUẤT (Interest Rate)
+
+Tác động đến thị trường:
+- Lãi suất TĂNG → Chứng khoán thường GIẢM vì:
+  + Chi phí vay tăng → Doanh nghiệp giảm lợi nhuận
+  + Gửi tiết kiệm hấp dẫn hơn → Dòng tiền rút khỏi chứng khoán
+  + Chiết khấu dòng tiền tương lai tăng → Định giá cổ phiếu giảm
+
+- Lãi suất GIẢM → Chứng khoán thường TĂNG vì:
+  + Chi phí vay giảm → Doanh nghiệp tăng lợi nhuận
+  + Tiết kiệm kém hấp dẫn → Dòng tiền chảy vào chứng khoán
+  + Margin rẻ hơn → Đòn bẩy tăng
+
+Lãi suất điều hành tại Việt Nam: Quyết định bởi Ngân hàng Nhà nước Việt Nam (SBV).
+
+---
+
+2. LẠM PHÁT (Inflation)
+
+- Lạm phát vừa phải (2-4%): Tốt cho chứng khoán, kinh tế tăng trưởng bền vững
+- Lạm phát cao (> 5%): Xấu cho chứng khoán, NHNN có thể tăng lãi suất
+- Giảm phát (< 0%): Rất xấu, kinh tế suy thoái
+
+Các ngành hưởng lợi từ lạm phát: Bất động sản, vàng, năng lượng, hàng hóa.
+Các ngành bị ảnh hưởng: Ngân hàng (NIM giảm), bán lẻ (sức mua giảm).
+
+CPI (Consumer Price Index): Chỉ số giá tiêu dùng, đo lường lạm phát hàng tháng tại VN.
+
+---
+
+3. TỶ GIÁ HỐI ĐOÁI (Exchange Rate)
+
+VND/USD ảnh hưởng trực tiếp:
+- VND mất giá → Doanh nghiệp xuất khẩu HƯỞNG LỢI (VNM, thủy sản, dệt may)
+- VND mất giá → Doanh nghiệp nhập khẩu CHỊU THIỆT (HPG nhập quặng, hãng hàng không)
+- VND mất giá → Nhà đầu tư nước ngoài rút vốn (sell-off)
+- VND tăng giá → Nhà đầu tư nước ngoài mua ròng (flow in)
+
+---
+
+4. GDP VÀ TĂNG TRƯỞNG KINH TẾ
+
+GDP Việt Nam tăng trưởng trung bình 6-7%/năm trong thập kỷ qua, thuộc nhóm nhanh nhất Đông Nam Á.
+
+- GDP tăng > 6%: Thị trường chứng khoán thường tăng tốt
+- GDP tăng < 4%: Thị trường chứng khoán có thể gặp khó khăn
+- GDP âm (suy thoái): Thị trường giảm mạnh, nhưng thường là cơ hội mua dài hạn
+
+---
+
+5. CHÍNH SÁCH TIỀN TỆ (Monetary Policy)
+
+Nới lỏng tiền tệ (Easing): NHNN bơm tiền ra, hạ lãi suất → Tích cực cho chứng khoán
+Thắt chặt tiền tệ (Tightening): NHNN hút tiền về, tăng lãi suất → Tiêu cực cho chứng khoán
+
+Công cụ:
+- Lãi suất tái cấp vốn
+- Tỷ lệ dự trữ bắt buộc
+- Nghiệp vụ thị trường mở (OMO)
+
+---
+
+6. DÒNG VỐN NƯỚC NGOÀI (Foreign Fund Flow)
+
+- Mua ròng (Net Buy): Nhà đầu tư ngoại mua nhiều hơn bán → Tích cực, đặc biệt với blue-chip
+- Bán ròng (Net Sell): Nhà đầu tư ngoại bán nhiều hơn mua → Tiêu cực, gây áp lực giảm giá
+
+Yếu tố ảnh hưởng dòng vốn ngoại:
+- Fed tăng/giảm lãi suất USD
+- Rủi ro địa chính trị
+- Triển vọng nâng hạng thị trường (FTSE, MSCI)
+- Tỷ giá VND/USD
+
+Nâng hạng thị trường FTSE/MSCI: Khi Việt Nam được nâng từ Frontier Market lên Emerging Market, dự kiến thu hút hàng tỷ USD từ các quỹ ETF toàn cầu.
+
+---
+
+7. CHU KỲ KINH TẾ VÀ CHỨNG KHOÁN
+
+Giai đoạn 1 - Phục hồi (Recovery): Kinh tế bắt đầu tăng trưởng sau suy thoái → MUA nhóm ngân hàng, bất động sản, chứng khoán
+Giai đoạn 2 - Mở rộng (Expansion): Kinh tế tăng trưởng mạnh → MUA nhóm công nghệ, tiêu dùng
+Giai đoạn 3 - Đỉnh (Peak): Kinh tế quá nóng, lạm phát tăng → BÁN bớt, chuyển sang phòng thủ
+Giai đoạn 4 - Suy thoái (Recession): Kinh tế co lại → GIỮ TIỀN MẶT, mua nhóm phòng thủ (VNM, DHG)
+
+---
+
+8. HIỆU ỨNG MÙA VỤ (Seasonality)
+
+- "Sell in May and Go Away": Thống kê cho thấy thị trường VN thường yếu từ tháng 5 đến tháng 10
+- Tháng 1 Effect: Thị trường thường tăng vào đầu năm do kỳ vọng mới
+- Window Dressing: Cuối quý, các quỹ đầu tư mua vào cổ phiếu tốt để "làm đẹp" báo cáo
+- Trước Tết Nguyên Đán: Thường có hiệu ứng "rally" trước Tết

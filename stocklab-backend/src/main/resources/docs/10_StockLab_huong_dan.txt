@@ -1,0 +1,140 @@
+HỆ THỐNG STOCKLAB - HƯỚNG DẪN SỬ DỤNG VÀ KIẾN TRÚC
+======================================================
+
+1. GIỚI THIỆU STOCKLAB
+
+StockLab là nền tảng mô phỏng giao dịch chứng khoán Việt Nam tích hợp trí tuệ nhân tạo (AI). Hệ thống cho phép người dùng:
+- Giao dịch mua bán cổ phiếu ảo với dữ liệu thị trường thực
+- Nhận tín hiệu phân tích từ Machine Learning (BUY/SELL/HOLD)
+- Chat với AI Assistant để phân tích cổ phiếu
+- Quản lý danh mục đầu tư và theo dõi lãi lỗ
+- Đọc tin tức tài chính tự động cập nhật
+
+---
+
+2. CÁC TÍNH NĂNG CHÍNH
+
+a) Giao dịch cổ phiếu:
+- Đặt lệnh MUA/BÁN với giá giới hạn
+- Lệnh điều kiện (Conditional Orders): Stop Loss, Take Profit tự động
+- Sổ lệnh (Order Book) hiển thị cung cầu realtime
+- Lịch sử giao dịch chi tiết
+
+b) AI Signal Dashboard:
+- Hiển thị tín hiệu BUY/SELL/HOLD cho từng cổ phiếu
+- Độ tin cậy (Confidence) từ 0-100%
+- Dựa trên các chỉ báo kỹ thuật: RSI, MACD, Bollinger Bands, SMA, EMA
+- Cập nhật mỗi ngày qua pipeline ML
+
+c) AI Chatbot:
+- Hỏi đáp về chứng khoán bằng tiếng Việt
+- Tự động lấy giá cổ phiếu realtime
+- Phân tích tín hiệu ML cho bất kỳ mã nào
+- Xem danh mục đầu tư qua chat
+- Đọc tin tức tài chính
+- Hỗ trợ cả Local AI (offline) và Gemini API (cloud)
+
+d) Quản lý rủi ro:
+- Risk Dashboard hiển thị mức rủi ro danh mục
+- Tính drawdown và Sharpe Ratio
+- Phân tích rủi ro trước khi đặt lệnh
+
+---
+
+3. PIPELINE MACHINE LEARNING
+
+Quy trình tạo tín hiệu AI:
+
+Bước 1: Thu thập dữ liệu giá (MySQL)
+Bước 2: Tính toán chỉ báo kỹ thuật (Feature Engineering):
+  - RSI 14 ngày
+  - MACD (12, 26, 9)
+  - Bollinger Bands (20, 2)
+  - SMA 10, SMA 20, SMA 50
+  - EMA 12, EMA 26
+  - ATR 14 ngày
+  - Volume trung bình 20 ngày
+  - Momentum 10 ngày
+  - Biến động giá (Returns)
+
+Bước 3: Lưu features vào Feature Store (Redis)
+Bước 4: Model dự đoán → Tín hiệu BUY/SELL/HOLD + Confidence
+
+Logic tín hiệu:
+- BUY: RSI < 35 AND MACD > Signal AND Giá > SMA50 → Quá bán + momentum tăng
+- SELL: RSI > 65 AND MACD < Signal AND Giá < SMA50 → Quá mua + momentum giảm
+- HOLD: Không thỏa mãn điều kiện BUY hoặc SELL
+
+---
+
+4. AI SMART ROUTER
+
+Hệ thống tự động chọn AI phù hợp:
+
+Ưu tiên 1: Local AI (Ollama + Qwen 2.5)
+- Chạy trên máy local, miễn phí hoàn toàn
+- Không giới hạn số câu hỏi
+- Dữ liệu không rời khỏi máy (riêng tư)
+- Hỗ trợ Function Calling: tự động lấy giá, tín hiệu, portfolio
+
+Ưu tiên 2: Gemini API (Fallback)
+- Sử dụng khi Ollama không khả dụng
+- Giới hạn 20 câu hỏi/ngày (quota)
+- Mạnh hơn trong suy luận phức tạp
+- Kết nối internet cần thiết
+
+---
+
+5. STOCKLAB TOOLS (Function Calling)
+
+Khi AI cần dữ liệu thực tế, nó sẽ tự động gọi các công cụ:
+
+get_stock_price: Lấy giá cổ phiếu realtime (giá mở cửa, cao, thấp, đóng cửa, khối lượng, % thay đổi)
+get_stock_signal: Lấy tín hiệu ML (BUY/SELL/HOLD, confidence, indicators)
+get_portfolio: Lấy danh mục đầu tư người dùng (số lượng CP, giá mua TB, lãi/lỗ)
+get_financial_news: Lấy tin tức từ VnEconomy, VnExpress qua RSS
+get_market_overview: Tổng quan top 20 cổ phiếu + tín hiệu AI
+
+---
+
+6. VECTOR DATABASE (RAG)
+
+StockLab sử dụng Vector Database (In-Memory) để lưu trữ tài liệu nội bộ:
+- Mô hình embedding: Nomic Embed Text (chạy local trên Ollama)
+- Chunking: Mỗi tài liệu được chia thành các đoạn ~500 token
+- Similarity Search: Khi user hỏi, hệ thống tìm top 5 đoạn văn bản liên quan nhất
+- Hỗ trợ upload PDF, TXT, MD
+
+Tài liệu đã được index:
+- Quy định bảo mật dự án
+- Thuật ngữ chứng khoán cơ bản
+- Phân tích kỹ thuật (RSI, MACD, BB...)
+- Phân tích cơ bản (P/E, ROE, EPS...)
+- Quản lý rủi ro
+- Thị trường Việt Nam
+- Chiến lược đầu tư
+- Kinh tế vĩ mô
+- Báo cáo tài chính
+- ETF và phái sinh
+
+---
+
+7. TÀI KHOẢN VÀ BẢO MẬT
+
+- Xác thực 2 lớp (2FA) với Google Authenticator
+- Token JWT cho mỗi phiên đăng nhập
+- OTP qua email cho giao dịch nạp/rút tiền
+- Mật khẩu được hash bằng BCrypt
+- Rate limiting: 20 câu hỏi AI/ngày, chống spam
+
+---
+
+8. KIẾN TRÚC HỆ THỐNG
+
+Frontend: React 19 + Vite (Port 5173)
+Backend: Spring Boot 3.2.5 + JDK 21 (Port 8080)
+ML Service: Python FastAPI (Port 8000)
+Local AI: Ollama + Qwen 2.5 7B (Port 11434)
+Database: MySQL 8 (Port 3306/3307)
+Cache: Redis (Port 6379/6380)
+WebSocket: STOMP over SockJS cho realtime updates

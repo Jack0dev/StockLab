@@ -100,6 +100,8 @@ export default function Navbar() {
               <Link to="/stocks" className="nav-link">Bảng Giá</Link>
               <Link to="/watchlist" className="nav-link">Thông Tin Thị Trường</Link>
 
+
+
               {/* Mega Dropdown — Giao Dịch Cơ Sở */}
               <div className="nav-mega-wrapper">
                 <button className="nav-link nav-mega-trigger">

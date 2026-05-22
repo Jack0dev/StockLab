@@ -1,0 +1,102 @@
+THỊ TRƯỜNG CHỨNG KHOÁN VIỆT NAM - CẤU TRÚC VÀ QUY ĐỊNH
+==========================================================
+
+1. CÁC SÀN GIAO DỊCH
+
+a) HOSE (Ho Chi Minh Stock Exchange)
+- Sàn giao dịch lớn nhất Việt Nam
+- Mã cổ phiếu: 3 ký tự (VD: VCB, FPT, VNM)
+- Biên độ dao động: ±7%
+- Lô giao dịch tối thiểu: 100 cổ phiếu
+- Chỉ số đại diện: VN-Index, VN30-Index
+- Phiên giao dịch: 9:00 - 15:00
+
+b) HNX (Hanoi Stock Exchange)
+- Sàn giao dịch thứ hai
+- Mã cổ phiếu: 3 ký tự
+- Biên độ dao động: ±10%
+- Chỉ số đại diện: HNX-Index, HNX30
+- Phiên giao dịch: 9:00 - 15:00
+
+c) UPCOM (Unlisted Public Company Market)
+- Thị trường cho công ty đại chúng chưa niêm yết
+- Biên độ dao động: ±15%
+- Thanh khoản thường thấp hơn HOSE và HNX
+- Nhiều cổ phiếu "ngầm" có tiềm năng tăng trưởng cao
+
+---
+
+2. PHIÊN GIAO DỊCH TRÊN HOSE
+
+- 9:00 - 9:15: Khớp lệnh định kỳ mở cửa (ATO)
+- 9:15 - 14:30: Khớp lệnh liên tục
+- 14:30 - 14:45: Khớp lệnh định kỳ đóng cửa (ATC)
+- 14:45 - 15:00: Giao dịch thỏa thuận (Put-through)
+
+---
+
+3. CÁC LOẠI LỆNH TRÊN HOSE
+
+- LO (Limit Order): Lệnh giới hạn, chỉ khớp tại giá đặt hoặc tốt hơn
+- MP (Market Price): Lệnh thị trường, khớp tại giá tốt nhất hiện có
+- ATO: Lệnh mở cửa, chỉ dùng trong phiên 9:00-9:15
+- ATC: Lệnh đóng cửa, chỉ dùng trong phiên 14:30-14:45
+- MOK (Match or Kill): Khớp toàn bộ hoặc hủy
+- MAK (Match and Kill): Khớp được bao nhiêu thì khớp, phần còn lại hủy
+
+---
+
+4. QUY ĐỊNH VỀ GIAO DỊCH KÝ QUỸ (MARGIN)
+
+- Tỷ lệ ký quỹ ban đầu: 50% (bạn bỏ 50%, vay 50%)
+- Tỷ lệ ký quỹ duy trì: 30%
+- Call Margin: Khi giá trị tài sản giảm khiến tỷ lệ ký quỹ < 30%, nhà đầu tư phải nộp thêm tiền trong vòng T+3
+- Force Sell: Nếu không nộp thêm, công ty chứng khoán có quyền bán cổ phiếu để thu hồi nợ
+- Lãi suất margin: Thường 9-14%/năm tùy công ty chứng khoán
+
+---
+
+5. THUẾ VÀ PHÍ GIAO DỊCH
+
+- Phí giao dịch: 0.15-0.35% giá trị mỗi lần mua/bán (tùy CTCK)
+- Thuế bán cổ phiếu: 0.1% giá trị bán
+- Thuế cổ tức: 5% trên cổ tức nhận được
+- Không có thuế lãi vốn (capital gains tax) riêng biệt tại Việt Nam
+
+---
+
+6. TOP 20 CỔ PHIẾU LỚN NHẤT TRÊN HOSE (Blue-chip)
+
+VCB - Ngân hàng Vietcombank: Ngân hàng thương mại nhà nước lớn nhất, vốn hóa hàng đầu
+VIC - Vingroup: Tập đoàn đa ngành lớn nhất Việt Nam (BĐS, ô tô, bệnh viện)
+VHM - Vinhomes: Phát triển bất động sản, thuộc hệ sinh thái Vingroup
+VNM - Vinamilk: Doanh nghiệp sữa lớn nhất Việt Nam, cổ phiếu phòng thủ
+FPT - FPT Corporation: Tập đoàn công nghệ hàng đầu, chuyển đổi số
+HPG - Hòa Phát: Tập đoàn thép lớn nhất Việt Nam
+MWG - Thế Giới Di Động: Chuỗi bán lẻ điện tử, điện máy
+BID - BIDV: Ngân hàng thương mại nhà nước
+CTG - VietinBank: Ngân hàng thương mại nhà nước
+TCB - Techcombank: Ngân hàng tư nhân hàng đầu
+MBB - MB Bank: Ngân hàng Quân đội
+MSN - Masan Group: Tập đoàn tiêu dùng (Vinmart, Phúc Long)
+GAS - PV Gas: Khí đốt, thuộc PVN
+SAB - Sabeco: Bia Sài Gòn
+PLX - Petrolimex: Xăng dầu
+ACB - ACB Bank: Ngân hàng tư nhân
+VPB - VPBank: Ngân hàng tư nhân, FE Credit
+SSI - SSI Securities: Công ty chứng khoán lớn nhất
+VRE - Vincom Retail: Trung tâm thương mại
+POW - PV Power: Điện lực
+
+---
+
+7. PHÂN NGÀNH THỊ TRƯỜNG VIỆT NAM
+
+- Ngân hàng (Banking): VCB, BID, CTG, TCB, MBB, VPB, ACB - Chiếm ~30% vốn hóa VN-Index
+- Bất động sản (Real Estate): VIC, VHM, NVL, KDH - Chiếm ~15%
+- Công nghệ (Technology): FPT - Tăng trưởng mạnh nhờ chuyển đổi số
+- Thép & Vật liệu: HPG, HSG, NKG - Biến động theo giá thép thế giới
+- Bán lẻ: MWG, PNJ, DGW - Phụ thuộc sức mua tiêu dùng nội địa
+- Thực phẩm & Đồ uống: VNM, MSN, SAB - Nhóm phòng thủ
+- Dầu khí: GAS, PLX, PVD, PVS - Biến động theo giá dầu
+- Chứng khoán: SSI, VCI, HCM - Biến động theo thanh khoản thị trường

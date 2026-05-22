@@ -1,0 +1,38 @@
+# ============================================
+# StockLab ML Service — Python Dependencies
+# ============================================
+# Install: pip install -r requirements.txt
+# ============================================
+
+# --- Core Data ---
+pandas>=2.0
+numpy>=1.24
+
+# --- Database ---
+sqlalchemy>=2.0
+pymysql>=1.1
+
+# --- Redis ---
+redis>=5.0
+
+# --- ML / Statistics ---
+scikit-learn>=1.3
+xgboost>=2.0
+
+# --- Technical Analysis ---
+ta>=0.11                # RSI, MACD, BB, ATR, etc.
+
+# --- Market Data (Vietnam) ---
+vnstock>=3.0
+
+# --- API ---
+fastapi>=0.110
+uvicorn[standard]>=0.29
+
+# --- Utilities ---
+python-dotenv>=1.0
+joblib>=1.3
+requests>=2.31
+
+# --- Testing ---
+pytest>=8.0
