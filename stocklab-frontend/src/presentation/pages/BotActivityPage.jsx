@@ -292,7 +292,9 @@ export default function BotActivityPage({ defaultTab }) {
         durationMinutes: Number(durationMinutes),
         intensity,
         priceStep: Number(priceStep),
+        targetPercent: Number(targetChangePercent),
         targetChangePercent: Number(targetChangePercent),
+        customMode: lockSide === 'CEILING' ? 'LOCK_CEILING' : 'LOCK_FLOOR',
         lockSide
       };
       const res = await adminManipulationAPI.startCampaign(payload);
@@ -615,7 +617,8 @@ export default function BotActivityPage({ defaultTab }) {
                 >
                   <option value="LOW">LOW — Thận trọng (100 - 500 CP / lệnh)</option>
                   <option value="MEDIUM">MEDIUM — Vừa phải (500 - 2,000 CP / lệnh)</option>
-                  <option value="HIGH">HIGH — Mãnh liệt (2,000 - 10,000 CP / lệnh)</option>
+                  <option value="HIGH">HIGH — Mạnh mẽ (1,000 - 5,000 CP / lệnh)</option>
+                  <option value="AGGRESSIVE">AGGRESSIVE — Quyết liệt (2,000 - 10,000 CP / lệnh)</option>
                 </select>
               </div>
 
