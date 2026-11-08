@@ -1,0 +1,607 @@
+/* ========================================================
+   QUICK TRADING DOCK — SWISS MODERNIST LIGHT UI
+   Strictly Zero Icons · Monospace Tabular Numerals · High Contrast
+   ======================================================== */
+
+/* --- Minimized Floating Dock Pill --- */
+.quick-dock-minimized {
+  position: fixed;
+  bottom: 24px;
+  right: 92px; /* Offset to the left of the AI Chat circle at 24px */
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #1e293b;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  z-index: 9995;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  animation: qdmSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qdmSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.qdm-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 100%;
+  cursor: pointer;
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.qdm-summary:hover {
+  background: #f8fafc;
+}
+
+.qdm-side-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.qdm-side-buy {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.qdm-side-sell {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.qdm-ticker {
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: #0f172a;
+  letter-spacing: 0.04em;
+}
+
+.qdm-price {
+  font-size: 0.82rem;
+  color: #475569;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.qdm-actions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-left: 1px solid #e2e8f0;
+}
+
+.qdm-btn {
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-right: 1px solid #e2e8f0;
+  padding: 0 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.qdm-btn:last-child {
+  border-right: none;
+}
+
+.qdm-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.qdm-btn-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* --- Expanded Floating Dock Window --- */
+.quick-dock-window {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 390px;
+  max-height: 90vh;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.08);
+  border-radius: 6px;
+  z-index: 9996;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  animation: qdwScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qdwScaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 1. Header */
+.qdw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.qdw-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qdw-title-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #f8fafc;
+}
+
+.qdw-exchange-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+}
+
+.qdw-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qdw-ctrl-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qdw-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.qdw-ctrl-close:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+}
+
+/* 2. Side Switcher: [ MUA ] / [ BÁN ] */
+.qdw-side-switcher {
+  display: flex;
+  border-bottom: 2px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.qdw-side-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.qdw-side-buy.active {
+  background: #ffffff;
+  color: #047857;
+  border-bottom: 3px solid #059669;
+}
+
+.qdw-side-sell.active {
+  background: #ffffff;
+  color: #dc2626;
+  border-bottom: 3px solid #dc2626;
+}
+
+.qdw-side-btn:hover:not(.active) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* 3. Market Quote Ribbon */
+.qdw-quote-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 6px 10px;
+}
+
+.qdw-quote-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-right: 1px solid #e2e8f0;
+}
+
+.qdw-quote-col:last-child {
+  border-right: none;
+}
+
+.qdw-qlabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.qdw-qval {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.text-purple { color: #7c3aed; }
+.text-cyan { color: #0284c7; }
+.text-amber { color: #d97706; }
+.text-green { color: #059669; }
+.text-red { color: #dc2626; }
+
+/* 4. Form Content */
+.qdw-form {
+  padding: 14px;
+  overflow-y: auto;
+  max-height: calc(90vh - 120px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qdw-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qdw-field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.qdw-field-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qdw-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qdw-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 0.05em;
+}
+
+.qdw-sub-label {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-family: ui-monospace, monospace;
+}
+
+.qdw-input {
+  width: 100%;
+  height: 36px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0 10px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.qdw-input:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
+}
+
+.qdw-input.uppercase {
+  text-transform: uppercase;
+}
+
+.qdw-select {
+  width: 100%;
+  height: 36px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.qdw-select:focus {
+  border-color: #0f172a;
+}
+
+.qdw-static-box {
+  height: 36px;
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+}
+
+/* Percentage Quick Buttons */
+.qdw-pct-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.qdw-pct-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 2px;
+  padding: 2px 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.qdw-pct-btn:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+/* Search Dropdown */
+.relative-wrap {
+  position: relative;
+}
+
+.qdw-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #94a3b8;
+  border-top: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 4px 4px;
+  z-index: 50;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.qdw-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.12s ease;
+}
+
+.qdw-search-item:last-child {
+  border-bottom: none;
+}
+
+.qdw-search-item:hover {
+  background: #f8fafc;
+}
+
+.qdw-si-ticker {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.qdw-si-name {
+  font-size: 0.72rem;
+  color: #64748b;
+  flex: 1;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qdw-si-price {
+  font-size: 0.8rem;
+  color: #047857;
+}
+
+/* 5. Financial Summary Panel */
+.qdw-summary-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.qdw-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qdw-sum-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.04em;
+}
+
+.qdw-sum-val {
+  font-size: 0.78rem;
+  color: #0f172a;
+}
+
+/* 6. Alerts & Feedback */
+.qdw-alert {
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: qdwShake 0.25s ease;
+}
+
+@keyframes qdwShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.qdw-alert-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.qdw-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.qdw-alert-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.qdw-alert-msg {
+  font-weight: 500;
+}
+
+/* 7. OTP Inline */
+.qdw-otp-inline {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qdw-otp-resend-btn {
+  background: transparent;
+  border: none;
+  color: #b45309;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.qdw-otp-resend-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* 8. Submit Button */
+.qdw-submit-btn {
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.15s ease;
+}
+
+.qdw-btn-buy {
+  background: #059669;
+}
+
+.qdw-btn-buy:hover {
+  background: #047857;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+}
+
+.qdw-btn-sell {
+  background: #dc2626;
+}
+
+.qdw-btn-sell:hover {
+  background: #b91c1c;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+}
+
+.qdw-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Utility Mono and Tabular */
+.mono-num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}

@@ -1,6 +1,6 @@
 package com.stocklab.service;
 
-import com.stocklab.model.Transaction;
+import com.stocklab.domain.model.Transaction;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;

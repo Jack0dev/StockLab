@@ -1,11 +1,11 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.ApiResponse;
-import com.stocklab.dto.TechnicalIndicatorsResponse;
-import com.stocklab.model.StockPriceHistory;
-import com.stocklab.model.Stock;
-import com.stocklab.repository.StockPriceHistoryRepository;
-import com.stocklab.repository.StockRepository;
+import com.stocklab.presentation.dto.ApiResponse;
+import com.stocklab.presentation.dto.TechnicalIndicatorsResponse;
+import com.stocklab.domain.model.StockPriceHistory;
+import com.stocklab.domain.model.Stock;
+import com.stocklab.infrastructure.repository.StockPriceHistoryRepository;
+import com.stocklab.infrastructure.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

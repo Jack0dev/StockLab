@@ -1,17 +1,20 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.*;
-import com.stocklab.model.Stock;
-import com.stocklab.model.StockPriceHistory;
-import com.stocklab.repository.StockPriceHistoryRepository;
-import com.stocklab.repository.StockRepository;
+import com.stocklab.presentation.dto.*;
+import com.stocklab.domain.model.Stock;
+import com.stocklab.domain.model.StockPriceHistory;
+import com.stocklab.domain.model.TradingConstants;
+import com.stocklab.infrastructure.repository.StockPriceHistoryRepository;
+import com.stocklab.infrastructure.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,24 +83,37 @@ public class StockService {
             return ApiResponse.error("Không tìm thấy cổ phiếu: " + ticker);
         }
 
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = calculateStartDate(endDate, range);
+        List<StockPriceHistory> allHistory = priceHistoryRepository.findByStockTickerOrderByTradingDateDesc(ticker.toUpperCase());
+        if (allHistory == null || allHistory.isEmpty()) {
+            return ApiResponse.success("Lấy lịch sử giá thành công", List.of());
+        }
 
-        List<StockPriceHistoryResponse> history;
-
-        if (startDate == null) {
-            // ALL range
-            history = priceHistoryRepository.findByStockTickerOrderByTradingDateDesc(ticker.toUpperCase())
-                    .stream()
+        if (range == null || "ALL".equalsIgnoreCase(range)) {
+            List<StockPriceHistoryResponse> responses = allHistory.stream()
                     .map(this::toPriceHistoryResponse)
                     .collect(Collectors.toList());
-        } else {
-            history = priceHistoryRepository
-                    .findByStockTickerAndTradingDateBetweenOrderByTradingDateAsc(
-                            ticker.toUpperCase(), startDate, endDate)
-                    .stream()
+            Collections.reverse(responses);
+            return ApiResponse.success("Lấy lịch sử giá thành công", responses);
+        }
+
+        // Lấy ngày mới nhất trong DB làm mốc kết thúc (tránh lệch thời gian hệ thống)
+        LocalDate latestDate = allHistory.get(0).getTradingDate();
+        LocalDate startDate = calculateStartDate(latestDate, range);
+
+        List<StockPriceHistoryResponse> history = priceHistoryRepository
+                .findByStockTickerAndTradingDateBetweenOrderByTradingDateAsc(
+                        ticker.toUpperCase(), startDate, latestDate)
+                .stream()
+                .map(this::toPriceHistoryResponse)
+                .collect(Collectors.toList());
+
+        // Fallback: nếu khoảng lọc ra rỗng, trả về toàn bộ dữ liệu theo thứ tự tăng dần
+        if (history.isEmpty()) {
+            List<StockPriceHistoryResponse> fallback = allHistory.stream()
                     .map(this::toPriceHistoryResponse)
                     .collect(Collectors.toList());
+            Collections.reverse(fallback);
+            return ApiResponse.success("Lấy lịch sử giá thành công", fallback);
         }
 
         return ApiResponse.success("Lấy lịch sử giá thành công", history);
@@ -185,6 +201,10 @@ public class StockService {
     }
 
     private StockResponse toStockResponse(Stock stock) {
+        BigDecimal ref = stock.getReferencePrice() != null ? stock.getReferencePrice() : stock.getCurrentPrice();
+        BigDecimal ceiling = TradingConstants.calculateCeilingPrice(ref, stock.getExchange());
+        BigDecimal floor = TradingConstants.calculateFloorPrice(ref, stock.getExchange());
+
         return StockResponse.builder()
                 .id(stock.getId())
                 .ticker(stock.getTicker())
@@ -195,6 +215,8 @@ public class StockService {
                 .highPrice(stock.getHighPrice())
                 .lowPrice(stock.getLowPrice())
                 .referencePrice(stock.getReferencePrice())
+                .ceilingPrice(ceiling)
+                .floorPrice(floor)
                 .volume(stock.getVolume())
                 .change(stock.getChange())
                 .changePercent(stock.getChangePercent())

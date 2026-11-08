@@ -34,13 +34,15 @@ RUN chown stocklab:stocklab app.jar
 
 USER stocklab
 
-# Railway injects PORT env var
+# Render/Railway injects PORT env var
 EXPOSE ${PORT:-8080}
 
-# JVM tuning for container environments
+# JVM tuning for container environments (optimized for Render Free: 512MB RAM)
 ENTRYPOINT ["java", \
   "-XX:+UseContainerSupport", \
   "-XX:MaxRAMPercentage=75.0", \
+  "-XX:+UseSerialGC", \
+  "-Xss256k", \
   "-Djava.security.egd=file:/dev/./urandom", \
   "-Dspring.profiles.active=${SPRING_PROFILE:-default}", \
   "-jar", "app.jar"]

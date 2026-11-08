@@ -1,0 +1,446 @@
+/* ==========================================================================
+   PLATFORM TOKEN PAGE — SWISS MODERNIST LIGHT THEME
+   ========================================================================== */
+
+.slp-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  color: var(--text-primary, #090d16);
+  font-family: var(--font, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
+}
+
+.slp-loading,
+.slp-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 400px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* Page Header */
+.slp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.slp-header-kicker {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted, #64748b);
+  margin-bottom: 0.4rem;
+}
+
+.slp-header-title {
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #090d16);
+  line-height: 1.25;
+  margin: 0 0 0.35rem 0;
+}
+
+.slp-header-sub {
+  font-size: 0.925rem;
+  color: var(--text-secondary, #475569);
+  margin: 0;
+  max-width: 650px;
+  line-height: 1.5;
+}
+
+.slp-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.slp-live-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #059669;
+}
+
+/* Hero Section */
+.slp-hero {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 16px;
+  padding: 2.25rem 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 10px 30px -10px rgba(15, 23, 42, 0.04);
+}
+
+.slp-hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.slp-token-badge {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.slp-token-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: #090d16;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono, monospace);
+  box-shadow: 0 4px 12px rgba(9, 13, 22, 0.15);
+}
+
+.slp-token-info h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #090d16;
+  margin: 0 0 0.35rem 0;
+}
+
+.slp-ticker-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono, monospace);
+}
+
+.slp-price-section {
+  text-align: right;
+}
+
+.slp-current-price {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #090d16;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.4rem;
+}
+
+.slp-currency {
+  font-size: 1rem;
+  color: #64748b;
+  margin-left: 0.4rem;
+  font-weight: 600;
+}
+
+.slp-change-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.slp-change-pill.positive {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.slp-change-pill.negative {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+
+.slp-change-pill.neutral {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* Stats Grid Bento */
+.slp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+  .slp-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .slp-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slp-stat-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 10px 30px -10px rgba(15, 23, 42, 0.04);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.slp-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 28px -8px rgba(15, 23, 42, 0.08);
+}
+
+.slp-stat-index {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.3rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  font-family: var(--font-mono, monospace);
+}
+
+.slp-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.slp-stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #090d16;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+/* Revenue Section */
+.slp-section-block {
+  margin-bottom: 2rem;
+}
+
+.slp-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.slp-section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #090d16;
+  margin: 0 0 0.25rem 0;
+}
+
+.slp-section-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.slp-revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .slp-revenue-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .slp-revenue-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slp-revenue-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.4rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 10px 30px -10px rgba(15, 23, 42, 0.04);
+}
+
+.slp-revenue-card.highlight-card {
+  grid-column: span 2;
+  background: #fafafc;
+  border-color: #cbd5e1;
+}
+
+@media (max-width: 900px) {
+  .slp-revenue-card.highlight-card {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 500px) {
+  .slp-revenue-card.highlight-card {
+    grid-column: span 1;
+  }
+}
+
+.slp-revenue-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.65rem;
+}
+
+.slp-revenue-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.slp-revenue-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.slp-revenue-badge.today {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+.slp-revenue-value {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #090d16;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.5rem;
+}
+
+.slp-revenue-unit {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-left: 0.35rem;
+  font-weight: 600;
+}
+
+.slp-progress-track {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.slp-progress-fill {
+  height: 100%;
+  background: #090d16;
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+/* How It Works (Editorial Steps) */
+.slp-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 800px) {
+  .slp-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slp-step-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 10px 30px -10px rgba(15, 23, 42, 0.04);
+}
+
+.slp-step-num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  color: #94a3b8;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
+.slp-step-card h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #090d16;
+  margin: 0 0 0.5rem 0;
+}
+
+.slp-step-card p {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.slp-step-card code {
+  display: inline-block;
+  margin-top: 0.4rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #090d16;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+}

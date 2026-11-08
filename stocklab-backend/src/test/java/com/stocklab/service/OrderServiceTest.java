@@ -1,18 +1,23 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.ApiResponse;
-import com.stocklab.dto.OrderRequest;
-import com.stocklab.dto.OrderResponse;
-import com.stocklab.model.*;
-import com.stocklab.repository.*;
+import com.stocklab.presentation.dto.ApiResponse;
+import com.stocklab.presentation.dto.OrderRequest;
+import com.stocklab.presentation.dto.OrderResponse;
+import com.stocklab.domain.model.*;
+import com.stocklab.infrastructure.repository.*;
+import com.stocklab.service.order.OrderEstimationService;
+import com.stocklab.service.order.OrderManagementService;
+import com.stocklab.service.order.OrderPlacementService;
+import com.stocklab.service.order.PortfolioMetricsCalculator;
+import com.stocklab.service.order.PortfolioQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -35,8 +40,11 @@ class OrderServiceTest {
     private PortfolioRepository portfolioRepository;
     @Mock
     private OtpService otpService;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private TransactionRepository transactionRepository;
 
-    @InjectMocks
     private OrderService orderService;
 
     private User testUser;
@@ -47,6 +55,18 @@ class OrderServiceTest {
     void setUp() {
         // OTP mock: luôn trả true
         lenient().when(otpService.verifyOtp(any(), any())).thenReturn(true);
+
+        PortfolioMetricsCalculator calculator = new PortfolioMetricsCalculator();
+        OrderPlacementService orderPlacementService = new OrderPlacementService(
+                userRepository, stockRepository, orderRepository, portfolioRepository, otpService, eventPublisher);
+        OrderManagementService orderManagementService = new OrderManagementService(
+                userRepository, stockRepository, orderRepository, portfolioRepository, eventPublisher);
+        PortfolioQueryService portfolioQueryService = new PortfolioQueryService(
+                userRepository, portfolioRepository, transactionRepository, calculator);
+        OrderEstimationService orderEstimationService = new OrderEstimationService(
+                userRepository, stockRepository, portfolioRepository);
+
+        orderService = new OrderService(orderPlacementService, orderManagementService, portfolioQueryService, orderEstimationService);
 
         testUser = User.builder()
                 .id(1L)
@@ -188,10 +208,10 @@ class OrderServiceTest {
             assertEquals("LIMIT", result.getData().getOrderType());
             assertEquals(10, result.getData().getQuantity());
             assertEquals(0, result.getData().getFilledQuantity());
-            assertEquals("PENDING", result.getData().getStatus());
+            assertEquals("ACTIVE", result.getData().getStatus());
 
-            // Verify lock tiền: 10 * 85000 = 850000
-            assertEquals(new BigDecimal("850000.00"), testUser.getLockedBalance());
+            // Verify lock tiền: 10 * 85000 = 850000 + phí 0.15% (1275) = 851275.00
+            assertEquals(new BigDecimal("851275.00"), testUser.getLockedBalance());
             verify(userRepository).save(testUser);
             verify(orderRepository).save(any(Order.class));
         }
@@ -282,7 +302,7 @@ class OrderServiceTest {
 
             assertTrue(result.isSuccess());
             assertEquals("SELL", result.getData().getSide());
-            assertEquals("PENDING", result.getData().getStatus());
+            assertEquals("ACTIVE", result.getData().getStatus());
 
             // Verify lock CP: lockedQuantity += 50
             assertEquals(50, testPortfolio.getLockedQuantity());
@@ -355,7 +375,7 @@ class OrderServiceTest {
             assertEquals("LIMIT", response.getOrderType());
             assertEquals(100, response.getQuantity());
             assertEquals(30, response.getFilledQuantity());
-            assertEquals("PARTIAL", response.getStatus());
+            assertEquals("PARTIALLY_FILLED", response.getStatus());
         }
     }
 
@@ -368,7 +388,7 @@ class OrderServiceTest {
         @Test
         @DisplayName("Hủy lệnh BUY PENDING → hoàn tiền locked")
         void shouldCancelBuyPendingAndUnlockMoney() {
-            testUser.setLockedBalance(new BigDecimal("850000.00")); // 10 * 85000
+            testUser.setLockedBalance(new BigDecimal("851275.00")); // 10 * 85000 + 0.15% fee
             Order order = Order.builder()
                     .id(1L).user(testUser).stock(testStock)
                     .side(OrderSide.BUY).orderType(OrderType.LIMIT)
@@ -383,7 +403,7 @@ class OrderServiceTest {
 
             assertTrue(result.isSuccess());
             assertEquals("CANCELLED", result.getData().getStatus());
-            // Hoàn tiền: 850000 - 10*85000 = 0
+            // Hoàn tiền: 851275.00 - (10*85000 + fee) = 0
             assertEquals(BigDecimal.ZERO.setScale(2), testUser.getLockedBalance().setScale(2));
             verify(userRepository).save(testUser);
             verify(orderRepository).save(order);
@@ -415,7 +435,7 @@ class OrderServiceTest {
         @Test
         @DisplayName("Hủy lệnh BUY PARTIAL → hoàn tiền remaining")
         void shouldCancelPartialBuyAndUnlockRemainingMoney() {
-            testUser.setLockedBalance(new BigDecimal("850000.00")); // locked cho 10 CP
+            testUser.setLockedBalance(new BigDecimal("851275.00")); // locked cho 10 CP + fee
             Order order = Order.builder()
                     .id(3L).user(testUser).stock(testStock)
                     .side(OrderSide.BUY).orderType(OrderType.LIMIT)
@@ -429,8 +449,8 @@ class OrderServiceTest {
             ApiResponse<OrderResponse> result = orderService.cancelOrder("testuser", 3L);
 
             assertTrue(result.isSuccess());
-            // Hoàn remaining: 850000 - 6*85000 = 340000
-            assertEquals(new BigDecimal("340000.00"), testUser.getLockedBalance());
+            // Hoàn remaining: 851275 - (6*85000 + 765) = 340510.00
+            assertEquals(new BigDecimal("340510.00"), testUser.getLockedBalance());
         }
 
         @Test

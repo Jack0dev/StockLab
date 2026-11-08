@@ -1,6 +1,6 @@
 package com.stocklab.service;
 
-import com.stocklab.config.VnPayConfig;
+import com.stocklab.infrastructure.config.VnPayConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
