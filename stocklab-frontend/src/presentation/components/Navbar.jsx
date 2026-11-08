@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/infrastructure/context/AuthContext';
 import { useQuickTrade } from '@/infrastructure/context/QuickTradeContext';
 import NotificationBell from './NotificationBell';
+import StockLabLogo from './logo/StockLabLogo';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -88,9 +89,9 @@ export default function Navbar() {
         {/* Brand Group */}
         <div className="navbar-left">
           <Link to={user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard'} className="navbar-brand">
-            <span className="brand-dot"></span>
+            <StockLabLogo variant="badge" size={30} />
             <span className="brand-title">StockLab</span>
-            <span className="brand-pill">{user?.role === 'ADMIN' ? 'QUẢN TRỊ' : 'MÔ PHỎNG'}</span>
+            <span className="brand-pill">{user?.role === 'ADMIN' ? 'QUẢN TRỊ' : 'GAME TRADING'}</span>
           </Link>
 
           <div className="live-status-chip">

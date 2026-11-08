@@ -1,0 +1,108 @@
+/* ========================================================
+   StockLabLogo — Game Trading Visual Identity
+   Fusion: gamepad-2 (gaming) + candlestick-chart (trading)
+   ======================================================== */
+
+.stocklab-game-trading-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Badge Variant: Squircle chứa biểu tượng */
+.stocklab-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #090d16;
+  border-radius: 9px;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(9, 13, 22, 0.18), 0 1px 2px rgba(9, 13, 22, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.stocklab-logo-badge:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 4px 14px rgba(9, 13, 22, 0.25);
+}
+
+/* Duo Variant: Cặp icon Gamepad + Candlestick cạnh nhau */
+.stocklab-duo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #090d16;
+  flex-shrink: 0;
+}
+
+.duo-icon {
+  flex-shrink: 0;
+}
+
+.duo-gamepad {
+  color: #090d16;
+}
+
+.duo-chart {
+  color: #10b981;
+}
+
+.duo-divider {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  user-select: none;
+}
+
+/* Full Brand Container */
+.stocklab-brand-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.stocklab-brand-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stocklab-brand-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #090d16;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.stocklab-trading-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #0f172a;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 3px 7px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.pill-dot {
+  width: 5px;
+  height: 5px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
