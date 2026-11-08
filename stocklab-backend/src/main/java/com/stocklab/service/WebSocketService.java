@@ -158,4 +158,12 @@ public class WebSocketService {
             log.error("❌ WebSocket broadcast transaction error for {}: {}", username, e.getMessage());
         }
     }
+
+    public void broadcastToTopic(String topic, Object payload) {
+        try {
+            messagingTemplate.convertAndSend(topic, payload);
+        } catch (Exception e) {
+            log.error("❌ WebSocket broadcast error for topic {}: {}", topic, e.getMessage());
+        }
+    }
 }

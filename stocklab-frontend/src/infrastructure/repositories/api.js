@@ -220,6 +220,15 @@ export const adminNewsAPI = {
   deleteArticle: (id) => api.delete(`/admin/news/articles/${id}`),
 };
 
+// ===== Admin Bot Manipulation APIs =====
+export const adminManipulationAPI = {
+  getPresets: () => api.get('/admin/manipulation/presets'),
+  getActiveCampaigns: () => api.get('/admin/manipulation/active'),
+  startCampaign: (payload) => api.post('/admin/manipulation/start', payload),
+  stopCampaign: (campaignId) => api.post(`/admin/manipulation/stop/${campaignId}`),
+  emergencyKillSwitch: () => api.post('/admin/manipulation/kill-switch'),
+};
+
 // ===== AI Assistant APIs (Hybrid RAG) =====
 export const aiAPI = {
   chat: (message) => api.post('/ai/chat', { message }),
