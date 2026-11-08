@@ -30,6 +30,7 @@ public class PostTradeProcessor {
     private final UserRepository userRepository;
     private final PortfolioRepository portfolioRepository;
     private final StockRepository stockRepository;
+    private final StockPriceHistoryRepository priceHistoryRepository;
     private final OrderRepository orderRepository;
     private final PlatformTokenService platformTokenService;
     private final org.springframework.context.ApplicationEventPublisher eventPublisher;
@@ -240,14 +241,15 @@ public class PostTradeProcessor {
      * - highPrice nếu matchPrice cao hơn
      * - lowPrice nếu matchPrice thấp hơn
      * - volume += matchQty
+     * - Tự động cập nhật hoặc tạo mới nến giá ngày hôm nay trong StockPriceHistory
      */
     private void updateStockPrice(Stock stock, BigDecimal matchPrice, int matchQty) {
         stock.setCurrentPrice(matchPrice);
 
-        if (matchPrice.compareTo(stock.getHighPrice()) > 0) {
+        if (stock.getHighPrice() == null || matchPrice.compareTo(stock.getHighPrice()) > 0) {
             stock.setHighPrice(matchPrice);
         }
-        if (matchPrice.compareTo(stock.getLowPrice()) < 0) {
+        if (stock.getLowPrice() == null || matchPrice.compareTo(stock.getLowPrice()) < 0) {
             stock.setLowPrice(matchPrice);
         }
 
@@ -263,8 +265,36 @@ public class PostTradeProcessor {
             );
         }
 
-        stock.setVolume(stock.getVolume() + matchQty);
+        long updatedVolume = (stock.getVolume() != null ? stock.getVolume() : 0L) + matchQty;
+        stock.setVolume(updatedVolume);
         stockRepository.save(stock);
+
+        // Đồng bộ dữ liệu vào StockPriceHistory cho phiên hôm nay
+        try {
+            java.time.LocalDate today = java.time.LocalDate.now();
+            StockPriceHistory history = priceHistoryRepository.findByStockIdAndTradingDate(stock.getId(), today)
+                    .orElseGet(() -> StockPriceHistory.builder()
+                            .stock(stock)
+                            .tradingDate(today)
+                            .openPrice(stock.getOpenPrice() != null ? stock.getOpenPrice() : matchPrice)
+                            .highPrice(matchPrice)
+                            .lowPrice(matchPrice)
+                            .closePrice(matchPrice)
+                            .volume(0L)
+                            .build());
+
+            history.setClosePrice(matchPrice);
+            if (history.getHighPrice() == null || matchPrice.compareTo(history.getHighPrice()) > 0) {
+                history.setHighPrice(matchPrice);
+            }
+            if (history.getLowPrice() == null || matchPrice.compareTo(history.getLowPrice()) < 0) {
+                history.setLowPrice(matchPrice);
+            }
+            history.setVolume((history.getVolume() != null ? history.getVolume() : 0L) + matchQty);
+            priceHistoryRepository.save(history);
+        } catch (Exception e) {
+            log.error("[POST-TRADE] Lỗi cập nhật StockPriceHistory cho {}: {}", stock.getTicker(), e.getMessage());
+        }
     }
 
     private com.stocklab.presentation.dto.OrderResponse toOrderResponse(Order order) {

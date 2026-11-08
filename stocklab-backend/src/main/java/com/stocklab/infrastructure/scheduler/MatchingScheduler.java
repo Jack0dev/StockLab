@@ -68,6 +68,8 @@ public class MatchingScheduler {
 
                 if (!results.isEmpty()) {
                     log.info("[SCHEDULER] {} — khớp {} lệnh", stock.getTicker(), results.size());
+                    // Phát sóng cập nhật giá ngay lập tức cho toàn bộ người dùng đang theo dõi biểu đồ
+                    webSocketService.broadcastStockPrices();
                 }
             } catch (Exception e) {
                 log.error("[SCHEDULER] Lỗi khớp lệnh cho {}: {}", stock.getTicker(), e.getMessage(), e);

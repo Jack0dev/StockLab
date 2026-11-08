@@ -15,5 +15,7 @@ public interface StockPriceHistoryRepository extends JpaRepository<StockPriceHis
 
     List<StockPriceHistory> findByStockTickerOrderByTradingDateDesc(String ticker);
 
+    java.util.Optional<StockPriceHistory> findByStockIdAndTradingDate(Long stockId, LocalDate tradingDate);
+
     void deleteByStockId(Long stockId);
 }

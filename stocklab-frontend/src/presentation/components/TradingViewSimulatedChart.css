@@ -412,6 +412,30 @@
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.tv-live-pulse.pulse {
+  transform: scale(1.6);
+  background: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4);
+}
+
+.tv-live-indicator {
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+
+.tv-live-indicator.pulse {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
 }
 
 /* Up / Down / Ref utility colors */

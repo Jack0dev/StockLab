@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,13 +80,16 @@ public class StockService {
      */
     public ApiResponse<List<StockPriceHistoryResponse>> getPriceHistory(String ticker, String range) {
         // Kiểm tra stock tồn tại
-        if (!stockRepository.existsByTicker(ticker.toUpperCase())) {
+        Stock stock = stockRepository.findByTicker(ticker.toUpperCase()).orElse(null);
+        if (stock == null) {
             return ApiResponse.error("Không tìm thấy cổ phiếu: " + ticker);
         }
 
         List<StockPriceHistory> allHistory = priceHistoryRepository.findByStockTickerOrderByTradingDateDesc(ticker.toUpperCase());
         if (allHistory == null || allHistory.isEmpty()) {
-            return ApiResponse.success("Lấy lịch sử giá thành công", List.of());
+            List<StockPriceHistoryResponse> singleList = new ArrayList<>();
+            syncTodayBar(singleList, stock);
+            return ApiResponse.success("Lấy lịch sử giá thành công", singleList);
         }
 
         if (range == null || "ALL".equalsIgnoreCase(range)) {
@@ -93,6 +97,7 @@ public class StockService {
                     .map(this::toPriceHistoryResponse)
                     .collect(Collectors.toList());
             Collections.reverse(responses);
+            syncTodayBar(responses, stock);
             return ApiResponse.success("Lấy lịch sử giá thành công", responses);
         }
 
@@ -113,10 +118,44 @@ public class StockService {
                     .map(this::toPriceHistoryResponse)
                     .collect(Collectors.toList());
             Collections.reverse(fallback);
+            syncTodayBar(fallback, stock);
             return ApiResponse.success("Lấy lịch sử giá thành công", fallback);
         }
 
+        syncTodayBar(history, stock);
         return ApiResponse.success("Lấy lịch sử giá thành công", history);
+    }
+
+    private void syncTodayBar(List<StockPriceHistoryResponse> list, Stock stock) {
+        if (list == null || stock == null || stock.getCurrentPrice() == null) return;
+        LocalDate today = LocalDate.now();
+        boolean hasToday = false;
+        for (StockPriceHistoryResponse item : list) {
+            if (today.equals(item.getTradingDate())) {
+                hasToday = true;
+                item.setClose(stock.getCurrentPrice());
+                if (stock.getHighPrice() != null && (item.getHigh() == null || stock.getHighPrice().compareTo(item.getHigh()) > 0)) {
+                    item.setHigh(stock.getHighPrice());
+                }
+                if (stock.getLowPrice() != null && (item.getLow() == null || stock.getLowPrice().compareTo(item.getLow()) < 0)) {
+                    item.setLow(stock.getLowPrice());
+                }
+                if (stock.getVolume() != null) {
+                    item.setVolume(Math.max(item.getVolume() != null ? item.getVolume() : 0L, stock.getVolume()));
+                }
+                break;
+            }
+        }
+        if (!hasToday) {
+            list.add(StockPriceHistoryResponse.builder()
+                    .tradingDate(today)
+                    .open(stock.getOpenPrice() != null ? stock.getOpenPrice() : stock.getCurrentPrice())
+                    .high(stock.getHighPrice() != null ? stock.getHighPrice() : stock.getCurrentPrice())
+                    .low(stock.getLowPrice() != null ? stock.getLowPrice() : stock.getCurrentPrice())
+                    .close(stock.getCurrentPrice())
+                    .volume(stock.getVolume() != null ? stock.getVolume() : 0L)
+                    .build());
+        }
     }
 
     // ===== Admin Thao tác (ADM-3) =====
