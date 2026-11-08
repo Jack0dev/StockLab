@@ -1,14 +1,14 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.ApiResponse;
-import com.stocklab.dto.DepositRequest;
-import com.stocklab.dto.WalletTransactionResponse;
-import com.stocklab.model.User;
-import com.stocklab.model.WalletTransaction;
-import com.stocklab.model.WalletTransactionStatus;
-import com.stocklab.model.WalletTransactionType;
-import com.stocklab.repository.UserRepository;
-import com.stocklab.repository.WalletTransactionRepository;
+import com.stocklab.presentation.dto.ApiResponse;
+import com.stocklab.presentation.dto.DepositRequest;
+import com.stocklab.presentation.dto.WalletTransactionResponse;
+import com.stocklab.domain.model.User;
+import com.stocklab.domain.model.WalletTransaction;
+import com.stocklab.domain.model.WalletTransactionStatus;
+import com.stocklab.domain.model.WalletTransactionType;
+import com.stocklab.infrastructure.repository.UserRepository;
+import com.stocklab.infrastructure.repository.WalletTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +64,7 @@ public class WalletService {
     }
 
     @Transactional
-    public ApiResponse<WalletTransactionResponse> withdraw(String username, com.stocklab.dto.WithdrawRequest request) {
+    public ApiResponse<WalletTransactionResponse> withdraw(String username, com.stocklab.presentation.dto.WithdrawRequest request) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             return ApiResponse.error("Không tìm thấy người dùng");
@@ -112,7 +112,7 @@ public class WalletService {
         userRepository.save(user);
         WalletTransaction savedTx = walletTransactionRepository.save(transaction);
 
-        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, username, com.stocklab.event.BalanceChangedEvent.BalanceReason.WITHDRAW));
+        eventPublisher.publishEvent(new com.stocklab.infrastructure.event.BalanceChangedEvent(this, username, com.stocklab.infrastructure.event.BalanceChangedEvent.BalanceReason.WITHDRAW));
 
         return ApiResponse.success("Rút tiền thành công! Mã giao dịch: " + txCode, toResponse(savedTx));
     }
@@ -136,7 +136,7 @@ public class WalletService {
         user.setBalance(user.getBalance().add(tx.getAmount()));
         userRepository.save(user);
         
-        eventPublisher.publishEvent(new com.stocklab.event.BalanceChangedEvent(this, user.getUsername(), com.stocklab.event.BalanceChangedEvent.BalanceReason.DEPOSIT));
+        eventPublisher.publishEvent(new com.stocklab.infrastructure.event.BalanceChangedEvent(this, user.getUsername(), com.stocklab.infrastructure.event.BalanceChangedEvent.BalanceReason.DEPOSIT));
     }
 
     @Transactional

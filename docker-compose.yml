@@ -17,7 +17,7 @@ services:
     container_name: stocklab-mysql
     restart: unless-stopped
     ports:
-      - "${DOCKER_MYSQL_PORT:-3307}:3306"
+      - "${DOCKER_MYSQL_PORT:-3306}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-stocklab2026}
       MYSQL_DATABASE: ${DB_NAME:-stock_lap}
@@ -25,6 +25,8 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-stocklab2026}
     volumes:
       - stocklab_mysql_data:/var/lib/mysql
+      - ./doc/database_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./doc/migrations/001_ml_tables.sql:/docker-entrypoint-initdb.d/02_ml.sql
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
@@ -41,7 +43,7 @@ services:
     container_name: stocklab-redis
     restart: unless-stopped
     ports:
-      - "${DOCKER_REDIS_PORT:-6380}:6379"
+      - "${DOCKER_REDIS_PORT:-6379}:6379"
     volumes:
       - stocklab_redis_data:/data
     command: redis-server --appendonly yes

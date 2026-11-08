@@ -1,223 +1,117 @@
 package com.stocklab.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.stocklab.domain.model.NewsArticle;
+import com.stocklab.infrastructure.repository.NewsArticleRepository;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * [P3-01] Financial News Service
- * [P3-02] RSS Parser (VnEconomy)
- * [P3-04] Redis cache TTL=15min
+ * Queries persistent news from MySQL news_articles table, populated by NewsCrawlerService.
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class NewsService {
 
-    private final StringRedisTemplate redis;
-    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
-    private final HttpClient httpClient;
+    private final NewsArticleRepository newsArticleRepository;
+    private final NewsCrawlerService newsCrawlerService;
 
-    private static final String NEWS_CACHE_KEY = "news:latest";
-    private static final long NEWS_CACHE_TTL = 900; // 15 minutes
-
-    // RSS feed URLs
-    private static final List<String> RSS_FEEDS = List.of(
-            "https://vneconomy.vn/chung-khoan.rss",
-            "https://vnexpress.net/rss/kinh-doanh/chung-khoan.rss"
-    );
-
-    public NewsService(StringRedisTemplate redis) {
-        this.redis = redis;
-        this.objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-    }
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     /**
-     * Get latest news. Returns from Redis cache first, fetches fresh if expired.
+     * Get latest general news.
      */
     public List<NewsItem> getLatestNews() {
-        try {
-            String cached = redis.opsForValue().get(NEWS_CACHE_KEY);
-            if (cached != null) {
-                return objectMapper.readValue(cached,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, NewsItem.class));
-            }
-        } catch (Exception e) {
-            log.debug("Cache read failed: {}", e.getMessage());
-        }
-
-        // Fetch fresh
-        List<NewsItem> news = fetchAllFeeds();
-        cacheNews(news);
-        return news;
+        return getLatestNews(null);
     }
 
     /**
-     * Fetch news from all RSS feeds.
+     * Get news with optional ticker filter.
      */
-    private List<NewsItem> fetchAllFeeds() {
-        List<NewsItem> allNews = new ArrayList<>();
+    public List<NewsItem> getLatestNews(String ticker) {
+        List<NewsArticle> articles = new ArrayList<>();
 
-        for (String feedUrl : RSS_FEEDS) {
-            try {
-                List<NewsItem> items = parseRssFeed(feedUrl);
-                allNews.addAll(items);
-            } catch (Exception e) {
-                log.warn("Failed to fetch RSS {}: {}", feedUrl, e.getMessage());
-            }
+        if (ticker != null && !ticker.isBlank()) {
+            articles = newsArticleRepository.findByTicker(ticker.trim().toUpperCase(), PageRequest.of(0, 15));
         }
 
-        // Sort by date desc, take top 20
-        allNews.sort((a, b) -> {
-            if (a.getPublishedAt() == null) return 1;
-            if (b.getPublishedAt() == null) return -1;
-            return b.getPublishedAt().compareTo(a.getPublishedAt());
-        });
+        // If no articles found for ticker or ticker is null, fallback to latest general news
+        if (articles.isEmpty()) {
+            articles = newsArticleRepository.findTop20ByOrderByPublishedAtDesc();
+        }
 
-        return allNews.size() > 20 ? allNews.subList(0, 20) : allNews;
+        // If database is completely empty (first boot), trigger a crawl on the fly
+        if (articles.isEmpty()) {
+            log.info("[NewsService] Cơ sở dữ liệu tin tức đang trống, tiến hành cào tin tức...");
+            newsCrawlerService.crawlNewsNow();
+            articles = newsArticleRepository.findTop20ByOrderByPublishedAtDesc();
+        }
+
+        return articles.stream().map(this::toNewsItem).toList();
     }
 
     /**
-     * Simple RSS XML parser (no ROME dependency needed for basic parsing).
+     * Get paginated and filtered news for the main News Page and Admin management.
      */
-    private List<NewsItem> parseRssFeed(String feedUrl) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(feedUrl))
-                .timeout(Duration.ofSeconds(10))
-                .header("User-Agent", "StockLab/1.0")
-                .GET()
-                .build();
+    public org.springframework.data.domain.Page<NewsItem> getNewsPaged(String ticker, String source, String search, int page, int size) {
+        String cleanTicker = (ticker != null && !ticker.isBlank()) ? ticker.trim().toUpperCase() : null;
+        String cleanSource = (source != null && !source.isBlank() && !source.equalsIgnoreCase("all")) ? source.trim() : null;
+        String cleanQuery = (search != null && !search.isBlank()) ? search.trim() : null;
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        org.springframework.data.domain.Pageable pageable = PageRequest.of(Math.max(0, page), Math.max(1, Math.min(size, 50)));
+        org.springframework.data.domain.Page<NewsArticle> articlePage = newsArticleRepository.filterNews(cleanSource, cleanTicker, cleanQuery, pageable);
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("HTTP " + response.statusCode());
+        // Fallback: If DB is empty on first query, trigger a crawl and re-query
+        if (articlePage.isEmpty() && newsArticleRepository.count() == 0) {
+            log.info("[NewsService] DB tin tức đang rỗng, tiến hành cào tin...");
+            newsCrawlerService.crawlNewsNow();
+            articlePage = newsArticleRepository.filterNews(cleanSource, cleanTicker, cleanQuery, pageable);
         }
 
-        String xml = response.body();
-        List<NewsItem> items = new ArrayList<>();
-
-        // Simple XML parsing for RSS <item> elements
-        String[] rawItems = xml.split("<item>");
-        for (int i = 1; i < rawItems.length && i <= 10; i++) { // Skip first (before any <item>)
-            String itemXml = rawItems[i];
-            NewsItem item = new NewsItem();
-            item.setTitle(extractXmlTag(itemXml, "title"));
-            item.setLink(extractXmlTag(itemXml, "link"));
-            item.setDescription(cleanHtml(extractXmlTag(itemXml, "description")));
-            item.setPublishedAt(extractXmlTag(itemXml, "pubDate"));
-            item.setSource(feedUrl.contains("vneconomy") ? "VnEconomy" : "VnExpress");
-
-            // Try to extract image from description or enclosure
-            String enclosure = extractXmlAttribute(itemXml, "enclosure", "url");
-            if (enclosure != null) {
-                item.setThumbnail(enclosure);
-            }
-
-            if (item.getTitle() != null && !item.getTitle().isBlank()) {
-                items.add(item);
-            }
-        }
-
-        log.debug("Parsed {} items from {}", items.size(), feedUrl);
-        return items;
+        return articlePage.map(this::toNewsItem);
     }
 
-    private String extractXmlTag(String xml, String tag) {
-        // Handle CDATA
-        String cdataPattern = "<" + tag + "><![CDATA[";
-        int cdataStart = xml.indexOf(cdataPattern);
-        if (cdataStart >= 0) {
-            int contentStart = cdataStart + cdataPattern.length();
-            int contentEnd = xml.indexOf("]]>", contentStart);
-            if (contentEnd > contentStart) {
-                return xml.substring(contentStart, contentEnd).trim();
-            }
-        }
-
-        // Normal tag
-        String startTag = "<" + tag + ">";
-        String endTag = "</" + tag + ">";
-        int start = xml.indexOf(startTag);
-        int end = xml.indexOf(endTag);
-        if (start >= 0 && end > start) {
-            return xml.substring(start + startTag.length(), end).trim();
-        }
-        return null;
+    public void deleteArticle(Long id) {
+        newsArticleRepository.deleteById(id);
     }
 
-    private String extractXmlAttribute(String xml, String tag, String attr) {
-        String search = "<" + tag + " ";
-        int tagStart = xml.indexOf(search);
-        if (tagStart >= 0) {
-            String attrSearch = attr + "=\"";
-            int attrStart = xml.indexOf(attrSearch, tagStart);
-            if (attrStart >= 0) {
-                int valStart = attrStart + attrSearch.length();
-                int valEnd = xml.indexOf("\"", valStart);
-                if (valEnd > valStart) {
-                    return xml.substring(valStart, valEnd);
-                }
-            }
-        }
-        return null;
-    }
+    private NewsItem toNewsItem(NewsArticle article) {
+        NewsItem item = new NewsItem();
+        item.setId(article.getId());
+        item.setTitle(article.getTitle());
+        item.setLink(article.getLink());
+        item.setDescription(article.getDescription());
+        item.setSource(article.getSource());
+        item.setThumbnail(article.getThumbnailUrl());
+        item.setRelatedTickers(article.getRelatedTickers());
 
-    private String cleanHtml(String html) {
-        if (html == null) return null;
-        return html.replaceAll("<[^>]+>", "").replaceAll("&amp;", "&")
-                .replaceAll("&lt;", "<").replaceAll("&gt;", ">")
-                .replaceAll("&nbsp;", " ").trim();
-    }
-
-    private void cacheNews(List<NewsItem> news) {
-        try {
-            String json = objectMapper.writeValueAsString(news);
-            redis.opsForValue().set(NEWS_CACHE_KEY, json, NEWS_CACHE_TTL, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            log.debug("Cache write failed: {}", e.getMessage());
+        if (article.getPublishedAt() != null) {
+            item.setPublishedAt(article.getPublishedAt().format(DATE_FORMATTER));
+            item.setPubDate(article.getPublishedAt().toString());
         }
-    }
-
-    /**
-     * Refresh news cache every 15 minutes.
-     */
-    @Scheduled(fixedRate = 900000) // 15 min
-    public void refreshNewsCache() {
-        try {
-            List<NewsItem> news = fetchAllFeeds();
-            cacheNews(news);
-            log.info("News cache refreshed: {} items", news.size());
-        } catch (Exception e) {
-            log.warn("News cache refresh failed: {}", e.getMessage());
-        }
+        return item;
     }
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class NewsItem {
+        private Long id;
         private String title;
         private String link;
         private String description;
         private String publishedAt;
+        private String pubDate;
         private String source;
         private String thumbnail;
+        private String relatedTickers;
     }
 }

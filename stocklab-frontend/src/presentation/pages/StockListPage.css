@@ -1,0 +1,455 @@
+/* ===== StockListPage — Creative Light Editorial Style ===== */
+.stock-list-light {
+  padding: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* 1. Telemetry Strip */
+.editorial-telemetry-strip {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.telemetry-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.telemetry-tag {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.telemetry-figures {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.telemetry-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.telemetry-delta {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.telemetry-divider {
+  color: var(--border-light);
+  font-weight: 300;
+  font-size: 1.2rem;
+}
+
+/* Tally */
+.telemetry-tally {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.tally-item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 0.8125rem;
+}
+
+.tally-count {
+  font-weight: 800;
+}
+
+.tally-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.tally-vol {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.78rem;
+  padding-left: 14px;
+  border-left: 1px solid var(--border);
+}
+
+.tally-vol-label {
+  color: var(--text-muted);
+}
+
+.tally-vol-val {
+  font-weight: 800;
+  color: #090d16;
+}
+
+/* 2. Table Action Strip */
+.table-action-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.strip-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.exchange-tabs {
+  display: flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.exchange-tab-btn {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.exchange-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.exchange-tab-btn.active {
+  background: #ffffff;
+  color: #090d16;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.feed-status-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--bullish);
+}
+
+.strip-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.text-tool-btn {
+  height: 36px;
+  padding: 0 14px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.text-tool-btn:hover {
+  background: #f8fafc;
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+/* 3. Editorial Table Container */
+.light-table-container {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.editorial-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.editorial-table thead th {
+  background: #f8fafc;
+  padding: 11px 8px;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.th-num {
+  text-align: right !important;
+}
+
+/* 100% Proportional Column Distribution — vừa khít khung thẻ không sinh scrollbar */
+.th-code { width: 7.5%; }
+.th-name { width: 17%; }
+.th-sàn { width: 5.5%; text-align: center; }
+.th-ceiling { width: 7.5%; color: var(--ceiling) !important; }
+.th-floor { width: 7.5%; color: var(--floor) !important; }
+.th-ref { width: 7.5%; color: var(--ref) !important; }
+.th-current { width: 8.5%; color: #090d16 !important; }
+.th-diff { width: 6.5%; }
+.th-pct { width: 7.5%; }
+.th-high { width: 7.5%; }
+.th-low { width: 7.5%; }
+.th-vol { width: 10%; }
+.th-btn { width: 8%; text-align: center; }
+
+/* Table Data Rows */
+.table-data-row {
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color 0.12s ease;
+}
+
+.table-data-row:hover {
+  background-color: #f8fafc;
+}
+
+.editorial-table td {
+  padding: 9px 8px;
+  vertical-align: middle;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-subtle);
+  box-sizing: border-box;
+}
+
+.td-num {
+  text-align: right;
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+
+.td-sàn {
+  text-align: center;
+}
+
+.font-bold {
+  font-weight: 800 !important;
+}
+
+/* Stock Code Badge */
+.stock-code-pill {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #090d16;
+  letter-spacing: 0.02em;
+}
+
+.stock-company-label {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.table-data-row:hover .stock-company-label {
+  color: var(--text-primary);
+}
+
+.exchange-text-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Change Pill (Subtle on Light BG) */
+.change-pill {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pill-bull {
+  background: var(--bullish-bg);
+  color: var(--bullish);
+}
+
+.pill-bear {
+  background: var(--bearish-bg);
+  color: var(--bearish);
+}
+
+.pill-ref {
+  background: var(--ref-bg);
+  color: var(--ref);
+}
+
+.pill-ceil {
+  background: var(--ceiling-bg);
+  color: var(--ceiling);
+  border: 1px solid var(--ceiling-border);
+  font-weight: 800;
+}
+
+.pill-floor {
+  background: var(--floor-bg);
+  color: var(--floor);
+  border: 1px solid var(--floor-border);
+  font-weight: 800;
+}
+
+/* Trade Link CTA */
+.td-btn {
+  text-align: center;
+}
+
+.trade-cta-link {
+  background: #090d16;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.trade-cta-link:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+
+/* 4. Minimalist Pager Footer */
+.table-pager-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #f8fafc;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pager-meta {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.pager-meta strong {
+  color: var(--text-primary);
+}
+
+.pager-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pager-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.pager-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.pager-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pager-num-group {
+  display: flex;
+  gap: 4px;
+}
+
+.pager-num-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.pager-num-btn:hover {
+  background: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.pager-num-btn.active {
+  background: #090d16;
+  color: #ffffff;
+  border-color: #090d16;
+  font-weight: 700;
+}
+
+/* Loading & Empty */
+.loading-state-block, .empty-state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}

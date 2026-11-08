@@ -1,10 +1,10 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.OrderRequest;
-import com.stocklab.model.OrderSide;
-import com.stocklab.model.OrderType;
-import com.stocklab.model.Stock;
-import com.stocklab.repository.StockRepository;
+import com.stocklab.presentation.dto.OrderRequest;
+import com.stocklab.domain.model.OrderSide;
+import com.stocklab.domain.model.OrderType;
+import com.stocklab.domain.model.Stock;
+import com.stocklab.infrastructure.repository.StockRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

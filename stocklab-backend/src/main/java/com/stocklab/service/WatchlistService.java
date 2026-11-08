@@ -1,13 +1,13 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.ApiResponse;
-import com.stocklab.dto.WatchlistResponse;
-import com.stocklab.model.Stock;
-import com.stocklab.model.User;
-import com.stocklab.model.Watchlist;
-import com.stocklab.repository.StockRepository;
-import com.stocklab.repository.UserRepository;
-import com.stocklab.repository.WatchlistRepository;
+import com.stocklab.presentation.dto.ApiResponse;
+import com.stocklab.presentation.dto.WatchlistResponse;
+import com.stocklab.domain.model.Stock;
+import com.stocklab.domain.model.User;
+import com.stocklab.domain.model.Watchlist;
+import com.stocklab.infrastructure.repository.StockRepository;
+import com.stocklab.infrastructure.repository.UserRepository;
+import com.stocklab.infrastructure.repository.WatchlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

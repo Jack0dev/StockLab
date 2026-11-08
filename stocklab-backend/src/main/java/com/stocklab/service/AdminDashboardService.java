@@ -1,9 +1,9 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.AdminDashboardResponse;
-import com.stocklab.dto.TopStockDto;
-import com.stocklab.repository.TransactionRepository;
-import com.stocklab.repository.UserRepository;
+import com.stocklab.presentation.dto.AdminDashboardResponse;
+import com.stocklab.presentation.dto.TopStockDto;
+import com.stocklab.infrastructure.repository.TransactionRepository;
+import com.stocklab.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

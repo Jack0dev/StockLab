@@ -1,10 +1,10 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.PlatformTokenResponse;
-import com.stocklab.model.PlatformStats;
-import com.stocklab.model.Stock;
-import com.stocklab.repository.PlatformStatsRepository;
-import com.stocklab.repository.StockRepository;
+import com.stocklab.presentation.dto.PlatformTokenResponse;
+import com.stocklab.domain.model.PlatformStats;
+import com.stocklab.domain.model.Stock;
+import com.stocklab.infrastructure.repository.PlatformStatsRepository;
+import com.stocklab.infrastructure.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

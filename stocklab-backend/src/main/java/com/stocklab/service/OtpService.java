@@ -1,6 +1,6 @@
 package com.stocklab.service;
 
-import com.stocklab.dto.ApiResponse;
+import com.stocklab.presentation.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

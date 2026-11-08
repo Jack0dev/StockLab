@@ -1,7 +1,7 @@
 package com.stocklab.service;
 
-import com.stocklab.model.Stock;
-import com.stocklab.repository.StockRepository;
+import com.stocklab.domain.model.Stock;
+import com.stocklab.infrastructure.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -123,7 +123,7 @@ public class WebSocketService {
         }
     }
 
-    public void broadcastUserBalance(String username, com.stocklab.dto.ws.BalanceWsDTO dto) {
+    public void broadcastUserBalance(String username, com.stocklab.presentation.dto.ws.BalanceWsDTO dto) {
         try {
             messagingTemplate.convertAndSendToUser(username, "/queue/balance", dto);
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class WebSocketService {
         }
     }
 
-    public void broadcastUserPortfolio(String username, com.stocklab.dto.ws.PortfolioWsDTO dto) {
+    public void broadcastUserPortfolio(String username, com.stocklab.presentation.dto.ws.PortfolioWsDTO dto) {
         try {
             messagingTemplate.convertAndSendToUser(username, "/queue/portfolio", dto);
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class WebSocketService {
         }
     }
 
-    public void broadcastUserOrder(String username, com.stocklab.dto.ws.OrderWsDTO dto) {
+    public void broadcastUserOrder(String username, com.stocklab.presentation.dto.ws.OrderWsDTO dto) {
         try {
             messagingTemplate.convertAndSendToUser(username, "/queue/orders", dto);
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class WebSocketService {
         }
     }
 
-    public void broadcastUserTransaction(String username, com.stocklab.dto.TransactionResponse dto) {
+    public void broadcastUserTransaction(String username, com.stocklab.presentation.dto.TransactionResponse dto) {
         try {
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("type", "NEW_TRANSACTION");
