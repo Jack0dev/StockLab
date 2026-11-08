@@ -2,27 +2,27 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { aiAPI } from '@/infrastructure/repositories/api';
 import './AIChatPage.css';
 
-// Tool name → display info mapping
+// Tool name → display info mapping (No emojis)
 const TOOL_INFO = {
-  get_stock_signal: { icon: '📊', label: 'ML Signal' },
-  get_stock_price: { icon: '💰', label: 'Stock Price' },
-  get_financial_news: { icon: '📰', label: 'News' },
-  get_portfolio: { icon: '💼', label: 'Portfolio' },
-  get_market_overview: { icon: '🌐', label: 'Market Overview' },
+  get_stock_signal: { label: 'Tín hiệu ML' },
+  get_stock_price: { label: 'Tra cứu giá cổ phiếu' },
+  get_financial_news: { label: 'Tin tức tài chính' },
+  get_portfolio: { label: 'Danh mục tài sản' },
+  get_market_overview: { label: 'Tổng quan thị trường' },
 };
 
 const SUGGESTED_PROMPTS = [
-  { icon: '📊', text: 'VCB tín hiệu gì hôm nay?' },
-  { icon: '📰', text: 'Tin tức chứng khoán mới nhất?' },
-  { icon: '🔍', text: 'So sánh FPT và VNM' },
-  { icon: '💼', text: 'Portfolio tôi lãi lỗ thế nào?' },
-  { icon: '🌐', text: 'Tổng quan thị trường hôm nay' },
-  { icon: '📚', text: 'P/E ratio là gì?' },
+  { text: 'VCB tín hiệu gì hôm nay?' },
+  { text: 'Tin tức chứng khoán mới nhất?' },
+  { text: 'So sánh FPT và VNM' },
+  { text: 'Portfolio tôi lãi lỗ thế nào?' },
+  { text: 'Tổng quan thị trường hôm nay' },
+  { text: 'Chỉ số P/E là gì?' },
 ];
 
 const MODEL_DISPLAY = {
-  local: { icon: '🖥️', label: 'Local AI', color: '#48bb78' },
-  gemini: { icon: '☁️', label: 'Gemini', color: '#667eea' },
+  local: { label: 'Local AI', color: '#16a34a' },
+  gemini: { label: 'Gemini', color: '#2563eb' },
 };
 
 export default function AIChatPage() {
@@ -33,7 +33,6 @@ export default function AIChatPage() {
   const [quota, setQuota] = useState(null);
   const [trainingState, setTrainingState] = useState('');
   const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
   const textareaRef = useRef(null);
 
   // Scroll to bottom on new message
@@ -73,7 +72,7 @@ export default function AIChatPage() {
       if (res.data.success) {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `✅ Đã học xong tài liệu **${file.name}** (${res.data.chunksIndexed} đoạn nội dung). Bây giờ bạn có thể đặt câu hỏi về tài liệu này.`,
+          content: `Đã học xong tài liệu **${file.name}** (${res.data.chunksIndexed} đoạn nội dung). Bây giờ bạn có thể đặt câu hỏi về tài liệu này.`,
           timestamp: new Date(),
           id: Date.now()
         }]);
@@ -81,7 +80,7 @@ export default function AIChatPage() {
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `❌ Lỗi tải tài liệu: ${err.message}`,
+        content: `Lỗi tải tài liệu: ${err.message}`,
         error: true,
         timestamp: new Date(),
         id: Date.now()
@@ -89,6 +88,18 @@ export default function AIChatPage() {
     } finally {
       setTrainingState('');
     }
+  };
+
+  const sanitizeErrorMessage = (msg) => {
+    if (!msg) return 'Đã xảy ra lỗi. Vui lòng thử lại.';
+    if (msg.length > 300 || /```|at\s+\w+\.|Exception|Error:|Traceback|java\.|org\.|com\./i.test(msg)) {
+      const shortPart = msg.split(/```|\n\n/)[0]?.trim();
+      if (shortPart && shortPart.length > 10 && shortPart.length < 200) {
+        return shortPart;
+      }
+      return 'Đã xảy ra lỗi xử lý yêu cầu. Vui lòng thử lại sau.';
+    }
+    return msg;
   };
 
   const sendMessage = useCallback(async (messageText) => {
@@ -106,14 +117,14 @@ export default function AIChatPage() {
     const userMsg = { role: 'user', content: text, timestamp: new Date() };
     const aiMsgId = Date.now();
     const initialAiMsg = {
-        id: aiMsgId,
-        role: 'assistant',
-        content: '',
-        toolsUsed: [],
-        sources: [],
-        modelUsed: null, // will be set by model_info event
-        error: false,
-        timestamp: new Date()
+      id: aiMsgId,
+      role: 'assistant',
+      content: '',
+      toolsUsed: [],
+      sources: [],
+      modelUsed: null,
+      error: false,
+      timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMsg, initialAiMsg]);
@@ -122,11 +133,10 @@ export default function AIChatPage() {
     let isStreamDone = false;
 
     try {
-      // Always use Smart Router — backend auto-selects the best AI
       const response = await aiAPI.chatSmartStream(text, newController.signal);
       
       if (!response.ok) {
-         throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const reader = response.body.getReader();
@@ -140,7 +150,7 @@ export default function AIChatPage() {
         buffer += decoder.decode(value, { stream: true });
         
         const events = buffer.split("\n\n");
-        buffer = events.pop(); // keep incomplete chunk
+        buffer = events.pop();
 
         for (const eventStr of events) {
           const lines = eventStr.split('\n');
@@ -171,24 +181,22 @@ export default function AIChatPage() {
             const updatedMsg = { ...msg };
             
             if (eventType === 'model_info') {
-              // Smart Router tells us which AI is responding
-              updatedMsg.modelUsed = parsedData.model; // 'local' or 'gemini'
+              updatedMsg.modelUsed = parsedData.model;
             } else if (eventType === 'model_switch') {
-              // Auto-fallback happened: Local AI → Gemini
               updatedMsg.modelUsed = parsedData.to;
-              updatedMsg.content += `\n\n> ⚡ *Local AI không khả dụng — đã tự động chuyển sang Gemini*\n\n`;
+              updatedMsg.content += `\n\n> *Local AI không khả dụng — đã tự động chuyển sang Gemini*\n\n`;
             } else if (eventType === 'text') {
               updatedMsg.content += parsedData.delta;
             } else if (eventType === 'tool_start') {
               if (!updatedMsg.toolsUsed.includes(parsedData.tool)) {
-                  updatedMsg.toolsUsed = [...updatedMsg.toolsUsed, parsedData.tool];
+                updatedMsg.toolsUsed = [...updatedMsg.toolsUsed, parsedData.tool];
               }
             } else if (eventType === 'source') {
               if (parsedData.sources) {
                 updatedMsg.sources = [...new Set([...updatedMsg.sources, ...parsedData.sources])];
               }
             } else if (eventType === 'error') {
-              updatedMsg.content = parsedData.message || 'Lỗi server';
+              updatedMsg.content = sanitizeErrorMessage(parsedData.message);
               updatedMsg.error = true;
               isStreamDone = true;
               newController.abort();
@@ -202,11 +210,11 @@ export default function AIChatPage() {
       fetchQuota();
     } catch (err) {
       if (err.name === 'AbortError') {
-          if (!isStreamDone) {
-            setMessages(prev => prev.map(msg => msg.id === aiMsgId ? { ...msg, content: msg.content + '\n\n*[Đã dừng tạo phản hồi]*' } : msg));
-          }
+        if (!isStreamDone) {
+          setMessages(prev => prev.map(msg => msg.id === aiMsgId ? { ...msg, content: msg.content + '\n\n*[Đã dừng tạo phản hồi]*' } : msg));
+        }
       } else {
-          setMessages(prev => prev.map(msg => msg.id === aiMsgId ? { ...msg, error: true, content: 'Không thể kết nối đến AI. Vui lòng thử lại.' } : msg));
+        setMessages(prev => prev.map(msg => msg.id === aiMsgId ? { ...msg, error: true, content: 'Không thể kết nối đến AI. Vui lòng thử lại.' } : msg));
       }
     } finally {
       setIsLoading(false);
@@ -241,16 +249,12 @@ export default function AIChatPage() {
     }
   };
 
-  // Simple markdown-like rendering
+  // Markdown rendering
   const renderMarkdown = (text) => {
     if (!text) return null;
-    // Split by newlines and process
     return text.split('\n').map((line, i) => {
-      // Bold
       let processed = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      // Inline code
       processed = processed.replace(/`([^`]+)`/g, '<code>$1</code>');
-      // Bullet points
       if (processed.startsWith('- ') || processed.startsWith('• ')) {
         return <li key={i} dangerouslySetInnerHTML={{ __html: processed.slice(2) }} />;
       }
@@ -264,42 +268,28 @@ export default function AIChatPage() {
       {/* Header */}
       <div className="ai-chat-header">
         <div className="ai-chat-header-left">
-          <div className="ai-chat-avatar">🤖</div>
+          <div className="ai-chat-avatar">AI</div>
           <div>
-            <h1 className="ai-chat-title" style={{ fontSize: '18px', margin: 0 }}>StockLab AI</h1>
-            <span style={{ fontSize: '11px', color: '#718096' }}>
-              Tự động chọn AI phù hợp nhất
-            </span>
+            <h1 className="ai-chat-title">StockLab AI</h1>
+            <span className="ai-chat-subtitle">Trợ lý phân tích tài chính thông minh</span>
           </div>
         </div>
         <div className="ai-chat-header-right">
           {quota !== null && (
             <div className="ai-quota-badge">
-              ⚡ {quota} Gemini còn lại
+              Gemini còn lại: {quota}
             </div>
           )}
-          <label className="ai-upload-btn" title="Tải tài liệu lên để AI học (PDF, TXT, MD)" style={{
-            cursor: trainingState ? 'not-allowed' : 'pointer',
-            padding: '6px 10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#a0aec0',
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '8px',
-            border: '1px solid rgba(255,255,255,0.1)',
-            transition: 'all 0.2s',
-            fontSize: '14px',
-            gap: '4px'
-          }}>
+          <label className="ai-upload-btn" title="Tải tài liệu lên để AI học (PDF, TXT, MD)">
             <input type="file" accept=".pdf,.txt,.md" style={{ display: 'none' }} onChange={handleFileUpload} disabled={trainingState !== ''} />
-            {trainingState === 'uploading' ? (
-               <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span>
-            ) : '📎 Tải tài liệu'}
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+            </svg>
+            {trainingState === 'uploading' ? 'Đang học tài liệu...' : 'Tải tài liệu'}
           </label>
           {messages.length > 0 && (
-            <button className="ai-clear-btn" onClick={handleClearHistory}>
-              🗑️ Xóa lịch sử
+            <button className="ai-clear-btn" onClick={handleClearHistory} title="Xóa toàn bộ lịch sử trò chuyện">
+              Xóa lịch sử
             </button>
           )}
         </div>
@@ -309,11 +299,11 @@ export default function AIChatPage() {
       <div className="ai-chat-messages">
         {messages.length === 0 ? (
           <div className="ai-welcome">
-            <div className="ai-welcome-icon">🧠</div>
-            <h2>Xin chào! Tôi là StockLab AI</h2>
+            <span className="ai-welcome-tag">TRỢ LÝ TÀI CHÍNH</span>
+            <h2>StockLab AI Assistant</h2>
             <p>
-              Trợ lý phân tích tài chính thông minh. Hệ thống tự động chọn AI phù hợp nhất:
-              ưu tiên <strong>Local AI</strong> (miễn phí, riêng tư), tự động chuyển sang <strong>Gemini</strong> khi cần.
+              Hệ thống hỗ trợ phân tích chứng khoán, đọc hiểu tài liệu doanh nghiệp và tra cứu danh mục.
+              Tự động phân phối tác vụ thông minh giữa <strong>Local AI</strong> và <strong>Gemini</strong>.
             </p>
             <div className="ai-suggestions">
               {SUGGESTED_PROMPTS.map((prompt, i) => (
@@ -322,7 +312,6 @@ export default function AIChatPage() {
                   className="ai-suggestion-chip"
                   onClick={() => handleSuggestionClick(prompt.text)}
                 >
-                  <span>{prompt.icon}</span>
                   {prompt.text}
                 </button>
               ))}
@@ -333,35 +322,23 @@ export default function AIChatPage() {
             {messages.map((msg, i) => (
               <div key={i} className={`ai-message ${msg.role}`}>
                 <div className="ai-message-avatar">
-                  {msg.role === 'user' ? '👤' : '🤖'}
+                  {msg.role === 'user' ? 'Bạn' : 'AI'}
                 </div>
                 <div className="ai-message-content">
                   {/* Model indicator badge */}
                   {msg.role === 'assistant' && msg.modelUsed && (
-                    <div style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontSize: '11px',
-                      marginBottom: '6px',
-                      background: MODEL_DISPLAY[msg.modelUsed]?.color + '20',
-                      color: MODEL_DISPLAY[msg.modelUsed]?.color,
-                      border: `1px solid ${MODEL_DISPLAY[msg.modelUsed]?.color}40`,
-                    }}>
-                      {MODEL_DISPLAY[msg.modelUsed]?.icon} {MODEL_DISPLAY[msg.modelUsed]?.label}
+                    <div className="ai-model-badge">
+                      {MODEL_DISPLAY[msg.modelUsed]?.label || msg.modelUsed}
                     </div>
                   )}
 
-                  {/* Tool badges (before AI response) */}
+                  {/* Tool badges */}
                   {msg.role === 'assistant' && msg.toolsUsed?.length > 0 && (
                     <div className="ai-tool-badges">
                       {msg.toolsUsed.map((tool, j) => {
-                        const info = TOOL_INFO[tool] || { icon: '🔧', label: tool };
+                        const info = TOOL_INFO[tool] || { label: tool };
                         return (
                           <span key={j} className="ai-tool-badge">
-                            <span className="tool-icon">{info.icon}</span>
                             {info.label}
                           </span>
                         );
@@ -378,7 +355,7 @@ export default function AIChatPage() {
                   {msg.role === 'assistant' && msg.sources?.length > 0 && (
                     <div className="ai-sources">
                       {msg.sources.map((src, j) => (
-                        <span key={j} className="ai-source-tag">📎 {src}</span>
+                        <span key={j} className="ai-source-tag">Nguồn: {src}</span>
                       ))}
                     </div>
                   )}
@@ -389,17 +366,7 @@ export default function AIChatPage() {
             {/* Typing indicator */}
             {isLoading && (
               <div className="ai-typing">
-                <div className="ai-message-avatar" style={{
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  borderRadius: '10px',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  flexShrink: 0
-                }}>🤖</div>
+                <div className="ai-message-avatar">AI</div>
                 <div className="ai-typing-dots">
                   <div className="ai-typing-dot" />
                   <div className="ai-typing-dot" />
@@ -416,21 +383,10 @@ export default function AIChatPage() {
       {/* Input */}
       <div className="ai-chat-input-area">
         {isLoading && (
-          <div className="ai-chat-stop-container" style={{ textAlign: 'center', marginBottom: '10px' }}>
-            <button className="ai-stop-btn" onClick={handleStopGenerating} style={{
-              background: 'transparent',
-              border: '1px solid #4a5568',
-              color: '#a0aec0',
-              padding: '4px 12px',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              fontSize: '12px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}>
-              <span style={{ width: '8px', height: '8px', background: '#e53e3e', borderRadius: '2px', display: 'inline-block' }}></span>
-              Stop generating
+          <div className="ai-chat-stop-container">
+            <button className="ai-stop-btn" onClick={handleStopGenerating}>
+              <span className="ai-stop-icon" />
+              Dừng phản hồi
             </button>
           </div>
         )}
@@ -441,7 +397,7 @@ export default function AIChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Hỏi về cổ phiếu, tín hiệu ML, tin tức, portfolio..."
+            placeholder="Hỏi về cổ phiếu, tín hiệu ML, tin tức, phân tích doanh nghiệp..."
             rows={1}
             disabled={isLoading}
             id="ai-chat-input"
@@ -451,8 +407,9 @@ export default function AIChatPage() {
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading}
             id="ai-send-btn"
+            title="Gửi câu hỏi"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>

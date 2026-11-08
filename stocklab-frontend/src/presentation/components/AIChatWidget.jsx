@@ -3,21 +3,21 @@ import { aiAPI } from '@/infrastructure/repositories/api';
 import './AIChatWidget.css';
 
 const TOOL_INFO = {
-  get_stock_price: { icon: '💰', label: 'Stock Price' },
-  get_financial_news: { icon: '📰', label: 'News' },
-  get_portfolio: { icon: '💼', label: 'Portfolio' },
+  get_stock_price: { label: 'Tra cứu giá cổ phiếu' },
+  get_financial_news: { label: 'Tin tức tài chính' },
+  get_portfolio: { label: 'Danh mục tài sản' },
 };
 
 const SUGGESTED_PROMPTS = [
-  { icon: '📊', text: 'VCB tín hiệu gì hôm nay?' },
-  { icon: '📰', text: 'Tin tức chứng khoán mới nhất?' },
-  { icon: '💼', text: 'Portfolio tôi lãi lỗ thế nào?' },
-  { icon: '📚', text: 'P/E ratio là gì?' },
+  { text: 'VCB tín hiệu gì hôm nay?' },
+  { text: 'Tin tức chứng khoán mới nhất?' },
+  { text: 'Portfolio tôi lãi lỗ thế nào?' },
+  { text: 'Chỉ số P/E là gì?' },
 ];
 
 const MODEL_DISPLAY = {
-  local: { icon: '🖥️', label: 'Local AI', color: '#48bb78' },
-  gemini: { icon: '☁️', label: 'Gemini', color: '#667eea' },
+  local: { label: 'Local AI', color: '#16a34a' },
+  gemini: { label: 'Gemini', color: '#2563eb' },
 };
 
 export default function AIChatWidget() {
@@ -264,7 +264,7 @@ export default function AIChatWidget() {
     if (!SpeechRecognition) {
       setMessages(prev => [...prev, {
         role: 'assistant', id: Date.now(), timestamp: new Date(),
-        content: '❌ Trình duyệt không hỗ trợ nhận dạng giọng nói. Vui lòng dùng Chrome.', error: true,
+        content: 'Trình duyệt không hỗ trợ nhận dạng giọng nói. Vui lòng dùng Chrome.', error: true,
       }]);
       return;
     }
@@ -327,13 +327,13 @@ export default function AIChatWidget() {
       if (res.data.success) {
         setMessages(prev => [...prev, {
           role: 'assistant', id: Date.now(), timestamp: new Date(),
-          content: `✅ Đã học xong tài liệu **${file.name}** (${res.data.chunksIndexed} đoạn nội dung). Bây giờ bạn có thể đặt câu hỏi về tài liệu này.`,
+          content: `Đã học xong tài liệu **${file.name}** (${res.data.chunksIndexed} đoạn nội dung). Bây giờ bạn có thể đặt câu hỏi về tài liệu này.`,
         }]);
       }
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant', id: Date.now(), timestamp: new Date(),
-        content: `❌ Lỗi tải tài liệu: ${err.message}`, error: true,
+        content: `Lỗi tải tài liệu: ${err.message}`, error: true,
       }]);
     } finally {
       setTrainingState('');
@@ -405,7 +405,7 @@ export default function AIChatWidget() {
               updatedMsg.modelUsed = parsedData.model;
             } else if (eventType === 'model_switch') {
               updatedMsg.modelUsed = parsedData.to;
-              updatedMsg.content += `\n\n> ⚡ *Đã chuyển sang Gemini*\n\n`;
+              updatedMsg.content += `\n\n> *Đã chuyển sang Gemini*\n\n`;
             } else if (eventType === 'text') {
               updatedMsg.content += parsedData.delta;
             } else if (eventType === 'tool_start') {
@@ -533,7 +533,7 @@ export default function AIChatWidget() {
           {/* Header */}
           <div className="ai-widget-header">
             <div className="ai-widget-header__left">
-              <div className="ai-widget-header__avatar">🤖</div>
+              <span className="ai-widget-header__badge">AI</span>
               <div>
                 <div className="ai-widget-header__title">StockLab AI</div>
                 <div className="ai-widget-header__sub">Trợ lý phân tích tài chính</div>
@@ -541,9 +541,16 @@ export default function AIChatWidget() {
             </div>
             <div className="ai-widget-header__actions">
               {messages.length > 0 && (
-                <button className="ai-widget-clear" onClick={handleClearHistory} title="Xóa lịch sử">🗑️</button>
+                <button className="ai-widget-clear-btn" onClick={handleClearHistory} title="Xóa lịch sử trò chuyện">
+                  Xóa lịch sử
+                </button>
               )}
-              <button className="ai-widget-close" onClick={toggleChat} title="Đóng">✕</button>
+              <button className="ai-widget-close-btn" onClick={toggleChat} title="Đóng">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -551,13 +558,13 @@ export default function AIChatWidget() {
           <div className="ai-widget-messages">
             {messages.length === 0 ? (
               <div className="ai-widget-welcome">
-                <div className="ai-widget-welcome__icon">🧠</div>
+                <span className="ai-widget-welcome__tag">TRỢ LÝ TÀI CHÍNH</span>
                 <h3>Xin chào!</h3>
-                <p>Tôi là StockLab AI — trợ lý phân tích tài chính thông minh.</p>
+                <p>Tôi là StockLab AI — trợ lý hỗ trợ phân tích dữ liệu thị trường và danh mục.</p>
                 <div className="ai-widget-suggestions">
                   {SUGGESTED_PROMPTS.map((p, i) => (
                     <button key={i} className="ai-widget-suggestion" onClick={() => sendMessage(p.text)}>
-                      <span>{p.icon}</span>{p.text}
+                      {p.text}
                     </button>
                   ))}
                 </div>
@@ -566,22 +573,20 @@ export default function AIChatWidget() {
               <>
                 {messages.map((msg, i) => (
                   <div key={i} className={`ai-widget-msg ai-widget-msg--${msg.role}`}>
-                    <div className="ai-widget-msg__avatar">{msg.role === 'user' ? '👤' : '🤖'}</div>
+                    <div className="ai-widget-msg__role-tag">
+                      {msg.role === 'user' ? 'Bạn' : 'AI'}
+                    </div>
                     <div className="ai-widget-msg__body">
                       {msg.role === 'assistant' && msg.modelUsed && (
-                        <span className="ai-widget-model-tag" style={{
-                          background: (MODEL_DISPLAY[msg.modelUsed]?.color || '#667eea') + '20',
-                          color: MODEL_DISPLAY[msg.modelUsed]?.color,
-                          borderColor: (MODEL_DISPLAY[msg.modelUsed]?.color || '#667eea') + '40',
-                        }}>
-                          {MODEL_DISPLAY[msg.modelUsed]?.icon} {MODEL_DISPLAY[msg.modelUsed]?.label}
+                        <span className="ai-widget-model-tag">
+                          {MODEL_DISPLAY[msg.modelUsed]?.label || msg.modelUsed}
                         </span>
                       )}
                       {msg.role === 'assistant' && msg.toolsUsed?.length > 0 && (
                         <div className="ai-widget-tools">
                           {msg.toolsUsed.map((tool, j) => {
-                            const info = TOOL_INFO[tool] || { icon: '🔧', label: tool };
-                            return <span key={j} className="ai-widget-tool">{info.icon} {info.label}</span>;
+                            const info = TOOL_INFO[tool] || { label: tool };
+                            return <span key={j} className="ai-widget-tool">{info.label}</span>;
                           })}
                         </div>
                       )}
@@ -590,7 +595,9 @@ export default function AIChatWidget() {
                       </div>
                       {msg.role === 'assistant' && msg.sources?.length > 0 && (
                         <div className="ai-widget-sources">
-                          {msg.sources.map((src, j) => <span key={j} className="ai-widget-source">📎 {src}</span>)}
+                          {msg.sources.map((src, j) => (
+                            <span key={j} className="ai-widget-source">Nguồn: {src}</span>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -598,7 +605,7 @@ export default function AIChatWidget() {
                 ))}
                 {isLoading && (
                   <div className="ai-widget-typing">
-                    <div className="ai-widget-msg__avatar">🤖</div>
+                    <div className="ai-widget-msg__role-tag">AI</div>
                     <div className="ai-widget-typing__dots">
                       <span /><span /><span />
                     </div>
