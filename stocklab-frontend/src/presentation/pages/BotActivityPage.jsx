@@ -81,7 +81,6 @@ const SCENARIO_META = {
 };
 
 export default function BotActivityPage({ defaultTab }) {
-  const { restartTour } = usePageTour('botActivity');
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -99,6 +98,17 @@ export default function BotActivityPage({ defaultTab }) {
   };
 
   const [activeTab, setActiveTab] = useState(computeActiveTab);
+  const { restartTour } = usePageTour(activeTab === 'manipulation' ? 'manipulation' : 'botActivity');
+
+  // Sync tab change with URL route dynamically
+  useEffect(() => {
+    if (location.pathname.includes('/admin/manipulation') || location.pathname.includes('/admin/scenarios')) {
+      setActiveTab('manipulation');
+    } else if (location.pathname.includes('/admin/bot-activity')) {
+      const tabParam = searchParams.get('tab');
+      setActiveTab(tabParam === 'manipulation' ? 'manipulation' : 'overview');
+    }
+  }, [location.pathname, searchParams]);
 
   // Sync tab change with URL route
   const handleTabChange = (tab) => {
@@ -153,11 +163,17 @@ export default function BotActivityPage({ defaultTab }) {
           adminManipulationAPI.getActiveCampaigns()
         ]);
 
-        if (statusRes.status === 'fulfilled') setStatus(statusRes.value.data);
-        if (activityRes.status === 'fulfilled') setActivity(activityRes.value.data || []);
+        if (statusRes.status === 'fulfilled') {
+          setStatus(statusRes.value.data?.data || statusRes.value.data);
+        }
+        if (activityRes.status === 'fulfilled') {
+          const actList = Array.isArray(activityRes.value?.data) ? activityRes.value.data : (activityRes.value?.data?.data || []);
+          setActivity(actList);
+        }
         if (stocksRes.status === 'fulfilled') {
-          const list = stocksRes.value.data?.content || stocksRes.value.data || [];
-          setStocks(list);
+          const payload = stocksRes.value?.data;
+          const content = payload?.data?.content || payload?.data || payload?.content || (Array.isArray(payload) ? payload : []);
+          setStocks(Array.isArray(content) ? content : []);
         }
         if (presetsRes.status === 'fulfilled' && presetsRes.value.data?.data) {
           setBackendPresets(presetsRes.value.data.data);
@@ -240,12 +256,12 @@ export default function BotActivityPage({ defaultTab }) {
     } else if (sector === 'VN30') {
       tickers = ['VCB', 'HPG', 'FPT', 'MWG', 'VIC', 'VHM', 'MSN'];
     } else if (sector === 'ALL') {
-      tickers = stocks.map(s => s.ticker);
+      tickers = Array.isArray(stocks) ? stocks.map(s => s.ticker) : [];
     } else if (sector === 'CLEAR') {
       tickers = [];
     }
     // Filter to tickers that actually exist in stock list if available
-    if (sector !== 'CLEAR' && stocks.length > 0) {
+    if (sector !== 'CLEAR' && Array.isArray(stocks) && stocks.length > 0) {
       const validTickers = stocks.map(s => s.ticker);
       tickers = tickers.filter(t => validTickers.includes(t));
       if (tickers.length === 0) tickers = ['VCB'];
@@ -341,7 +357,7 @@ export default function BotActivityPage({ defaultTab }) {
         name: fromBackend?.titleVi || meta.name,
         description: fromBackend?.description || meta.description,
         suggestedMinutes: fromBackend?.defaultDurationMinutes || meta.suggestedMinutes,
-        phases: fromBackend?.phases || meta.phases,
+        phases: meta.phases || fromBackend?.phases,
         icon: meta.icon,
         iconClass: meta.iconClass
       };
@@ -551,7 +567,7 @@ export default function BotActivityPage({ defaultTab }) {
 
             {/* Ticker Selector Grid */}
             <div className="ticker-picker-grid">
-              {stocks.length === 0 ? (
+              {!Array.isArray(stocks) || stocks.length === 0 ? (
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Đang tải danh sách cổ phiếu...</div>
               ) : (
                 stocks.map(stock => {

@@ -297,6 +297,34 @@ export const PAGE_TOUR_STEPS = {
     },
   ],
 
+  // ─── 11b. Kịch Bản Thao Túng Thị Trường (Manipulation) ───
+  manipulation: [
+    {
+      selector: '.bot-header',
+      title: '⚡ Kịch Bản Thao Túng & Định Hướng Xu Hướng Giá',
+      description: 'Hệ thống cho phép Quản trị viên can thiệp vào diễn biến giá với 6 kịch bản tạo lập chuyên nghiệp: Bơm xả, Bẫy giảm giá, Bẫy tăng giá, Đè gom đi ngang, Khớp chéo thanh khoản và Khóa trần/sàn.',
+      position: 'bottom',
+    },
+    {
+      selector: '.bot-killswitch-banner',
+      title: '🚨 Cơ Chế Dừng Khẩn Cấp (Kill-Switch)',
+      description: 'Một chạm lập tức hủy bỏ toàn bộ chiến dịch đang chạy và thu hồi mọi lệnh mua/bán của bot đang treo trên toàn sàn giao dịch.',
+      position: 'bottom',
+    },
+    {
+      selector: '.manipulation-config-card',
+      title: '🎯 Bộ Chọn Cổ Phiếu & Cấu Hình Tham Số',
+      description: 'Chọn nhanh theo nhóm ngành (Thép, Ngân hàng, BĐS, VN30) hoặc chọn lẻ các mã cổ phiếu; điều chỉnh thời lượng, cường độ khớp và bước giá.',
+      position: 'top',
+    },
+    {
+      selector: '.scenarios-grid',
+      title: '🃏 6 Thẻ Kịch Bản Thao Túng Thị Trường',
+      description: 'Xem chi tiết các pha diễn biến giá của từng kịch bản và bấm "Kích Hoạt" để hệ thống bot tự động triển khai tức thì.',
+      position: 'top',
+    },
+  ],
+
   // ─── 12. Tổng Quan Thị Trường (DashboardPage) ─────────
   dashboard: [
     {
