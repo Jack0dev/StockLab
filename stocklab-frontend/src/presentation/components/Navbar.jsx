@@ -105,11 +105,12 @@ export default function Navbar() {
           {user?.role === 'ADMIN' ? (
             <>
               <Link to="/admin/stocks" className={`nav-link ${isActive('/admin/stocks') ? 'active' : ''}`}>Cổ Phiếu</Link>
+              <Link to="/admin/manipulation" className={`nav-link ${isActive('/admin/manipulation') || isActive('/admin/scenarios') ? 'active' : ''}`}>Kịch Bản Giá</Link>
+              <Link to="/admin/bot-activity" className={`nav-link ${isActive('/admin/bot-activity') ? 'active' : ''}`}>Bot Thanh Khoản</Link>
+              <Link to="/admin/orders" className={`nav-link ${isActive('/admin/orders') ? 'active' : ''}`}>Quản Lý Lệnh</Link>
               <Link to="/admin/news" className={`nav-link ${isActive('/admin/news') ? 'active' : ''}`}>Quản Lý Tin Tức</Link>
               <Link to="/admin/users" className={`nav-link ${isActive('/admin/users') ? 'active' : ''}`}>Người Dùng</Link>
               <Link to="/admin/dashboard" className={`nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}>Thống Kê</Link>
-              <Link to="/admin/orders" className={`nav-link ${isActive('/admin/orders') ? 'active' : ''}`}>Quản Lý Lệnh</Link>
-              <Link to="/admin/bot-activity" className={`nav-link ${isActive('/admin/bot-activity') ? 'active' : ''}`}>Trading Bot</Link>
               <Link to="/admin/platform-token" className={`nav-link ${isActive('/admin/platform-token') ? 'active' : ''}`}>Token SLP</Link>
             </>
           ) : (

@@ -14,7 +14,9 @@ const adminRoutes = [
   { path: '/admin/stocks', element: <AdminStocksPage /> },
   { path: '/admin/stocks/:ticker', element: <StockDetailPage /> },
   { path: '/admin/orders', element: <AdminOrdersPage /> },
-  { path: '/admin/bot-activity', element: <BotActivityPage /> },
+  { path: '/admin/manipulation', element: <BotActivityPage defaultTab="manipulation" /> },
+  { path: '/admin/scenarios', element: <BotActivityPage defaultTab="manipulation" /> },
+  { path: '/admin/bot-activity', element: <BotActivityPage defaultTab="overview" /> },
   { path: '/admin/platform-token', element: <PlatformTokenPage /> },
 ]
 

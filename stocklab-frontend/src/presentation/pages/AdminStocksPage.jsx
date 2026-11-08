@@ -237,12 +237,21 @@ const AdminStocksPage = () => {
                         Cấu hình mã chứng khoán, kiểm soát sàn niêm yết, cập nhật giá cơ sở và điều hành trạng thái khớp lệnh trực tiếp.
                     </p>
                 </div>
-                <button 
-                    onClick={handleOpenCreate}
-                    className="btn-primary-action"
-                >
-                    + Thêm cổ phiếu mới
-                </button>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <button 
+                        onClick={() => navigate('/admin/manipulation')}
+                        className="btn-secondary-action"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#f8fafc', color: '#090d16', border: '1px solid #cbd5e1', padding: '0.55rem 1rem', borderRadius: '8px', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer' }}
+                    >
+                        ⚡ Kịch Bản Thao Túng Giá
+                    </button>
+                    <button 
+                        onClick={handleOpenCreate}
+                        className="btn-primary-action"
+                    >
+                        + Thêm cổ phiếu mới
+                    </button>
+                </div>
             </div>
             
             {/* Bộ lọc (Filter Nâng Cao) */}
@@ -363,6 +372,14 @@ const AdminStocksPage = () => {
                                                     title="Xem biểu đồ nến kỹ thuật & sổ lệnh giao dịch"
                                                 >
                                                     Biểu đồ
+                                                </button>
+                                                <button
+                                                    onClick={() => navigate(`/admin/manipulation?ticker=${stock.ticker}`)}
+                                                    className="btn-action-sm"
+                                                    style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#ddd6fe' }}
+                                                    title={`Thiết lập kịch bản thao túng giá cho ${stock.ticker}`}
+                                                >
+                                                    Kịch bản
                                                 </button>
                                                 <button 
                                                     onClick={() => setDetailModal({ isOpen: true, stock })}

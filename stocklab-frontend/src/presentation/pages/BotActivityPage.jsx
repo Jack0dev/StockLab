@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { botAPI, stockAPI, adminManipulationAPI } from '@/infrastructure/repositories/api';
 import { useMultiWebSocket } from '@/presentation/controllers/useWebSocket';
 import { usePageTour } from '@/presentation/controllers/usePageTour';
@@ -20,17 +21,94 @@ import {
   Sliders,
   CheckCircle2,
   XCircle,
-  HelpCircle
+  HelpCircle,
+  Check
 } from 'lucide-react';
 import './BotActivityPage.css';
 
 const MAX_ACTIVITY = 100;
 
-export default function BotActivityPage() {
-  const { restartTour } = usePageTour('botActivity');
+// Metadata for all 6 scenarios (icon, styling, descriptions)
+const SCENARIO_META = {
+  PUMP_AND_DUMP: {
+    name: 'Bơm & Xả (Pump & Dump)',
+    description: 'Gom hàng âm thầm ở nền giá thấp, bơm trần liên tục kích hoạt tâm lý FOMO, phân phối trao tay đỉnh điểm và xả sàn thoát vốn.',
+    suggestedMinutes: 5,
+    iconClass: 'pump',
+    icon: TrendingUp,
+    phases: ['Gom hàng (30%)', 'Bơm giá trần (30%)', 'Phân phối đỉnh (20%)', 'Xả hàng ép sàn (20%)']
+  },
+  BEAR_TRAP: {
+    name: 'Bẫy Giảm Giá (Bear Trap / Rũ Cung)',
+    description: 'Đè giá xuyên thủng các mốc hỗ trợ then chốt ép nhà đầu tư nhỏ lẻ cắt lỗ, sau đó gom sạch lệnh sàn và kéo giật ngược trần.',
+    suggestedMinutes: 3,
+    iconClass: 'bear',
+    icon: TrendingDown,
+    phases: ['Đè giá rũ cung (40%)', 'Quét sàn giật trần (60%)']
+  },
+  BULL_TRAP: {
+    name: 'Bẫy Tăng Giá (Bull Trap / Đu Đỉnh)',
+    description: 'Kéo giá tăng mạnh vượt đỉnh cũ dụ lệnh mua FOMO của nhà đầu tư, sau đó bất ngờ xả hàng ồ ạt khiến bên mua bị kẹp giá đỉnh.',
+    suggestedMinutes: 3,
+    iconClass: 'bull',
+    icon: ArrowUpRight,
+    phases: ['Kéo vượt đỉnh ảo (40%)', 'Úp sọt đảo chiều (60%)']
+  },
+  SIDEWAY_ACCUMULATION: {
+    name: 'Đè Gom Biên Độ Hẹp (Sideway)',
+    description: 'Dựng đồng thời 2 bức tường Mua/Bán song song kẹp biên ±1% giữ giá đi ngang tuyệt đối quanh tham chiếu để gom cạn kiệt nguồn cung.',
+    suggestedMinutes: 8,
+    iconClass: 'sideway',
+    icon: Layers,
+    phases: ['Dựng tường chặn song song (50%)', 'Gom hàng biên hẹp (50%)']
+  },
+  WASH_TRADING: {
+    name: 'Quay Tay Thanh Khoản (Wash Trading)',
+    description: 'Hai hay nhiều bot tự đặt lệnh mua và bán đối ứng với nhau tại cùng mức giá tham chiếu, kích nổ thanh khoản khổng lồ lọt top thị trường.',
+    suggestedMinutes: 5,
+    iconClass: 'wash',
+    icon: BarChart2,
+    phases: ['Quay tay khớp chéo 2 chiều (100%)']
+  },
+  LOCK_LIMIT: {
+    name: 'Khóa Cứng Trần / Sàn (Lock Limit)',
+    description: 'Chất lệnh mua giá trần hoặc bán giá sàn với khối lượng áp đảo hàng triệu cổ phiếu, tạo tình trạng trắng bảng bên mua hoặc bên bán tuyệt đối.',
+    suggestedMinutes: 5,
+    iconClass: 'lock',
+    icon: ShieldAlert,
+    phases: ['Chất tường lệnh khóa biên độ (100%)']
+  }
+};
 
-  // Navigation tab: 'overview' | 'manipulation'
-  const [activeTab, setActiveTab] = useState('overview');
+export default function BotActivityPage({ defaultTab }) {
+  const { restartTour } = usePageTour('botActivity');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Determine initial active tab based on prop or route or search param
+  const computeActiveTab = () => {
+    if (defaultTab) return defaultTab;
+    if (location.pathname.includes('/admin/manipulation') || location.pathname.includes('/admin/scenarios')) {
+      return 'manipulation';
+    }
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'manipulation') return 'manipulation';
+    if (tabParam === 'overview') return 'overview';
+    return 'manipulation'; // Default to manipulation for immediate visibility
+  };
+
+  const [activeTab, setActiveTab] = useState(computeActiveTab);
+
+  // Sync tab change with URL route
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'manipulation') {
+      navigate('/admin/manipulation', { replace: true });
+    } else {
+      navigate('/admin/bot-activity', { replace: true });
+    }
+  };
 
   // ===== TAB 1: Bot Overview State =====
   const [status, setStatus] = useState(null);
@@ -39,17 +117,29 @@ export default function BotActivityPage() {
 
   // ===== TAB 2: Manipulation State =====
   const [stocks, setStocks] = useState([]);
-  const [selectedTickers, setSelectedTickers] = useState(['VCB']);
+  const [selectedTickers, setSelectedTickers] = useState(() => {
+    const tickerFromUrl = searchParams.get('ticker');
+    return tickerFromUrl ? [tickerFromUrl.toUpperCase()] : ['VCB'];
+  });
   const [durationMinutes, setDurationMinutes] = useState(5);
   const [intensity, setIntensity] = useState('MEDIUM');
   const [priceStep, setPriceStep] = useState(100);
   const [targetChangePercent, setTargetChangePercent] = useState(5.0);
   const [lockSide, setLockSide] = useState('CEILING');
-  const [presets, setPresets] = useState([]);
+  const [backendPresets, setBackendPresets] = useState([]);
   const [activeCampaigns, setActiveCampaigns] = useState([]);
   const [killSwitchModalOpen, setKillSwitchModalOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState({});
   const [notification, setNotification] = useState(null);
+
+  // Watch for ticker change in URL query
+  useEffect(() => {
+    const tickerFromUrl = searchParams.get('ticker');
+    if (tickerFromUrl) {
+      setSelectedTickers([tickerFromUrl.toUpperCase()]);
+      setActiveTab('manipulation');
+    }
+  }, [searchParams]);
 
   // Fetch initial data
   useEffect(() => {
@@ -70,7 +160,7 @@ export default function BotActivityPage() {
           setStocks(list);
         }
         if (presetsRes.status === 'fulfilled' && presetsRes.value.data?.data) {
-          setPresets(presetsRes.value.data.data);
+          setBackendPresets(presetsRes.value.data.data);
         }
         if (campaignsRes.status === 'fulfilled' && campaignsRes.value.data?.data) {
           setActiveCampaigns(campaignsRes.value.data.data);
@@ -87,7 +177,7 @@ export default function BotActivityPage() {
   // Show temporary toast notification
   const showNotification = (type, message) => {
     setNotification({ type, message });
-    setTimeout(() => setNotification(null), 4000);
+    setTimeout(() => setNotification(null), 4500);
   };
 
   // WebSocket realtime: nhận lệnh bot mới qua /topic/bot
@@ -174,7 +264,7 @@ export default function BotActivityPage() {
   // Launch campaign
   const handleStartCampaign = async (scenarioType) => {
     if (selectedTickers.length === 0) {
-      showNotification('error', 'Vui lòng chọn ít nhất 1 mã cổ phiếu để áp dụng.');
+      showNotification('error', 'Vui lòng chọn ít nhất 1 mã cổ phiếu để áp dụng kịch bản.');
       return;
     }
 
@@ -191,18 +281,18 @@ export default function BotActivityPage() {
       };
       const res = await adminManipulationAPI.startCampaign(payload);
       if (res.data?.success) {
-        showNotification('success', `Đã kích hoạt chiến dịch ${scenarioType} thành công!`);
+        showNotification('success', `Đã kích hoạt kịch bản [${scenarioType}] thành công trên ${selectedTickers.join(', ')}!`);
         // Refresh active campaigns
         const activeRes = await adminManipulationAPI.getActiveCampaigns();
         if (activeRes.data?.data) {
           setActiveCampaigns(activeRes.data.data);
         }
       } else {
-        showNotification('error', res.data?.message || 'Không thể kích hoạt chiến dịch.');
+        showNotification('error', res.data?.message || 'Không thể kích hoạt kịch bản.');
       }
     } catch (err) {
       console.error('Start campaign error:', err);
-      showNotification('error', err.response?.data?.message || 'Lỗi khi kích hoạt chiến dịch.');
+      showNotification('error', err.response?.data?.message || 'Lỗi khi kích hoạt kịch bản thao túng.');
     } finally {
       setActionLoading(prev => ({ ...prev, [scenarioType]: false }));
     }
@@ -226,7 +316,8 @@ export default function BotActivityPage() {
       const res = await adminManipulationAPI.emergencyKillSwitch();
       setActiveCampaigns([]);
       setKillSwitchModalOpen(false);
-      showNotification('success', res.data?.message || 'ĐÃ DỪNG KHẨN CẤP TOÀN BỘ CHIẾN DỊCH THAO TÚNG!');
+      const count = res.data?.data?.canceledOrdersCount || 0;
+      showNotification('success', `ĐÃ DỪNG KHẨN CẤP TOÀN BỘ! Đã hủy ${count} lệnh bot đang treo.`);
     } catch (err) {
       console.error('Kill switch error:', err);
       showNotification('error', 'Lỗi khi kích hoạt dừng khẩn cấp.');
@@ -239,70 +330,30 @@ export default function BotActivityPage() {
     return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
-  // Fallback scenario presets if backend presets not yet loaded
-  const defaultPresets = [
-    {
-      scenarioType: 'PUMP_AND_DUMP',
-      name: 'Pump & Dump (Bơm xả 4 pha)',
-      description: 'Gom hàng kín tiếng ở nền giá thấp, đẩy giá dốc đứng tạo FOMO, phân phối trao tay đỉnh điểm và xả hàng bán tháo ép sàn.',
-      suggestedMinutes: 10,
-      iconClass: 'pump',
-      icon: TrendingUp,
-      phases: ['Gom hàng (30%)', 'Bơm giá (30%)', 'Phân phối (20%)', 'Xả hàng (20%)']
-    },
-    {
-      scenarioType: 'BEAR_TRAP',
-      name: 'Bear Trap (Bẫy giảm giá)',
-      description: 'Đè giá gãy hỗ trợ then chốt ép nhà đầu tư nhỏ lẻ hoảng loạn cắt lỗ, sau đó quét cạn toàn bộ lệnh bán kéo giật ngược trần.',
-      suggestedMinutes: 5,
-      iconClass: 'bear',
-      icon: TrendingDown,
-      phases: ['Đè giá rũ cung (40%)', 'Quét sàn giật trần (60%)']
-    },
-    {
-      scenarioType: 'BULL_TRAP',
-      name: 'Bull Trap (Bẫy tăng giá)',
-      description: 'Kéo giá bứt phá vượt kháng cự giả dụ nhà đầu tư đua lệnh mua, sau đó đột ngột xả lượng lớn cổ phiếu khiến giá sập sâu.',
-      suggestedMinutes: 5,
-      iconClass: 'bull',
-      icon: ArrowUpRight,
-      phases: ['Kéo trần kích thích (40%)', 'Đạp giá bẫy mua (60%)']
-    },
-    {
-      scenarioType: 'SIDEWAY',
-      name: 'Sideway (Chặn biên độ giá)',
-      description: 'Đặt đồng thời tường mua chặn ở giá sàn và tường bán chặn ở giá trần/tham chiếu, ghìm chặt không cho giá bứt phá.',
-      suggestedMinutes: 15,
-      iconClass: 'sideway',
-      icon: Layers,
-      phases: ['Kê tường chặn song song (100%)']
-    },
-    {
-      scenarioType: 'WASH_TRADING',
-      name: 'Wash Trading (Khớp chéo tạo thanh khoản)',
-      description: 'Các tài khoản bot tự đặt lệnh mua và bán khớp chéo với nhau tại cùng mức giá, tạo thanh khoản bùng nổ kích thích thị trường.',
-      suggestedMinutes: 10,
-      iconClass: 'wash',
-      icon: BarChart2,
-      phases: ['Quay tay khớp chéo (100%)']
-    },
-    {
-      scenarioType: 'LOCK_LIMIT',
-      name: 'Lock Limit (Khóa trần / Khóa sàn)',
-      description: 'Kê lệnh mua giá trần hoặc bán giá sàn với khối lượng áp đảo hàng triệu cổ phiếu, tạo tình trạng trắng bảng bên mua hoặc bên bán.',
-      suggestedMinutes: 5,
-      iconClass: 'lock',
-      icon: ShieldAlert,
-      phases: ['Kê tường chặn tuyệt đối (100%)']
-    }
-  ];
+  // Build the dynamic list of 6 scenarios merging backend presets with icons & details
+  const scenariosList = useMemo(() => {
+    const defaultKeys = Object.keys(SCENARIO_META);
+    return defaultKeys.map(key => {
+      const meta = SCENARIO_META[key];
+      const fromBackend = backendPresets.find(p => (p.type === key || p.scenarioType === key));
+      return {
+        scenarioType: key,
+        name: fromBackend?.titleVi || meta.name,
+        description: fromBackend?.description || meta.description,
+        suggestedMinutes: fromBackend?.defaultDurationMinutes || meta.suggestedMinutes,
+        phases: fromBackend?.phases || meta.phases,
+        icon: meta.icon,
+        iconClass: meta.iconClass
+      };
+    });
+  }, [backendPresets]);
 
   if (loading) {
     return (
       <div className="bot-page">
         <div className="bot-loading">
           <div className="bot-loading-spinner"></div>
-          <span>Đang đồng bộ dữ liệu bot quản trị thị trường...</span>
+          <span>Đang đồng bộ dữ liệu kịch bản thao túng & bot thị trường...</span>
         </div>
       </div>
     );
@@ -336,10 +387,17 @@ export default function BotActivityPage() {
       {/* Header */}
       <div className="bot-header">
         <div>
-          <span className="bot-header-kicker">Phân hệ Quản trị & Điều phối Thị Trường</span>
-          <h1 className="bot-header-title">Hệ Thống Bot & Thao Túng Xu Hướng Giá</h1>
+          <span className="bot-header-kicker">
+            {activeTab === 'manipulation' ? 'Phân Hệ Quản Trị & Tạo Xu Hướng Thị Trường' : 'Phân Hệ Tạo Lập Thanh Khoản'}
+          </span>
+          <h1 className="bot-header-title">
+            {activeTab === 'manipulation' ? 'Kịch Bản Thao Túng & Định Hướng Xu Hướng Giá' : 'Giám Sát Bot Tạo Thanh Khoản Tự Động'}
+          </h1>
           <p className="bot-subtitle">
-            Giám sát bot thanh khoản tự động và điều khiển 6 kịch bản thao túng giá chuyên sâu dành cho Quản trị viên.
+            {activeTab === 'manipulation'
+              ? 'Điều khiển 6 kịch bản thao túng thị trường chuyên sâu dành cho Quản trị viên: Bơm xả 4 pha, Bẫy giảm giá (Bear Trap), Bẫy tăng giá (Bull Trap), Đè gom đi ngang (Sideway), Quay tay khớp chéo (Wash Trading), Khóa cứng trần/sàn.'
+              : 'Hệ thống tự động phát sinh lệnh đối ứng theo thuật toán ngẫu nhiên nhằm kích hoạt biên độ giá và duy trì thanh khoản cho toàn sàn.'
+            }
           </p>
         </div>
         <div className="bot-header-actions">
@@ -363,121 +421,34 @@ export default function BotActivityPage() {
       {/* Navigation Tabs */}
       <div className="bot-tabs-nav">
         <button
-          className={`bot-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          <Activity size={16} />
-          Tổng Quan Bot Thanh Khoản
-        </button>
-        <button
           className={`bot-tab-btn ${activeTab === 'manipulation' ? 'active' : ''}`}
-          onClick={() => setActiveTab('manipulation')}
+          onClick={() => handleTabChange('manipulation')}
         >
           <Zap size={16} />
-          Kịch Bản Thao Túng Giá ({activeCampaigns.length} đang chạy)
+          <span>Kịch Bản Thao Túng Giá</span>
+          {activeCampaigns.length > 0 && (
+            <span style={{
+              background: '#059669',
+              color: '#ffffff',
+              fontSize: '0.7rem',
+              padding: '0.15rem 0.45rem',
+              borderRadius: '9999px',
+              marginLeft: '0.35rem'
+            }}>
+              {activeCampaigns.length} đang chạy
+            </span>
+          )}
+        </button>
+        <button
+          className={`bot-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => handleTabChange('overview')}
+        >
+          <Activity size={16} />
+          <span>Tổng Quan Bot Thanh Khoản</span>
         </button>
       </div>
 
-      {/* TAB 1: OVERVIEW */}
-      {activeTab === 'overview' && (
-        <>
-          {/* Bento Grid 4 Cards */}
-          <div className="bot-stats-grid">
-            <div className="bot-stat-card">
-              <span className="bot-stat-index">01</span>
-              <div className="bot-stat-label">Trạng thái vận hành</div>
-              <div>
-                <span className={`bot-status-tag ${status?.enabled ? 'active' : 'inactive'}`}>
-                  {status?.enabled ? 'Đang chạy' : 'Đã dừng'}
-                </span>
-              </div>
-            </div>
-
-            <div className="bot-stat-card">
-              <span className="bot-stat-index">02</span>
-              <div className="bot-stat-label">Tổng lệnh đã phát sinh</div>
-              <div className="bot-stat-value tabular-num">
-                {status?.totalOrdersPlaced?.toLocaleString('vi-VN') || 0}
-              </div>
-            </div>
-
-            <div className="bot-stat-card">
-              <span className="bot-stat-index">03</span>
-              <div className="bot-stat-label">Tần suất chu kỳ</div>
-              <div className="bot-stat-value tabular-num">
-                {(status?.intervalMs / 1000)?.toFixed(0) || 5}s <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>/ lệnh</span>
-              </div>
-            </div>
-
-            <div className="bot-stat-card">
-              <span className="bot-stat-index">04</span>
-              <div className="bot-stat-label">Tài khoản điều phối</div>
-              <div>
-                <span className="bot-username-pill">{status?.username || 'bot_liquidity'}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Activity Table Card */}
-          <div className="bot-activity-card">
-            <div className="bot-activity-header">
-              <h3>Nhật ký phát sinh lệnh (Thời gian thực)</h3>
-              <span className="bot-activity-count">{activity.length} lệnh gần nhất</span>
-            </div>
-
-            {activity.length === 0 ? (
-              <div className="bot-empty">
-                <p>Hệ thống chưa ghi nhận lượt đặt lệnh nào. Hãy đợi chu kỳ tiếp theo...</p>
-              </div>
-            ) : (
-              <div className="bot-table-wrapper">
-                <table className="bot-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '100px' }}>Thời gian</th>
-                      <th style={{ width: '100px' }}>Mã CP</th>
-                      <th style={{ width: '100px' }}>Chiều lệnh</th>
-                      <th className="th-right" style={{ width: '110px' }}>Khối lượng</th>
-                      <th className="th-right" style={{ width: '130px' }}>Mức giá</th>
-                      <th className="th-right">Tổng giá trị</th>
-                      <th style={{ width: '120px' }}>Trạng thái</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {activity.map((order, i) => (
-                      <tr key={i} className={i === 0 ? 'bot-row-new' : ''}>
-                        <td className="bot-time">{formatTime(order.timestamp)}</td>
-                        <td>
-                          <span className="bot-ticker-pill">{order.ticker}</span>
-                        </td>
-                        <td>
-                          <span className={`bot-side-badge ${order.side === 'BUY' ? 'buy' : 'sell'}`}>
-                            {order.side === 'BUY' ? 'MUA' : 'BÁN'}
-                          </span>
-                        </td>
-                        <td className="th-right tabular-num font-bold">
-                          {order.quantity?.toLocaleString('vi-VN')}
-                        </td>
-                        <td className="th-right tabular-num">
-                          {formatPrice(order.price)} đ
-                        </td>
-                        <td className="th-right tabular-num font-bold" style={{ color: '#090d16' }}>
-                          {formatPrice(order.price * order.quantity)} đ
-                        </td>
-                        <td>
-                          <span className="bot-status-badge success">{order.status}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </>
-      )}
-
-      {/* TAB 2: MARKET MANIPULATION */}
+      {/* TAB 1: KỊCH BẢN THAO TÚNG GIÁ (MANIPULATION) */}
       {activeTab === 'manipulation' && (
         <>
           {/* Emergency Kill Switch Banner */}
@@ -489,7 +460,7 @@ export default function BotActivityPage() {
               <div>
                 <div className="bot-killswitch-title">CƠ CHẾ DỪNG KHẨN CẤP (EMERGENCY KILL-SWITCH)</div>
                 <p className="bot-killswitch-desc">
-                  Ngay lập tức dừng mọi chiến dịch thao túng đang chạy và tự động hủy tất cả lệnh bot đang treo trong sổ lệnh.
+                  Lập tức dừng toàn bộ chiến dịch thao túng đang chạy và tự động hủy sạch mọi lệnh bot đang treo trong sổ lệnh trên sàn.
                 </p>
               </div>
             </div>
@@ -506,19 +477,19 @@ export default function BotActivityPage() {
           <div className="active-campaigns-card">
             <div className="manipulation-section-title">
               <Activity size={18} />
-              Chiến Dịch Đang Chạy ({activeCampaigns.length})
+              <span>Chiến Dịch Đang Thực Thi ({activeCampaigns.length})</span>
             </div>
 
             {activeCampaigns.length === 0 ? (
               <div className="active-campaigns-empty">
-                Chưa có chiến dịch thao túng nào đang chạy. Hãy cấu hình tham số và kích hoạt một kịch bản bên dưới.
+                Chưa có kịch bản thao túng nào đang chạy. Vui lòng chọn mã cổ phiếu và bấm "Kích Hoạt Kịch Bản" bên dưới.
               </div>
             ) : (
               <div>
                 {activeCampaigns.map(camp => (
                   <div key={camp.campaignId} className="active-campaign-item">
                     <div className="active-campaign-info">
-                      <h4>{camp.scenarioType}</h4>
+                      <h4>{camp.scenarioTitle || camp.scenarioType}</h4>
                       <div className="active-campaign-tickers">
                         {camp.tickers?.map(t => (
                           <span key={t} className="bot-ticker-pill">{t}</span>
@@ -540,7 +511,7 @@ export default function BotActivityPage() {
                     </div>
 
                     <div className="active-campaign-stats">
-                      <div>Lệnh đã phát: <strong>{camp.totalOrdersPlaced || 0}</strong></div>
+                      <div>Lệnh đã phát: <strong>{camp.ordersPlaced || camp.totalOrdersPlaced || 0}</strong></div>
                       <div>Cường độ: <strong>{camp.intensity}</strong></div>
                     </div>
 
@@ -562,7 +533,7 @@ export default function BotActivityPage() {
           <div className="manipulation-config-card">
             <div className="manipulation-section-title">
               <Sliders size={18} />
-              Cấu Hình Tham Số Chiến Dịch & Mã Cổ Phiếu Áp Dụng
+              <span>Cấu Hình Tham Số & Chọn Mã Cổ Phiếu Áp Dụng</span>
             </div>
 
             {/* Quick Sector Presets */}
@@ -574,7 +545,7 @@ export default function BotActivityPage() {
               <button className="manipulation-sector-btn" onClick={() => handleSelectSector('BANK')}>Ngân hàng (VCB, BID, CTG...)</button>
               <button className="manipulation-sector-btn" onClick={() => handleSelectSector('BDS')}>BĐS (VHM, NVL, DIG...)</button>
               <button className="manipulation-sector-btn" onClick={() => handleSelectSector('VN30')}>VN30</button>
-              <button className="manipulation-sector-btn" onClick={() => handleSelectSector('ALL')}>Chọn tất cả ({stocks.length})</button>
+              <button className="manipulation-sector-btn" onClick={() => handleSelectSector('ALL')}>Tất cả ({stocks.length})</button>
               <button className="manipulation-sector-btn" onClick={() => handleSelectSector('CLEAR')}>Bỏ chọn</button>
             </div>
 
@@ -591,6 +562,7 @@ export default function BotActivityPage() {
                       className={`ticker-checkbox-pill ${isSelected ? 'selected' : ''}`}
                       onClick={() => toggleTicker(stock.ticker)}
                     >
+                      {isSelected && <Check size={12} style={{ marginRight: '2px' }} />}
                       <span>{stock.ticker}</span>
                       <span style={{ fontSize: '0.7rem', opacity: 0.75 }}>({stock.exchange || 'HOSE'})</span>
                     </div>
@@ -598,19 +570,19 @@ export default function BotActivityPage() {
                 })
               )}
             </div>
-            <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '1.25rem' }}>
-              Đã chọn <strong>{selectedTickers.length}</strong> mã: {selectedTickers.join(', ')}
+            <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '1.25rem' }}>
+              Đã chọn <strong>{selectedTickers.length}</strong> mã: <span style={{ color: '#090d16', fontWeight: '700' }}>{selectedTickers.join(', ') || '(Chưa chọn mã nào)'}</span>
             </div>
 
             {/* Parameter Row */}
             <div className="config-param-row">
               <div className="config-field">
-                <label>Thời gian chạy (Phút)</label>
+                <label>Thời lượng chiến dịch</label>
                 <select
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(Number(e.target.value))}
                 >
-                  <option value={1}>1 Phút (Siêu tốc)</option>
+                  <option value={1}>1 Phút (Siêu tốc / Kiểm thử nhanh)</option>
                   <option value={3}>3 Phút (Thử nghiệm)</option>
                   <option value={5}>5 Phút (Tiêu chuẩn)</option>
                   <option value={10}>10 Phút</option>
@@ -620,24 +592,24 @@ export default function BotActivityPage() {
               </div>
 
               <div className="config-field">
-                <label>Cường độ khớp lệnh</label>
+                <label>Cường độ tác động</label>
                 <select
                   value={intensity}
                   onChange={(e) => setIntensity(e.target.value)}
                 >
-                  <option value="LOW">LOW — Thận trọng (100 - 500 CP / lần)</option>
-                  <option value="MEDIUM">MEDIUM — Vừa phải (500 - 2,000 CP / lần)</option>
-                  <option value="HIGH">HIGH — Mãnh liệt (2,000 - 10,000 CP / lần)</option>
+                  <option value="LOW">LOW — Thận trọng (100 - 500 CP / lệnh)</option>
+                  <option value="MEDIUM">MEDIUM — Vừa phải (500 - 2,000 CP / lệnh)</option>
+                  <option value="HIGH">HIGH — Mãnh liệt (2,000 - 10,000 CP / lệnh)</option>
                 </select>
               </div>
 
               <div className="config-field">
-                <label>Bước giá đẩy / Bước ép (VND)</label>
+                <label>Bước giá đẩy / ép (VND)</label>
                 <select
                   value={priceStep}
                   onChange={(e) => setPriceStep(Number(e.target.value))}
                 >
-                  <option value={100}>100 VND (Chuẩn HOSE)</option>
+                  <option value={100}>100 VND (Chuẩn bước giá HOSE)</option>
                   <option value={200}>200 VND</option>
                   <option value={500}>500 VND</option>
                   <option value={1000}>1,000 VND</option>
@@ -648,8 +620,8 @@ export default function BotActivityPage() {
 
           {/* 6 Scenario Cards Grid */}
           <div className="scenarios-grid">
-            {defaultPresets.map(sc => {
-              const IconComp = sc.icon;
+            {scenariosList.map(sc => {
+              const IconComp = sc.icon || Zap;
               const isRunningForType = activeCampaigns.some(c => c.scenarioType === sc.scenarioType);
               const isLoading = actionLoading[sc.scenarioType];
 
@@ -669,10 +641,10 @@ export default function BotActivityPage() {
                     <p className="scenario-desc">{sc.description}</p>
 
                     <div className="scenario-phases-list">
-                      <div style={{ fontSize: '0.72rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase' }}>
-                        Các pha thực thi:
+                      <div style={{ fontSize: '0.72rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.2rem' }}>
+                        Trình tự các pha ({sc.suggestedMinutes} phút gợi ý):
                       </div>
-                      {sc.phases.map((ph, idx) => (
+                      {sc.phases?.map((ph, idx) => (
                         <div key={idx} className="scenario-phase-item">
                           <span className="scenario-phase-num">{idx + 1}</span>
                           <span>{ph}</span>
@@ -741,6 +713,105 @@ export default function BotActivityPage() {
                 </div>
               );
             })}
+          </div>
+        </>
+      )}
+
+      {/* TAB 2: TỔNG QUAN BOT THANH KHOẢN (LIQUIDITY OVERVIEW) */}
+      {activeTab === 'overview' && (
+        <>
+          {/* Bento Grid 4 Cards */}
+          <div className="bot-stats-grid">
+            <div className="bot-stat-card">
+              <span className="bot-stat-index">01</span>
+              <div className="bot-stat-label">Trạng thái vận hành</div>
+              <div>
+                <span className={`bot-status-tag ${status?.enabled ? 'active' : 'inactive'}`}>
+                  {status?.enabled ? 'Đang chạy' : 'Đã dừng'}
+                </span>
+              </div>
+            </div>
+
+            <div className="bot-stat-card">
+              <span className="bot-stat-index">02</span>
+              <div className="bot-stat-label">Tổng lệnh đã phát sinh</div>
+              <div className="bot-stat-value tabular-num">
+                {status?.totalOrdersPlaced?.toLocaleString('vi-VN') || 0}
+              </div>
+            </div>
+
+            <div className="bot-stat-card">
+              <span className="bot-stat-index">03</span>
+              <div className="bot-stat-label">Tần suất chu kỳ</div>
+              <div className="bot-stat-value tabular-num">
+                {(status?.intervalMs / 1000)?.toFixed(0) || 5}s <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>/ lệnh</span>
+              </div>
+            </div>
+
+            <div className="bot-stat-card">
+              <span className="bot-stat-index">04</span>
+              <div className="bot-stat-label">Tài khoản điều phối</div>
+              <div>
+                <span className="bot-username-pill">{status?.username || 'bot_liquidity'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Activity Table Card */}
+          <div className="bot-activity-card">
+            <div className="bot-activity-header">
+              <h3>Nhật ký phát sinh lệnh (Thời gian thực)</h3>
+              <span className="bot-activity-count">{activity.length} lệnh gần nhất</span>
+            </div>
+
+            {activity.length === 0 ? (
+              <div className="bot-empty">
+                <p>Hệ thống chưa ghi nhận lượt đặt lệnh nào. Hãy kích hoạt bot để bắt đầu...</p>
+              </div>
+            ) : (
+              <div className="bot-table-wrapper">
+                <table className="bot-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '100px' }}>Thời gian</th>
+                      <th style={{ width: '100px' }}>Mã CP</th>
+                      <th style={{ width: '100px' }}>Chiều lệnh</th>
+                      <th className="th-right" style={{ width: '110px' }}>Khối lượng</th>
+                      <th className="th-right" style={{ width: '130px' }}>Mức giá</th>
+                      <th className="th-right">Tổng giá trị</th>
+                      <th style={{ width: '120px' }}>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activity.map((order, i) => (
+                      <tr key={i} className={i === 0 ? 'bot-row-new' : ''}>
+                        <td className="bot-time">{formatTime(order.timestamp)}</td>
+                        <td>
+                          <span className="bot-ticker-pill">{order.ticker}</span>
+                        </td>
+                        <td>
+                          <span className={`bot-side-badge ${order.side === 'BUY' ? 'buy' : 'sell'}`}>
+                            {order.side === 'BUY' ? 'MUA' : 'BÁN'}
+                          </span>
+                        </td>
+                        <td className="th-right tabular-num font-bold">
+                          {order.quantity?.toLocaleString('vi-VN')}
+                        </td>
+                        <td className="th-right tabular-num">
+                          {formatPrice(order.price)} đ
+                        </td>
+                        <td className="th-right tabular-num font-bold" style={{ color: '#090d16' }}>
+                          {formatPrice(order.price * order.quantity)} đ
+                        </td>
+                        <td>
+                          <span className="bot-status-badge success">{order.status}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </>
       )}
