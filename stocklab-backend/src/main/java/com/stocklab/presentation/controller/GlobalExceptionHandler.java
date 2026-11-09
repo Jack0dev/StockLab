@@ -86,6 +86,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Xử lý lỗi JSON payload không parse được hoặc sai định dạng Enum / Kiểu dữ liệu
+     */
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(
+            org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        log.warn("[HttpMessageNotReadableException] Dữ liệu JSON không hợp lệ: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ErrorCode.INVALID_ORDER_PARAMETERS, "Dữ liệu JSON gửi lên không đúng định dạng hoặc giá trị tham số không hợp lệ"));
+    }
+
+    /**
      * Xử lý vi phạm quyền truy cập từ Spring Security
      */
     @ExceptionHandler(AccessDeniedException.class)

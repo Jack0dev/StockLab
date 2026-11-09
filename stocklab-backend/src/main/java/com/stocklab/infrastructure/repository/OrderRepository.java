@@ -58,4 +58,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Cho OCO: lấy tất cả lệnh cùng group
     List<Order> findByOcoGroupId(String ocoGroupId);
+
+    // Cho Bot Kill-Switch: lấy tất cả lệnh PENDING/PARTIAL của các bot
+    @Query("SELECT o FROM Order o WHERE o.user.username IN :usernames AND o.status IN :statuses")
+    List<Order> findBotPendingOrders(@Param("usernames") List<String> usernames, @Param("statuses") List<OrderStatus> statuses);
 }

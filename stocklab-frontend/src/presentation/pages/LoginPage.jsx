@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '@/infrastructure/repositories/api';
 import { useAuth } from '@/infrastructure/context/AuthContext';
+import StockLabLogo from '@/presentation/components/logo/StockLabLogo';
 import './LoginPage.css';
 
 export default function LoginPage() {
@@ -97,9 +98,9 @@ export default function LoginPage() {
       <div className="editorial-showcase-panel">
         <div className="showcase-content">
           <div className="showcase-brand-tag">
-            <span className="brand-dot-black"></span>
+            <StockLabLogo variant="badge" size={32} />
             <span className="brand-name-bold">StockLab</span>
-            <span className="edition-badge">PHIÊN BẢN 2026</span>
+            <span className="edition-badge">GAME TRADING</span>
           </div>
 
           <div className="showcase-hero-statement">

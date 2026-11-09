@@ -42,6 +42,10 @@
 - **Giao diện sáng tinh giản (Light Modernist Editorial UI)**: Thiết kế nền sáng chuẩn typographic, tương phản cao, loại bỏ hoàn toàn các biểu tượng cảm xúc (emoji/icon) trang trí, thay thế bằng huy hiệu vai trò tối giản (`Bạn`, `AI`) và nút thao tác văn bản trực quan.
 - **Nhập liệu kép**: Hỗ trợ đồng thời gõ văn bản và nhận diện giọng nói tiếng Việt thời gian thực (Web Speech API).
 
+### 4. Nhận Diện Thương Hiệu Game Trading (Gamepad-2 + Candlestick-Chart)
+- **Định vị trực quan Game Trading**: Kết hợp biểu tượng tay cầm chơi game (`gamepad-2`) đại diện cho tính tương tác giả lập cùng biểu đồ nến tài chính (`candlestick-chart`) đại diện cho giao dịch chứng khoán thành một logo vector đồng nhất, thể hiện sắc nét mô hình **Sàn Giao Dịch Chứng Khoán Mô Phỏng (Game Trading Simulation)**.
+- **Tích hợp đồng bộ toàn nền tảng**: Hiển thị trên thanh điều hướng chính (`Navbar`), giao diện Đăng nhập / Đăng ký (`LoginPage`, `RegisterPage`), favicon tab trình duyệt và huy hiệu trạng thái `GAME TRADING`.
+
 ---
 
 ## 🛠 Công Nghệ Sử Dụng

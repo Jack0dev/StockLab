@@ -40,3 +40,8 @@ stocklab-ml/models/*.bin
 
 # Docker
 docker-compose.override.yml
+
+# Performance Testing Tools
+apache-jmeter*/
+*.jmx.bak
+jmeter.log

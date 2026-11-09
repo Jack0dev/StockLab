@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '@/infrastructure/repositories/api';
+import StockLabLogo from '@/presentation/components/logo/StockLabLogo';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
@@ -119,13 +120,10 @@ export default function RegisterPage() {
       <div className="register-container fade-in">
         {/* Logo */}
         <div className="register-logo">
-          <div className="logo-icon">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#2962ff"/>
-              <path d="M8 22L12 14L16 18L20 10L24 16" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <div className="logo-icon" style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+            <StockLabLogo variant="badge" size={48} />
           </div>
-          <h1 className="logo-text">{step === 1 ? 'Tạo tài khoản' : 'Xác thực Email'}</h1>
+          <h1 className="logo-text">{step === 1 ? 'Tạo tài khoản StockLab' : 'Xác thực Email'}</h1>
           <p className="logo-subtitle">
             {step === 1 
               ? 'Đăng ký để bắt đầu giao dịch trên StockLab' 

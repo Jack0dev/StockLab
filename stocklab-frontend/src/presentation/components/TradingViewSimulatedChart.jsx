@@ -19,11 +19,15 @@ export default function TradingViewSimulatedChart({
   selectedRange = '3m',
   onRangeChange,
   fullHeight = false,
+  latestTrade = null,
 }) {
   const workspaceRef = useRef(null);
   const chartViewportRef = useRef(null);
   const chartRef = useRef(null);
   const mainSeriesRef = useRef(null);
+  const volumeSeriesRef = useRef(null);
+  const livePriceLineRef = useRef(null);
+  const lastCandleRef = useRef(null);
   const priceLinesRef = useRef([]);
 
   // Fast indicator maps for dynamic legend lookup
@@ -37,6 +41,7 @@ export default function TradingViewSimulatedChart({
   const [showMeasure, setShowMeasure] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [lineCount, setLineCount] = useState(0);
+  const [livePulse, setLivePulse] = useState(false);
 
   // Active indicator toggles
   const [activeIndicators, setActiveIndicators] = useState({
@@ -138,7 +143,49 @@ export default function TradingViewSimulatedChart({
         (a, b) => new Date(a.tradingDate) - new Date(b.tradingDate)
       );
 
+      // Ensure today's candle matches current stock price & volume
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (stock && stock.currentPrice != null) {
+        if (sortedData.length > 0) {
+          const lastItem = sortedData[sortedData.length - 1];
+          if (lastItem.tradingDate === todayStr) {
+            lastItem.close = Number(stock.currentPrice);
+            if (stock.highPrice != null) lastItem.high = Math.max(Number(lastItem.high), Number(stock.highPrice));
+            if (stock.lowPrice != null) lastItem.low = Math.min(Number(lastItem.low), Number(stock.lowPrice));
+            if (stock.volume != null) lastItem.volume = Math.max(Number(lastItem.volume || 0), Number(stock.volume));
+          } else if (new Date(lastItem.tradingDate) < new Date(todayStr)) {
+            sortedData.push({
+              tradingDate: todayStr,
+              open: Number(stock.openPrice ?? stock.referencePrice ?? stock.currentPrice),
+              high: Number(stock.highPrice ?? stock.currentPrice),
+              low: Number(stock.lowPrice ?? stock.currentPrice),
+              close: Number(stock.currentPrice),
+              volume: Number(stock.volume || 0),
+            });
+          }
+        } else {
+          sortedData.push({
+            tradingDate: todayStr,
+            open: Number(stock.openPrice ?? stock.referencePrice ?? stock.currentPrice),
+            high: Number(stock.highPrice ?? stock.currentPrice),
+            low: Number(stock.lowPrice ?? stock.currentPrice),
+            close: Number(stock.currentPrice),
+            volume: Number(stock.volume || 0),
+          });
+        }
+      }
+
       if (!sortedData.length) return;
+
+      const lastBar = sortedData[sortedData.length - 1];
+      lastCandleRef.current = {
+        time: lastBar.tradingDate,
+        open: +(lastBar.open ?? lastBar.close),
+        high: +(lastBar.high ?? lastBar.close),
+        low: +(lastBar.low ?? lastBar.close),
+        close: +lastBar.close,
+        volume: Number(lastBar.volume || 0),
+      };
 
       const container = chartViewportRef.current;
       const chart = createChart(container, {
@@ -315,9 +362,26 @@ export default function TradingViewSimulatedChart({
             color: +d.close >= +(d.open ?? d.close) ? 'rgba(5, 150, 105, 0.25)' : 'rgba(225, 29, 72, 0.25)',
           }))
         );
+        volumeSeriesRef.current = vs;
+      } else {
+        volumeSeriesRef.current = null;
       }
 
-      // 7. Subscribe to Crosshair Movement for Dynamic Legend
+      // 7. Add Live Price Line
+      if (stock && stock.currentPrice != null) {
+        try {
+          livePriceLineRef.current = mainSeries.createPriceLine({
+            price: Number(stock.currentPrice),
+            color: '#2563eb',
+            lineWidth: 1.5,
+            lineStyle: LineStyle.Dotted,
+            axisLabelVisible: true,
+            title: `Khớp: ${fmt(stock.currentPrice)}`,
+          });
+        } catch {}
+      }
+
+      // 8. Subscribe to Crosshair Movement for Dynamic Legend
       chart.subscribeCrosshairMove((param) => {
         if (!param || !param.time || !param.seriesData) {
           setLegendData(null);
@@ -358,12 +422,93 @@ export default function TradingViewSimulatedChart({
     } catch (err) {
       console.error('Lỗi khởi tạo biểu đồ:', err);
     }
-  }, [priceHistory, chartType, activeIndicators, crosshairMagnet, fullHeight]);
+  }, [priceHistory, chartType, activeIndicators, crosshairMagnet, fullHeight, stock?.ticker]);
 
   // Re-render chart when data or options change
   useEffect(() => {
     renderChart();
   }, [renderChart]);
+
+  // 🚀 REAL-TIME TICK HANDLER: Cập nhật biến động theo giao dịch mới mà không re-render canvas
+  useEffect(() => {
+    if (!mainSeriesRef.current || !lastCandleRef.current) return;
+
+    const newPrice = Number(latestTrade?.price ?? stock?.currentPrice);
+    if (!newPrice || isNaN(newPrice)) return;
+
+    const prev = lastCandleRef.current;
+    const newHigh = Math.max(prev.high, newPrice);
+    const newLow = Math.min(prev.low, newPrice);
+    const newClose = newPrice;
+    const addedVol = Number(latestTrade?.quantity || 0);
+    const newVolume = Number(stock?.volume ?? (prev.volume + addedVol));
+
+    const updated = {
+      time: prev.time,
+      open: prev.open,
+      high: newHigh,
+      low: newLow,
+      close: newClose,
+      volume: newVolume,
+    };
+    lastCandleRef.current = updated;
+
+    // Update Main Series smoothly
+    try {
+      if (chartType === 'line' || chartType === 'area') {
+        mainSeriesRef.current.update({
+          time: updated.time,
+          value: updated.close,
+        });
+      } else {
+        mainSeriesRef.current.update({
+          time: updated.time,
+          open: updated.open,
+          high: updated.high,
+          low: updated.low,
+          close: updated.close,
+        });
+      }
+    } catch (err) {
+      console.warn('Lỗi cập nhật main series tick:', err);
+    }
+
+    // Update Volume Histogram Series smoothly
+    if (volumeSeriesRef.current && activeIndicators.volume) {
+      try {
+        volumeSeriesRef.current.update({
+          time: updated.time,
+          value: updated.volume,
+          color: updated.close >= updated.open ? 'rgba(5, 150, 105, 0.25)' : 'rgba(225, 29, 72, 0.25)',
+        });
+      } catch (err) {
+        console.warn('Lỗi cập nhật volume series tick:', err);
+      }
+    }
+
+    // Update Live Price Line on chart
+    if (livePriceLineRef.current) {
+      try {
+        livePriceLineRef.current.applyOptions({
+          price: updated.close,
+          title: `Khớp: ${fmt(updated.close)}`,
+        });
+      } catch {}
+    }
+
+    // Trigger visual pulse for real-time trade feedback
+    setLivePulse(true);
+    const t = setTimeout(() => setLivePulse(false), 500);
+    return () => clearTimeout(t);
+  }, [
+    stock?.currentPrice,
+    stock?.volume,
+    stock?.highPrice,
+    stock?.lowPrice,
+    latestTrade,
+    chartType,
+    activeIndicators.volume,
+  ]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -633,20 +778,32 @@ export default function TradingViewSimulatedChart({
       {/* 2. DYNAMIC CURSOR LEGEND BAR */}
       <div className="tv-legend-bar">
         <div className="tv-legend-ohlc">
-          <span>{stock?.ticker} · 1D</span>
-          <span>O: <strong>{fmt(legendData ? legendData.open : stock?.openPrice)}</strong></span>
-          <span>H: <strong>{fmt(legendData ? legendData.high : stock?.highPrice)}</strong></span>
-          <span>L: <strong>{fmt(legendData ? legendData.low : stock?.lowPrice)}</strong></span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <strong>{stock?.ticker}</strong> · 1D
+            <span
+              className={`tv-live-indicator ${livePulse ? 'pulse' : ''}`}
+              title="Đang đồng bộ lệnh khớp thời gian thực"
+            >
+              LIVE
+            </span>
+          </span>
+          <span>O: <strong>{fmt(legendData ? legendData.open : (lastCandleRef.current?.open ?? stock?.openPrice))}</strong></span>
+          <span>H: <strong>{fmt(legendData ? legendData.high : (lastCandleRef.current?.high ?? stock?.highPrice))}</strong></span>
+          <span>L: <strong>{fmt(legendData ? legendData.low : (lastCandleRef.current?.low ?? stock?.lowPrice))}</strong></span>
           <span>
             C: <strong className={cls(legendData ? legendData.change : stock?.change)}>
-              {fmt(legendData ? legendData.close : stock?.currentPrice)}
+              {fmt(legendData ? legendData.close : (lastCandleRef.current?.close ?? stock?.currentPrice))}
             </strong>
           </span>
-          {legendData && (
+          {legendData ? (
             <span className={cls(legendData.change)}>
               ({legendData.changePct > 0 ? '+' : ''}{legendData.changePct.toFixed(2)}%)
             </span>
-          )}
+          ) : stock?.changePercent != null ? (
+            <span className={cls(stock.change)}>
+              ({stock.changePercent > 0 ? '+' : ''}{Number(stock.changePercent).toFixed(2)}%)
+            </span>
+          ) : null}
         </div>
 
         <div className="tv-legend-inds">
@@ -763,8 +920,8 @@ export default function TradingViewSimulatedChart({
           ))}
         </div>
         <div className="tv-status-live">
-          <span className="tv-live-pulse"></span>
-          <span>Dữ liệu mô phỏng sàn StockLab</span>
+          <span className={`tv-live-pulse ${livePulse ? 'pulse' : ''}`}></span>
+          <span>{livePulse ? 'Đang nhận lệnh khớp thời gian thực...' : 'Dữ liệu mô phỏng sàn StockLab'}</span>
         </div>
       </div>
     </div>

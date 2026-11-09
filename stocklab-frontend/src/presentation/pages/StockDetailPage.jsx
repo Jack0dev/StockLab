@@ -31,13 +31,43 @@ export default function StockDetailPage() {
   const [priceHistory, setPriceHistory] = useState([]);
   const [news, setNews] = useState([]);
 
-  // Realtime Price Updates via WebSocket
+  // Realtime Price Updates via WebSocket (/topic/prices)
   const handlePriceUpdate = useCallback((data) => {
     if (!Array.isArray(data)) return;
     const live = data.find(d => d.ticker === ticker);
     if (live) setStock(prev => (prev ? { ...prev, ...live } : prev));
   }, [ticker]);
   const { connected } = useWebSocket('/topic/prices', handlePriceUpdate);
+
+  // Realtime Matched Trades Updates via WebSocket (/topic/trades)
+  const [latestTrade, setLatestTrade] = useState(null);
+  const [recentTrades, setRecentTrades] = useState([]);
+
+  const handleTradeUpdate = useCallback((trade) => {
+    if (!trade || trade.ticker !== ticker) return;
+    setLatestTrade(trade);
+    setRecentTrades(prev => [trade, ...prev.slice(0, 49)]);
+
+    // Cập nhật ngay lập tức các chỉ số giá và khối lượng hiện tại của cổ phiếu
+    setStock(prev => {
+      if (!prev) return prev;
+      const p = Number(trade.price);
+      const q = Number(trade.quantity || 0);
+      const ref = Number(prev.referencePrice) || p;
+      const chg = p - ref;
+      const chgPct = ref > 0 ? (chg / ref) * 100 : 0;
+      return {
+        ...prev,
+        currentPrice: p,
+        highPrice: Math.max(Number(prev.highPrice) || p, p),
+        lowPrice: Math.min(Number(prev.lowPrice) || p, p),
+        volume: (Number(prev.volume) || 0) + q,
+        change: chg,
+        changePercent: chgPct,
+      };
+    });
+  }, [ticker]);
+  useWebSocket('/topic/trades', handleTradeUpdate);
 
   useEffect(() => {
     fetchAll();
@@ -271,6 +301,7 @@ export default function StockDetailPage() {
                 priceHistory={priceHistory}
                 selectedRange={selectedRange}
                 onRangeChange={setSelectedRange}
+                latestTrade={latestTrade}
               />
             </div>
 
@@ -314,47 +345,45 @@ export default function StockDetailPage() {
 
               {/* Matched / Khop lenh */}
               <div className="sd-matched-panel">
-                <h4 className="sd-panel-title">Nhật ký khớp lệnh gần nhất</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <h4 className="sd-panel-title" style={{ margin: 0 }}>Nhật ký khớp lệnh trực tiếp</h4>
+                  <span className="tv-status-live" style={{ fontSize: '0.72rem' }}>
+                    <span className="tv-live-pulse"></span> TRỰC TIẾP
+                  </span>
+                </div>
                 <div className="sd-ml-head">
                   <span>Thời gian</span>
                   <span>Khối lượng</span>
                   <span>Mức giá</span>
-                  <span>Biến động</span>
+                  <span>Chiều khớp</span>
                 </div>
-                {orderBook.bids?.slice(0, 6).map((b, i) => (
-                  <div className="sd-ml-row" key={`b${i}`}>
-                    <span className="sd-ml-t">
-                      {new Date().toLocaleTimeString('vi-VN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      })}
-                    </span>
-                    <span>{fmtVol(b.totalQuantity)}</span>
-                    <span className="c-up" style={{ fontWeight: '700' }}>
-                      {fmt(b.price)}
-                    </span>
-                    <span className="c-ref">{stock.changePercent?.toFixed(1)}%</span>
+                {recentTrades.length > 0 ? (
+                  recentTrades.slice(0, 12).map((t, i) => {
+                    const tTime = t.timestamp ? new Date(t.timestamp).toLocaleTimeString('vi-VN', {
+                      hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    }) : new Date().toLocaleTimeString('vi-VN');
+                    const isBuy = t.side === 'BUY';
+                    const isSell = t.side === 'SELL';
+                    const priceNum = Number(t.price);
+                    const refPrice = Number(stock?.referencePrice || priceNum);
+                    const pCls = priceNum > refPrice ? 'c-up' : priceNum < refPrice ? 'c-down' : 'c-ref';
+                    return (
+                      <div className="sd-ml-row" key={t.id || `rt-${i}`}>
+                        <span className="sd-ml-t">{tTime}</span>
+                        <span>{fmtVol(t.quantity)}</span>
+                        <span className={pCls} style={{ fontWeight: '700' }}>
+                          {fmt(t.price)}
+                        </span>
+                        <span className={isBuy ? 'c-up' : isSell ? 'c-down' : 'c-ref'} style={{ fontWeight: '600' }}>
+                          {isBuy ? 'Mua' : isSell ? 'Bán' : 'Khớp'}
+                        </span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="sd-empty" style={{ padding: '1.25rem 0', textAlign: 'center', color: '#94a3b8', fontSize: '0.8rem' }}>
+                    Đang kết nối luồng khớp lệnh trực tiếp...
                   </div>
-                ))}
-                {orderBook.asks?.slice(0, 6).map((a, i) => (
-                  <div className="sd-ml-row" key={`a${i}`}>
-                    <span className="sd-ml-t">
-                      {new Date().toLocaleTimeString('vi-VN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      })}
-                    </span>
-                    <span>{fmtVol(a.totalQuantity)}</span>
-                    <span className="c-down" style={{ fontWeight: '700' }}>
-                      {fmt(a.price)}
-                    </span>
-                    <span className="c-ref">{stock.changePercent?.toFixed(1)}%</span>
-                  </div>
-                ))}
-                {!orderBook.bids?.length && !orderBook.asks?.length && (
-                  <div className="sd-empty">Chưa ghi nhận lệnh khớp trong phiên</div>
                 )}
               </div>
             </div>
@@ -413,6 +442,7 @@ export default function StockDetailPage() {
                 selectedRange={selectedRange}
                 onRangeChange={setSelectedRange}
                 fullHeight={true}
+                latestTrade={latestTrade}
               />
             </div>
           </div>
