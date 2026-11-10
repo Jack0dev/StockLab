@@ -1,4 +1,5 @@
 # GitHub Linguist language detection overrides
 *.sql linguist-detectable=false
 *.md linguist-documentation
-stocklab-backend/apache-jmeter*/** linguist-vendored
+stocklab-frontend/index.html linguist-detectable=false
+stocklab-backend/apache-jmeter*/** linguist-vendored=true
